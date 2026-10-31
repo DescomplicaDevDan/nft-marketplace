@@ -2,6 +2,10 @@ import artwork05 from '@/assets/img/NFT Artwork 05.png'
 import artwork09 from '@/assets/img/NFT Artwork 09.png'
 import artwork18 from '@/assets/img/NFT Artwork 18.png'
 import frame136 from '@/assets/img/Frame 136.png'
+import facebookIcon from '@/assets/icons/facebook.svg'
+import instagramIcon from '@/assets/icons/instagram.svg'
+import linkedinIcon from '@/assets/icons/linkedin.svg'
+import twitterIcon from '@/assets/icons/twitter.svg'
 
 export const featuredCollections = [
   {
@@ -45,4 +49,23 @@ export const journalArticles = [
     summary: 'Proteja sua carteira, seus ativos e sua identidade.',
     image: artwork09,
   },
+]
+
+export const footerHighlights = [
+  { icon: 'W', title: 'Segurança da carteira', description: 'Proteja sua carteira e colecione arte digital verificada com confiança.' },
+  { icon: 'C', title: 'Criadores em destaque', description: 'Conheça artistas, estúdios e comunidades que moldam a cultura digital na rede.' },
+  { icon: 'D', title: 'Alertas de lançamento', description: 'Receba calendários de cunhagem, novidades de listas de acesso e análises do mercado.' },
+]
+
+export const footerGroups = [
+  { title: 'Meu perfil', links: ['Meu perfil', 'Minha coleção', 'Atividade', 'Estúdio do criador', 'Lista de interesse'] },
+  { title: 'Central de ajuda', links: ['Central de ajuda', 'Como comprar NFTs', 'Carteira e segurança', 'Política do mercado', 'Denunciar item'] },
+  { title: 'Coleções', links: ['Arte digital', 'Fotografia', 'Música', 'Arte 3D', 'Utilidade'] },
+]
+
+export const socialLinks = [
+  { name: 'Facebook', icon: facebookIcon },
+  { name: 'Instagram', icon: instagramIcon },
+  { name: 'Twitter', icon: twitterIcon },
+  { name: 'LinkedIn', icon: linkedinIcon },
 ]

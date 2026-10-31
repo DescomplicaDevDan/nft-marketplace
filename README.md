@@ -60,7 +60,7 @@ npm run preview
 
 ## Estado atual
 
-Já estão configurados o roteamento, os provedores do TanStack Query, o cliente Axios, o MSW com dados de exemplo, o Tailwind CSS e o shadcn/ui. A página inicial tem cabeçalho, hero, catálogo com filtros, banners de coleções em destaque e uma seção editorial. Busca, ordenação, filtros e paginação usam a URL e o MSW. Os cards abrem uma página de detalhe; favoritos e carrinho persistem localmente. O checkout gera pedidos simulados, sem realizar pagamentos. A fidelidade visual desktop e a responsividade ainda estão em refinamento. Não há autenticação, Socket.IO em uso, testes E2E, auditoria Lighthouse nem deploy.
+Já estão configurados o roteamento, os provedores do TanStack Query, o cliente Axios, o MSW com dados de exemplo, o Tailwind CSS e o shadcn/ui. A página inicial tem cabeçalho, hero, catálogo com filtros, banners de coleções, seção editorial e rodapé com newsletter e links. Busca, ordenação, filtros e paginação usam a URL e o MSW. Os cards abrem uma página de detalhe; favoritos e carrinho persistem localmente. O checkout gera pedidos simulados, sem realizar pagamentos. A fidelidade visual desktop e a responsividade ainda estão em refinamento. Não há autenticação, Socket.IO em uso, testes E2E, auditoria Lighthouse nem deploy.
 
 A compilação (`npm run build`) passou após a configuração atual. O lint executa, com um aviso no componente de botão gerado pelo shadcn/ui.
 
