@@ -49,14 +49,18 @@
 .checkout-confirm { width: 100%; min-height: 44px; padding: 12px; border: 0; border-radius: 7px; background: #d28a4c; color: #140d0a; font: 700 13px 'Roboto Mono Variable', monospace; cursor: pointer; }
 .checkout-confirm:disabled { opacity: .5; }
 .checkout-demo { margin-top: 10px; font-size: 10px; color: #b39463; text-align: center; }
+.checkout-mobile-wallets, .checkout-mobile-edit-profile, .checkout-mobile-provider-icon, .checkout-mobile-provider-label, .checkout-mobile-colon { display: none; }
+.checkout-mobile-bottom { display: contents; }
 @media (max-width: 1100px) { .checkout-layout { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 24px; } .checkout-items li { flex-wrap: wrap; padding-bottom: 6px; } }
 @media (max-width: 760px) { .checkout-layout { grid-template-columns: 1fr; gap: 40px; } }
 @media (max-width: 480px) { .checkout-fields { grid-template-columns: 1fr; } }
 
 @media (max-width: 767px) {
-  .checkout-page { overflow: visible; padding: 0 23px 28px; }
+  .checkout-page { overflow: visible; padding: 0 23px 100px; }
   .checkout-page .checkout-mobile-header { margin: 0 -23px; }
-  .checkout-page .checkout-layout { display: flex; flex-direction: column; gap: 30px; margin-top: 10px; }
+  .checkout-page .checkout-mobile-header h1 { overflow: visible; font-size: 13px; white-space: nowrap; }
+  .checkout-page .checkout-layout { display: flex; flex-direction: column; gap: 22px; margin-top: 10px; padding-bottom: 100px; }
+  .checkout-page .checkout-profile-mobile-hidden { display: none; }
   .checkout-page .checkout-profile h2, .checkout-page .checkout-order h2 { margin-bottom: 18px; font-size: 15px; }
   .checkout-page .checkout-saved-wallet { margin-bottom: 22px; }
   .checkout-page .checkout-saved-wallet > label { color: #cfb28c; font-size: 12px; }
@@ -71,8 +75,20 @@
   .checkout-page .checkout-alternative { margin-bottom: 18px; }
   .checkout-page .checkout-notes { max-width: none; }
   .checkout-page .checkout-profile textarea { min-height: 112px; }
-  .checkout-page .checkout-order { min-width: 0; padding: 20px 16px; border: 1px solid #38241b; border-radius: 20px; background: #241612; }
-  .checkout-page .checkout-order h2 { margin-bottom: 10px; }
+  .checkout-page .checkout-order { display: flex; flex-direction: column; min-width: 0; padding: 0 0 20px; border: 0; border-radius: 0; background: transparent; }
+  .checkout-page .checkout-order > h2, .checkout-page .checkout-list-heading, .checkout-page .checkout-items, .checkout-page .checkout-promo-link, .checkout-page .cart-summary-values, .checkout-page .cart-fee-note { display: none; }
+  .checkout-page .checkout-mobile-wallets { display: block; }
+  .checkout-mobile-wallet-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 2px 0 10px; font-size: 11px; }
+  .checkout-mobile-wallet-heading a { color: #e89b55; font-size: 10px; }
+  .checkout-mobile-wallet-card { display: flex !important; align-items: center; gap: 12px; min-height: 60px; margin: 0 0 12px !important; padding: 9px 12px !important; border: 0 !important; border-radius: 12px !important; background: #241612; cursor: pointer; }
+  .checkout-mobile-wallet-card > input { appearance: none; width: 12px; height: 12px; flex: 0 0 12px; margin: 0; border: 1px solid #8a502d; border-radius: 50%; background: transparent; }
+  .checkout-mobile-wallet-card > input:checked { border-color: #d28a4c; background: radial-gradient(circle, #d28a4c 0 3px, transparent 3.5px); }
+  .checkout-mobile-wallet-text { display: grid; flex: 1; min-width: 0; gap: 2px; }
+  .checkout-mobile-wallet-text strong { overflow: hidden; font-size: 11px; line-height: 15px; text-overflow: ellipsis; white-space: nowrap; }
+  .checkout-mobile-wallet-text small { overflow: hidden; color: #b39463; font-size: 9px; line-height: 13px; text-overflow: ellipsis; white-space: nowrap; }
+  .checkout-mobile-wallet-menu { padding: 0 2px; color: #b39463; font-size: 20px; line-height: 1; }
+  .checkout-mobile-no-wallet { margin: 12px 0; color: #cfb28c; font-size: 11px; }
+  .checkout-mobile-no-wallet a, .checkout-mobile-no-wallet button { color: #e89b55; }
   .checkout-page .checkout-list-heading { font-size: 12px; }
   .checkout-page .checkout-items { margin: 10px 0; }
   .checkout-page .checkout-items li { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; gap: 8px; min-height: 62px; margin-bottom: 8px; padding: 0 8px 0 0; flex-wrap: nowrap; }
@@ -85,13 +101,27 @@
   .checkout-page .cart-summary-values > div { margin-bottom: 7px; font-size: 11px; }
   .checkout-page .cart-fee-note { margin: 0 0 8px; font-size: 9px; }
   .checkout-page .checkout-total { padding: 12px 8px; margin-top: 8px; font-size: 13px; }
-  .checkout-page .checkout-wallets { margin-top: 4px; }
-  .checkout-page .checkout-wallets legend { margin-bottom: 10px; font-size: 13px; }
-  .checkout-page .checkout-wallets label { min-height: 46px; margin-bottom: 10px; border-radius: 6px; }
-  .checkout-page .checkout-wallets label:first-of-type { font-size: 8px; }
-  .checkout-page .checkout-connection { margin: 16px 0; }
-  .checkout-page .checkout-payment-scenario { margin: 12px 0; }
-  .checkout-page .checkout-confirm { min-height: 48px; border-radius: 24px; }
-  .checkout-page .cart-footer { display: block; margin: 36px -23px 0; }
+  .checkout-page .checkout-wallets { margin-top: 6px; }
+  .checkout-page .checkout-wallets legend { margin-bottom: 10px; font-size: 11px; }
+  .checkout-page .checkout-wallets label { display: grid; grid-template-columns: 26px minmax(0, 1fr) 12px; min-height: 42px; margin-bottom: 10px; border: 0; border-radius: 12px; background: #241612; font-size: 10px; }
+  .checkout-page .checkout-wallets label:first-of-type { color: #f5f1eb; font-size: 10px; }
+  .checkout-page .checkout-wallets input { grid-column: 3; grid-row: 1; width: 12px; height: 12px; }
+  .checkout-mobile-provider-icon { display: grid; grid-column: 1; grid-row: 1; place-items: center; width: 26px; height: 26px; flex: 0 0 26px; margin-left: 0; border-radius: 50%; background: #392319; color: #d28a4c; font-size: 10px; }
+  .checkout-provider-desktop-label { display: none; }
+  .checkout-mobile-provider-label { display: inline; grid-column: 2; grid-row: 1; }
+  .checkout-mobile-colon { display: inline; }
+  .checkout-page .checkout-connection { margin: 14px 0 8px; }
+  .checkout-page .checkout-connection > label, .checkout-page .checkout-payment-scenario { display: none; }
+  .checkout-page .checkout-connection button { min-height: 42px; border-radius: 10px; }
+  .checkout-page .checkout-connection.is-connected > button:first-of-type, .checkout-page .checkout-connection.is-connected .checkout-connected-message { display: none; }
+  .checkout-page .checkout-connection.is-connected > button:not(:first-of-type) { display: none; }
+  .checkout-page .checkout-mobile-edit-profile { display: inline-block; align-self: flex-start; margin: 2px 0 14px; padding: 4px 0; border: 0; background: transparent; color: #b39463; font: 10px 'Roboto Mono Variable', monospace; text-decoration: underline; }
+  .checkout-page .checkout-mobile-bottom { display: contents; }
+  .checkout-page .checkout-total { display: flex; justify-content: flex-end; gap: 12px; padding: 8px 0; margin: 4px 0 8px; border: 0; font-size: 11px; }
+  .checkout-page .checkout-total strong:last-child { color: #e89b55; }
+  .checkout-page .checkout-confirm { position: fixed; z-index: 40; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); left: 20px; width: calc(100% - 40px); min-height: 48px; padding: 12px; border-radius: 28px; box-shadow: 0 8px 24px #140d0a75; }
+  .checkout-page .checkout-demo { display: none; }
+  .checkout-page .cart-footer { display: none; }
+  .checkout-page .checkout-mobile-message { margin: 4px 0 14px; color: #e89b55; font-size: 11px; }
   .checkout-page :is(a, button, input, select, textarea):focus-visible { outline: 2px solid #e89b55; outline-offset: 2px; }
 }

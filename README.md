@@ -287,7 +287,11 @@ Checagens isoladas: quatro itens renderizados na largura-base de 344 px, sem ove
 
 ### Pagamento mobile
 
-A rota `/checkout` abaixo de 768 px usa cabeçalho de retorno ao carrinho, formulário em uma coluna e resumo do pedido em painel próprio, seguido das opções de carteira e confirmação. Os mesmos dados e operações do checkout desktop permanecem ativos: rascunho por usuário, carteiras salvas, conexão simulada, cotação da API, idempotência e recuperação de pedido. O rodapé continua após o formulário, acessível pela rolagem. A revisão visual usa a referência desktop de pagamento enviada; ainda não foi fornecido um frame mobile específico.
+A rota `/checkout` abaixo de 768 px segue a referência mobile enviada para pagamento com carteira: cabeçalho “Pagamento com carteira”, seleção de carteiras salvas e rede/provedor, total e botão de confirmação fixo na base. As carteiras exibem apelido, ENS/endereço abreviado e rede; “Trocar carteira” abre o gerenciamento de carteiras. A tela usa a conexão e a cotação reais da API simulada, e só habilita a confirmação depois de uma conexão válida.
+
+Os dados obrigatórios do colecionador continuam no checkout e podem ser abertos por “Editar dados do colecionador”. Se faltarem dados ao confirmar, o formulário é aberto e a conclusão é bloqueada até o preenchimento. A etapa mantém a idempotência, recuperação de pedidos e rascunho por usuário. O layout desktop permanece preservado; o rodapé não aparece nesta tela mobile.
+
+Checagens isoladas: duas carteiras salvas renderizadas na ordem da referência, carteira conectada reconhecida, troca de provedor seguida de nova conexão permitida, sem overflow horizontal em 344 px e CTA habilitada somente com cotação/conexão válidas. Build passou; o lint mantém os dois avisos conhecidos dos provedores e o bundle continua acima de 500 kB. A suíte completa segue para a revisão final.
 
 ### Executar e compilar
 
