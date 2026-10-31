@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw'
-import { categoryCounts, networkCounts, nfts } from './data/nfts'
+import { categoryCounts, featuredNFT, networkCounts, nfts } from './data/nfts'
 import type { NFTListResponse } from '@/features/catalog/types'
 
 function ethToWei(value: string): bigint {
@@ -55,6 +55,7 @@ export const handlers = [
     })
     const body: NFTListResponse = {
       items: sorted.slice((page - 1) * pageSize, page * pageSize),
+      featuredNFT,
       total: sorted.length,
       page,
       pageSize,

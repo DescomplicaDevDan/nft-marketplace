@@ -2,7 +2,7 @@
 
 Frontend de um marketplace de NFTs desenvolvido para um desafio técnico. O objetivo é implementar descoberta de NFTs, compra simulada e área do colecionador, com React e TypeScript.
 
-> Em desenvolvimento: a infraestrutura inicial está configurada, mas a tela atual ainda é o template do Vite. Os fluxos de catálogo, conta, carrinho e compra ainda não foram implementados.
+> Em desenvolvimento: a página inicial desktop e os fluxos simulados de catálogo, detalhe, favoritos, carrinho e checkout estão implementados. A correspondência visual com o Figma e a responsividade ainda estão em refinamento.
 
 ## Links
 
@@ -60,7 +60,7 @@ npm run preview
 
 ## Estado atual
 
-Já estão configurados o roteamento, os provedores do TanStack Query, o cliente Axios, o MSW com dados de exemplo, o Tailwind CSS e o shadcn/ui. A página inicial tem cabeçalho e hero baseados no frame desktop do Figma, além de um catálogo simulado com busca, paginação e filtros funcionais de categoria, preço e rede. As abas “Todos os NFTs”, “Novos lançamentos” e “Em alta” atualizam a ordenação. Esses parâmetros são mantidos na URL e aplicados pelo MSW. Os cards abrem uma página de detalhe por NFT; favoritos e carrinho funcionam localmente e persistem no navegador. O checkout gera pedidos simulados, limpa o carrinho e registra o histórico local, sem realizar pagamentos. Ainda falta validar responsividade e refinar a correspondência visual. Não há autenticação, Socket.IO em uso, testes E2E, auditoria Lighthouse nem deploy.
+Já estão configurados o roteamento, os provedores do TanStack Query, o cliente Axios, o MSW com dados de exemplo, o Tailwind CSS e o shadcn/ui. A página inicial tem cabeçalho, hero, filtros laterais, NFT em destaque e catálogo com busca, ordenação, filtros e paginação. Os parâmetros são mantidos na URL e aplicados pelo MSW. Os cards abrem uma página de detalhe; favoritos e carrinho persistem localmente. O checkout gera pedidos simulados, sem realizar pagamentos. A fidelidade visual desktop e a responsividade ainda estão em refinamento. Não há autenticação, Socket.IO em uso, testes E2E, auditoria Lighthouse nem deploy.
 
 A compilação (`npm run build`) passou após a configuração atual. O lint executa, com um aviso no componente de botão gerado pelo shadcn/ui.
 

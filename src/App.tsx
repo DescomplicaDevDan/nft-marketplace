@@ -1,12 +1,14 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import searchIcon from './assets/icons/Search Icon.svg'
+import cartIcon from './assets/icons/Cart Icon.svg'
+import userIcon from './assets/icons/User.svg'
 import heroArtwork from './assets/img/Frame 136.png'
 import kurioWordmark from './assets/img/Logo.svg'
 import { useNFTs } from '@/features/catalog/api'
 import type { NFTNetwork } from '@/features/catalog/types'
 
-const PAGE_SIZE = 4
+const PAGE_SIZE = 9
 
 function SearchForm({
   value,
@@ -171,7 +173,7 @@ function App() {
           <img src={kurioWordmark} alt="KURIO" className="h-[22px] w-[100px] sm:h-[35px] sm:w-[160px]" />
         </a>
 
-        <nav aria-label="Navegação principal" className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] sm:gap-x-10 sm:text-base md:col-start-2 md:translate-x-20 md:justify-center">
+        <nav aria-label="Navegação principal" className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] sm:gap-x-10 sm:text-base md:col-start-2 md:translate-x-10 md:justify-center">
           <a
             href="/"
             aria-current="page"
@@ -189,6 +191,12 @@ function App() {
             Aprenda
           </span>
         </nav>
+        <div className="hidden items-center justify-self-end gap-4 md:flex">
+          <a href="#catalogo" aria-label="Buscar NFTs" className="rounded p-1 hover:bg-[#211511]"><img src={searchIcon} alt="" className="size-4" /></a>
+          <Link to="/cart" search={search} aria-label="Abrir carrinho" className="rounded p-1 hover:bg-[#211511]"><img src={cartIcon} alt="" className="size-4" /></Link>
+          <button type="button" title="Entrar em breve" className="rounded bg-[#e69a55] px-3 py-1 text-xs font-bold text-[#1b1310]">Entrar</button>
+          <span className="grid size-9 place-items-center rounded-full bg-[#f5f1eb]"><img src={userIcon} alt="Perfil" className="size-6" /></span>
+        </div>
       </header>
 
       <section className="relative mt-8 grid min-h-[450px] items-start py-0 md:mb-[108px] md:grid-cols-[600px_450px] md:gap-[166px]">
@@ -293,6 +301,17 @@ function App() {
                 })}
               </ul>
             </div>
+            {data?.featuredNFT && (
+              <article className="mt-8 border-t border-[#49372b] pt-6">
+                <p className="mb-1 text-xs font-bold uppercase tracking-wide text-[#e69a55]">NFT em destaque</p>
+                <p className="mb-3 text-[11px] uppercase tracking-wider text-[#b8aa9b]">Oferta limitada</p>
+                <Link to="/nft/$nftId" params={{ nftId: data.featuredNFT.id }} search={search} className="group block">
+                  <img src={data.featuredNFT.imageUrl} alt={data.featuredNFT.name} className="mb-2 aspect-square w-full object-cover" />
+                  <span className="block truncate font-mono text-xs">{data.featuredNFT.name}</span>
+                  <span className="font-mono text-xs font-bold text-[#e69a55]">{data.featuredNFT.priceEth} ETH</span>
+                </Link>
+              </article>
+            )}
           </aside>
 
           <div className="min-w-0">
@@ -328,7 +347,7 @@ function App() {
             </div>
 
             {isPending && (
-              <div aria-label="Carregando NFTs" className="grid grid-cols-1 gap-10 sm:grid-cols-[repeat(auto-fill,250px)]">
+              <div aria-label="Carregando NFTs" className="grid grid-cols-1 gap-5 sm:grid-cols-[repeat(auto-fill,250px)]">
                 {Array.from({ length: PAGE_SIZE }, (_, index) => (
                   <div key={index} className="animate-pulse overflow-hidden rounded-xl border border-[#49372b]">
                     <div className="aspect-square bg-[#211511]" />
@@ -351,7 +370,7 @@ function App() {
 
             {data && data.items.length > 0 && (
               <>
-                <ul className="grid list-none grid-cols-1 gap-10 p-0 sm:grid-cols-[repeat(auto-fill,250px)]">
+                <ul className="grid list-none grid-cols-1 gap-x-5 gap-y-8 p-0 sm:grid-cols-[repeat(auto-fill,250px)]">
                   {data.items.map((nft) => (
                     <li key={nft.id} className="overflow-hidden bg-[#1b1310] text-[#f5f1eb]">
                       <Link

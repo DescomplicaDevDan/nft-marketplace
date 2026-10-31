@@ -41,6 +41,7 @@ export interface NFT {
 
 export interface NFTListResponse {
   items: NFT[]
+  featuredNFT?: NFT
   total: number
   page: number
   pageSize: number
