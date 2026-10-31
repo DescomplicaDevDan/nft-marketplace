@@ -7,6 +7,7 @@ import { cartHandlers } from './cart'
 import { orderHandlers } from './orders'
 import { inventoryNFTs } from './inventory'
 import { realtimeHandlers } from './realtime'
+import { scenarioHandlers } from './scenarios'
 
 type MockUser = { id: string; username: string; email: string; passwordHash: string; profile?: CollectorProfile }
 type MockSession = { userId: string; expiresAt: number }
@@ -71,6 +72,7 @@ function ethToWei(value: string): bigint {
 }
 
 export const handlers = [
+  ...scenarioHandlers,
   ...realtimeHandlers((token) => sessionUser(new Request('https://kurio.local/api/auth/me', { headers: { Authorization: `Bearer ${token}` } }), readAuthState())?.id),
   http.post('/api/auth/expire', ({ request }) => {
     const state = readAuthState()
