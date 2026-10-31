@@ -295,7 +295,7 @@ Checagens isoladas: duas carteiras salvas renderizadas na ordem da referência, 
 
 ### Login mobile
 
-O diálogo de autenticação abaixo de 768 px adapta login e cadastro às referências mobile. O cadastro usa cartão alto com marca Kurio, título “Criar perfil de colecionador”, campos de usuário, e-mail, senha e confirmação com controles de visibilidade, botão “Criar perfil”, opções sociais e atalho para entrar. Login, cadastro, sessão e validação continuam usando a API simulada existente; Google/Facebook e recuperação de senha continuam informativos, sem integração. No desktop, a composição anterior com abas permanece.
+O diálogo de autenticação abaixo de 768 px ocupa a tela toda e centraliza verticalmente o conteúdo de login e cadastro conforme as referências mobile. O cadastro traz marca Kurio, título “Criar perfil de colecionador”, campos de usuário, e-mail, senha e confirmação com controles de visibilidade, botão “Criar perfil”, opções sociais e atalho para entrar. Login, cadastro, sessão e validação continuam usando a API simulada existente; Google/Facebook e recuperação de senha continuam informativos, sem integração. No desktop, a composição anterior com abas permanece.
 
 Checagens isoladas: modal em 344 px, alternância login/cadastro, login demonstrativo pela interface e retorno à rota protegida; a checagem visual desktop e a suíte E2E completa ficam para a revisão final.
 
