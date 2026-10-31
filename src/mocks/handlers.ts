@@ -3,6 +3,7 @@ import { categoryCounts, featuredNFT, networkCounts, nfts } from './data/nfts'
 import type { NFTListResponse } from '@/features/catalog/types'
 import type { CollectorProfile, ProfileUpdate } from '@/features/profile/api'
 import { walletHandlers } from './wallets'
+import { cartHandlers } from './cart'
 
 type MockUser = { id: string; username: string; email: string; passwordHash: string; profile?: CollectorProfile }
 type MockAuthState = { users: MockUser[]; sessions: Record<string, string> }
@@ -64,6 +65,7 @@ function ethToWei(value: string): bigint {
 }
 
 export const handlers = [
+  ...cartHandlers((request) => sessionUser(request, readAuthState())?.id),
   ...walletHandlers((request) => sessionUser(request, readAuthState())?.id),
   http.get('/api/profile', ({ request }) => {
     const user = sessionUser(request, readAuthState())

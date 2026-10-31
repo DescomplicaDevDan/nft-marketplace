@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { NFT } from '@/features/catalog/types'
 import { useFavoriteActions } from './favorites'
+import { useCartApi, type CartItem } from './cartApi'
 
 export interface Order {
   id: string
@@ -13,22 +14,28 @@ export interface Order {
 }
 
 interface CommerceState {
-  quantities: Record<string, number>
-  cart: string[]
   orders: Order[]
 }
 
 interface CommerceContextValue extends CommerceState {
   favorites: string[]
+  cart: string[]
+  quantities: Record<string, number>
+  cartItems: CartItem[]
+  cartLoading: boolean
+  cartError: boolean
+  cartBusy: boolean
+  cartMessage: string
+  retryCart: () => void
   setCartQuantity: (id: string, quantity: number) => void
   toggleFavorite: (id: string) => void
-  addToCart: (id: string) => void
+  addToCart: (id: string, quantity?: number) => void
   removeFromCart: (id: string) => void
   placeOrder: (order: Order) => void
 }
 
 const STORAGE_KEY = 'kurio-commerce'
-const emptyState: CommerceState = { cart: [], orders: [], quantities: {} }
+const emptyState: CommerceState = { orders: [] }
 const CommerceContext = createContext<CommerceContextValue | null>(null)
 
 function loadState(): CommerceState {
@@ -39,8 +46,6 @@ function loadState(): CommerceState {
     if (typeof parsed !== 'object' || parsed === null) return emptyState
     const value = parsed as Record<string, unknown>
     return {
-      quantities: typeof value.quantities === 'object' && value.quantities !== null ? Object.fromEntries(Object.entries(value.quantities).filter(([, quantity]) => typeof quantity === 'number' && Number.isSafeInteger(quantity) && quantity > 0)) : {},
-      cart: Array.isArray(value.cart) ? value.cart.filter((id): id is string => typeof id === 'string') : [],
       orders: Array.isArray(value.orders) ? value.orders as Order[] : [],
     }
   } catch {
@@ -51,6 +56,7 @@ function loadState(): CommerceState {
 export function CommerceProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState(loadState)
   const favoriteActions = useFavoriteActions()
+  const cartApi = useCartApi()
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
@@ -58,24 +64,26 @@ export function CommerceProvider({ children }: { children: ReactNode }) {
 
   const value: CommerceContextValue = {
     ...state,
-    setCartQuantity: (id, quantity) => setState((current) => ({ ...current, quantities: { ...current.quantities, [id]: Math.max(1, Math.floor(quantity)) } })),
+    cart: cartApi.items.map((item) => item.id),
+    quantities: Object.fromEntries(cartApi.items.map((item) => [item.id, item.quantity])),
+    cartItems: cartApi.items,
+    cartLoading: cartApi.isPending,
+    cartError: cartApi.isError,
+    cartBusy: cartApi.busy,
+    cartMessage: cartApi.message,
+    retryCart: () => { void cartApi.refetch() },
+    setCartQuantity: cartApi.setQuantity,
     favorites: favoriteActions.favorites,
     toggleFavorite: favoriteActions.toggleFavorite,
-    addToCart: (id) => setState((current) => current.cart.includes(id)
-      ? current
-      : { ...current, cart: [...current.cart, id] }),
-    removeFromCart: (id) => setState((current) => ({
-      ...current,
-      cart: current.cart.filter((item) => item !== id),
-    })),
+    addToCart: cartApi.add,
+    removeFromCart: cartApi.remove,
     placeOrder: (order) => setState((current) => ({
       ...current,
-      cart: [],
       orders: [order, ...current.orders],
     })),
   }
 
-  return <CommerceContext.Provider value={value}>{children}<p role="status" aria-live="polite" className="sr-only">{favoriteActions.message}</p>{favoriteActions.message.includes('desfeita') && <p role="alert" className="fixed bottom-4 left-4 right-4 z-50 rounded border border-[#d28a4c] bg-[#241612] p-4 text-[#f5f1eb]">{favoriteActions.message}</p>}</CommerceContext.Provider>
+  return <CommerceContext.Provider value={value}>{children}<p role="status" aria-live="polite" className="sr-only">{favoriteActions.message}</p>{favoriteActions.message.includes('desfeita') && <p role="alert" className="fixed bottom-4 left-4 right-4 z-50 rounded border border-[#d28a4c] bg-[#241612] p-4 text-[#f5f1eb]">{favoriteActions.message}</p>}{cartApi.message && <p role="status" className="fixed bottom-4 left-4 right-4 z-50 rounded border border-[#d28a4c] bg-[#241612] p-4 text-[#f5f1eb]">{cartApi.message}</p>}</CommerceContext.Provider>
 }
 
 export function useCommerce() {

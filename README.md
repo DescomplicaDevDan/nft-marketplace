@@ -2,7 +2,7 @@
 
 Frontend de um marketplace de NFTs desenvolvido para um desafio técnico. O objetivo é implementar descoberta de NFTs, compra simulada e área do colecionador com React e TypeScript.
 
-> Em desenvolvimento: as telas desktop estão montadas; catálogo, autenticação, favoritos, perfil e carteiras já usam a API simulada. Carrinho e pedidos ainda serão migrados para a API simulada antes da revisão funcional e mobile.
+> Em desenvolvimento: as telas desktop estão montadas; catálogo, autenticação, favoritos, perfil, carteiras e carrinho já usam a API simulada. Cotação, cupons e pedidos ainda precisam ser integrados antes da revisão funcional e mobile.
 
 ## Links
 
@@ -86,7 +86,15 @@ A tela `/wallets` usa `GET /api/wallets`, `PUT /api/wallets` e `DELETE /api/wall
 
 ENS e indicação também são obrigatórios no formulário de pagamento. Os testes completos dos fluxos serão realizados na revisão final solicitada; esta etapa passou pela compilação TypeScript/Vite.
 
-### Scripts disponíveis
+### Carrinho de visitante e conta
+
+O carrinho usa `GET /api/cart`, `PUT /api/cart/items/:id` (adicionar ou definir quantidade), `DELETE /api/cart/items/:id` e `POST /api/cart/merge`. O visitante recebe um identificador local enviado no cabeçalho `X-Guest-Cart`; contas usam a sessão. O MSW separa seus carrinhos e persiste as alterações. O cache usa `['cart', owner]`.
+
+Ao carregar o carrinho autenticado, a API une os itens do visitante aos da conta, soma quantidades e ajusta ao estoque com aviso. A gravação e o esvaziamento do carrinho visitante ocorrem juntos, permitindo repetir a operação sem duplicar itens. A leitura autenticada repete essa operação idempotente para recuperar falhas de rede. Logout não transforma os itens privados em itens de visitante.
+
+A quantidade selecionada no detalhe é enviada ao carrinho. A API recusa quantidades inválidas ou acima do estoque. Alterações aguardam confirmação, bloqueiam cliques concorrentes e mostram falhas; a lista retorna todos os itens, sem o limite da primeira página do catálogo. O carrinho compartilhado antigo não é importado. O checkout já lê os itens da API; cotação, cupons e criação/confirmação de pedidos ainda são demonstrativos. Nesta etapa, a confirmação antiga não esvazia o carrinho da API; a remoção das quantidades compradas será responsabilidade da futura API de pedidos. Compilação verificada; testes completos seguem para a revisão final.
+
+### Comandos de execução
 
 | Comando | Descrição |
 | --- | --- |
@@ -97,9 +105,9 @@ ENS e indicação também são obrigatórios no formulário de pagamento. Os tes
 
 ## Estado e próximos passos
 
-Catálogo, detalhe, favoritos, perfil e carteiras usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Carrinho e pedidos ainda usam armazenamento local ou estado de demonstração e não estão isolados por conta. O checkout ainda não depende de uma confirmação de pedido do servidor simulado. Socket.IO está instalado, mas não integrado. Playwright, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
+Catálogo, detalhe, favoritos, perfil, carteiras e carrinho usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos ainda usam armazenamento local e não estão isolados por conta. O checkout ainda não depende de uma confirmação de pedido do servidor simulado. Socket.IO está instalado, mas não integrado. Playwright, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
 
-1. Migrar carrinho para handlers REST com dados separados por usuário e mesclar o carrinho visitante ao entrar.
+1. Integrar cotação e cupons ao carrinho, com totais calculados pela API.
 2. Implementar cotação, cupons, pedidos idempotentes e estados de pagamento simulados.
 3. Integrar eventos Socket.IO simulados e cenários de reconciliação/falha.
 4. Revisar mobile e acessibilidade; adicionar testes Playwright, documentação de arquitetura e auditorias Lighthouse.

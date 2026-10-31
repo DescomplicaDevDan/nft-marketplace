@@ -1,7 +1,6 @@
 import { AuthButton } from '@/features/auth/AuthProvider'
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
-import { useNFTs } from '@/features/catalog/api'
 import SiteFooter from '@/components/SiteFooter'
 import searchIcon from '@/assets/icons/Search Icon.svg'
 import cartIcon from '@/assets/icons/Cart Icon.svg'
@@ -20,18 +19,16 @@ function eth(value: bigint) {
 export default function CheckoutScreen() {
   const search = useSearch({ from: '/checkout' })
   const navigate = useNavigate({ from: '/checkout' })
-  const { cart, quantities, placeOrder } = useCommerce()
-  const { data, isPending, isError } = useNFTs({ page: 1, pageSize: 24 })
+  const { cart, quantities, placeOrder, cartItems: items, cartLoading: isPending, cartError: isError, cartBusy } = useCommerce()
   const [otherWallet, setOtherWallet] = useState(false)
   const [wallet, setWallet] = useState('coinbase')
   const [submitted, setSubmitted] = useState(false)
-  const items = data?.items.filter((item) => cart.includes(item.id)) ?? []
   const subtotal = items.reduce((sum, item) => sum + toWei(item.priceEth) * BigInt(quantities[item.id] ?? 1), 0n)
   const fee = toWei('0.016')
 
   function confirm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (submitted || items.length === 0 || items.length !== cart.length) return
+    if (submitted || cartBusy || isError || items.length === 0 || items.length !== cart.length) return
     setSubmitted(true)
     const id = `KURIO-${Date.now().toString(36).toUpperCase()}`
     placeOrder({ id, createdAt: new Date().toISOString(), wallet: wallet === 'coinbase' ? 'Coinbase Wallet' : wallet === 'metamask' ? 'MetaMask' : 'WalletConnect', networkFeeEth: eth(fee), totalEth: eth(subtotal + fee), items: items.map((item) => ({ ...item, quantity: quantities[item.id] ?? 1, priceEth: eth(toWei(item.priceEth) * BigInt(quantities[item.id] ?? 1)) })) })

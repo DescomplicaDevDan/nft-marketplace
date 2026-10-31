@@ -20,7 +20,7 @@ export default function NFTDetailPage() {
   const search = useSearch({ from: '/nft/$nftId' })
   const { data: nft, isPending, isError } = useNFT(nftId)
   const { data: catalog } = useNFTs({ page: 1, pageSize: 24 })
-  const { favorites, cart, toggleFavorite, addToCart } = useCommerce()
+  const { favorites, cart, toggleFavorite, addToCart, cartBusy } = useCommerce()
   const [selectedImage, setSelectedImage] = useState(1)
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState<'details' | 'reviews'>('details')
@@ -73,7 +73,7 @@ export default function NFTDetailPage() {
                   <div><h2 className="mb-2 text-sm font-bold">Edição:</h2><div className="flex gap-2 text-xs"><span className="rounded-full border border-[#49372b] px-2 py-1">1/1</span><span className="rounded-full border border-[#49372b] px-2 py-1">1/10</span><span className="rounded-full border border-[#d28a4c] px-2 py-1 text-[#e89b55]">1/50</span><span className="rounded-full border border-[#49372b] px-2 py-1">ABERTA</span></div></div>
                   <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
                     <div className="flex items-center gap-3"><button type="button" aria-label="Diminuir quantidade" onClick={() => setQuantity((value) => Math.max(1, value - 1))} className="grid size-10 place-items-center rounded-full bg-[#d28a4c] text-xl font-bold text-[#140d0a]">−</button><span>{quantity}</span><button type="button" aria-label="Aumentar quantidade" onClick={() => setQuantity((value) => Math.min(nft.available, value + 1))} className="grid size-10 place-items-center rounded-full bg-[#d28a4c] text-xl font-bold text-[#140d0a]">+</button></div>
-                    <div className="flex gap-2"><button type="button" onClick={() => addToCart(nft.id)} className="min-w-[128px] rounded bg-[#d28a4c] px-6 py-2 text-xs font-bold text-[#140d0a]">COMPRAR</button><button type="button" aria-pressed={isFavorite} onClick={() => toggleFavorite(nft.id)} className="rounded border border-[#d28a4c] px-4 py-2 text-xs text-[#d28a4c]">♡ {isFavorite ? 'Favoritado' : 'Favoritar'}</button></div>
+                    <div className="flex gap-2"><button type="button" disabled={cartBusy || nft.available < 1} onClick={() => addToCart(nft.id, quantity)} className="min-w-[128px] rounded bg-[#d28a4c] px-6 py-2 text-xs font-bold text-[#140d0a]">COMPRAR</button><button type="button" aria-pressed={isFavorite} onClick={() => toggleFavorite(nft.id)} className="rounded border border-[#d28a4c] px-4 py-2 text-xs text-[#d28a4c]">♡ {isFavorite ? 'Favoritado' : 'Favoritar'}</button></div>
                   </div>
                   <div className="space-y-2 pt-1 text-sm text-[#b39463]"><p>ID do token: #{tokenNumber.padStart(4, '0')}</p><p>Coleção: Kurio Apes</p><p>Atributos: Óculos, Esmeralda, Raro</p><p className="flex items-center gap-2 pt-1 font-bold text-[#f5f1eb]">Compartilhar este NFT:<img src={linkedinIcon} alt="LinkedIn" className="size-4" /><span className="text-sm">✉</span><img src={twitterIcon} alt="Twitter" className="size-4" /></p></div>
                 </div>

@@ -21,12 +21,11 @@ function formatEth(value: bigint) {
 
 export default function CartPage() {
   const search = useSearch({ from: '/cart' })
-  const { cart, removeFromCart, quantities, setCartQuantity } = useCommerce()
-  const { data, isPending, isError } = useNFTs({ page: 1, pageSize: 24 })
+  const { cartItems: items, cartLoading: isPending, cartError: isError, cartBusy, retryCart, removeFromCart, quantities, setCartQuantity } = useCommerce()
+  const { data } = useNFTs({ page: 1, pageSize: 24 })
   const [promoCode, setPromoCode] = useState('')
   const [promoMessage, setPromoMessage] = useState('')
   const [recommendationPage, setRecommendationPage] = useState(1)
-  const items = data?.items.filter((item) => cart.includes(item.id)) ?? []
   const recommendations = data?.items.slice(recommendationPage * 3, recommendationPage * 3 + 5) ?? []
   const subtotal = items.reduce((sum, item) => sum + ethToWei(item.priceEth) * BigInt(quantities[item.id] ?? 1), 0n)
   const networkFee = ethToWei('0.016')
@@ -58,7 +57,7 @@ export default function CartPage() {
       </nav>
       <h1 className="sr-only">Carrinho de NFTs</h1>
       {isPending && <p role="status">Carregando carrinho…</p>}
-      {isError && <p role="alert">Não foi possível carregar o carrinho.</p>}
+      {isError && <div role="alert"><p>Não foi possível carregar o carrinho.</p><button type="button" onClick={retryCart}>Tentar novamente</button></div>}
       {!isPending && !isError && items.length === 0 && <div className="cart-empty"><p>Seu carrinho está vazio.</p><Link to="/" search={search} hash="catalogo">Explorar NFTs</Link></div>}
       {items.length > 0 && (
         <div className="cart-content">
@@ -74,7 +73,7 @@ export default function CartPage() {
                     <tr key={item.id}>
                       <td><Link className="cart-nft" to="/nft/$nftId" params={{ nftId: item.id }} search={search}><img src={item.imageUrl} alt="" /><span><strong>{item.name}</strong><small>ID do token: #{token.padStart(4, '0')}</small></span></Link></td>
                       <td className="cart-price">{item.priceEth} ETH</td>
-                      <td><div className="cart-quantity"><button type="button" aria-label={`Diminuir edições de ${item.name}`} disabled={quantity === 1} onClick={() => changeQuantity(item.id, -1)}>−</button><span>{quantity}</span><button type="button" aria-label={`Aumentar edições de ${item.name}`} onClick={() => changeQuantity(item.id, 1)}>+</button></div></td>
+                      <td><div className="cart-quantity"><button type="button" aria-label={`Diminuir edições de ${item.name}`} disabled={cartBusy || quantity === 1} onClick={() => changeQuantity(item.id, -1)}>−</button><span>{quantity}</span><button type="button" aria-label={`Aumentar edições de ${item.name}`} disabled={cartBusy || quantity >= item.available} onClick={() => changeQuantity(item.id, 1)}>+</button></div></td>
                       <td className="cart-line-total">{total} ETH</td>
                       <td><button type="button" className="cart-remove" aria-label={`Remover ${item.name}`} onClick={() => removeFromCart(item.id)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 6V3h6v3M6 9l1 12h10l1-12" /></svg></button></td>
                     </tr>
@@ -97,7 +96,7 @@ export default function CartPage() {
             </dl>
             <p className="cart-fee-note">Taxa estimada</p>
             <div className="cart-summary-total"><strong>Total</strong><strong>{formatEth(subtotal + networkFee)} ETH</strong></div>
-            <Link to="/checkout" search={search} className="cart-finalize">Conectar e finalizar</Link>
+            <Link to="/checkout" search={search} className="cart-finalize" aria-disabled={cartBusy || isError} onClick={(event) => { if (cartBusy || isError) event.preventDefault() }}>Conectar e finalizar</Link>
             <Link to="/" search={search} hash="catalogo" className="cart-continue">Continuar explorando</Link>
           </aside>
         </div>
