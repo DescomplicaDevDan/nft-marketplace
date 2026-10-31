@@ -1,10 +1,6 @@
 import { http, HttpResponse } from 'msw'
-import { nfts } from './data/nfts'
-import {
-  NFT_CATEGORIES,
-  NFT_NETWORKS,
-  type NFTListResponse,
-} from '@/features/catalog/types'
+import { categoryCounts, networkCounts, nfts } from './data/nfts'
+import type { NFTListResponse } from '@/features/catalog/types'
 
 function ethToWei(value: string): bigint {
   const [whole, fraction = ''] = value.split('.')
@@ -36,14 +32,6 @@ export const handlers = [
 
       return matchesSearch
     })
-    const categoryCounts = NFT_CATEGORIES.map((name) => ({
-      name,
-      count: searchFiltered.filter((nft) => nft.category === name).length,
-    }))
-    const networkCounts = NFT_NETWORKS.map((name) => ({
-      name,
-      count: searchFiltered.filter((nft) => nft.network === name).length,
-    }))
     const minWei = minPrice ? ethToWei(minPrice) : undefined
     const maxWei = maxPrice ? ethToWei(maxPrice) : undefined
     const filtered = category

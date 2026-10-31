@@ -1,10 +1,9 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
-import heroArtwork from './assets/img/Frame 136.png'
+import searchIcon from './assets/icons/Search Icon.svg'
 import kurioWordmark from './assets/img/Logo.svg'
 import { useNFTs } from '@/features/catalog/api'
 import type { NFTNetwork } from '@/features/catalog/types'
-import { useCommerce } from '@/features/commerce/CommerceProvider'
 
 const PAGE_SIZE = 4
 
@@ -25,13 +24,16 @@ function SearchForm({
   return (
     <form onSubmit={submit} role="search" className="flex w-full max-w-md gap-2">
       <label className="sr-only" htmlFor="nft-search">Buscar por NFT, coleção ou artista</label>
-      <input
-        id="nft-search"
-        value={input}
-        onChange={(event) => setInput(event.target.value)}
-        placeholder="Buscar NFTs, coleções ou artistas"
-        className="h-11 min-w-0 flex-1 rounded-md border border-[#49372b] bg-[#1b1310] px-3 text-sm text-[#f5f1eb] outline-none placeholder:text-[#b8aa9b] focus-visible:ring-2 focus-visible:ring-[#e69a55]"
-      />
+      <div className="relative min-w-0 flex-1">
+        <img src={searchIcon} alt="" aria-hidden="true" className="absolute left-3 top-1/2 size-5 -translate-y-1/2" />
+        <input
+          id="nft-search"
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          placeholder="Buscar NFTs, coleções ou artistas"
+          className="h-11 w-full min-w-0 rounded-md border border-[#49372b] bg-[#1b1310] pl-10 pr-3 text-sm text-[#f5f1eb] outline-none placeholder:text-[#b8aa9b] focus-visible:ring-2 focus-visible:ring-[#e69a55]"
+        />
+      </div>
       <button className="h-11 rounded-md bg-[#e69a55] px-4 text-sm font-medium text-[#1b1310] hover:opacity-90" type="submit">Buscar</button>
     </form>
   )
@@ -56,6 +58,9 @@ function PriceRangeFilter({
   const [max, setMax] = useState(Number(currentMax ?? maxEth))
   const minCents = Math.round(rangeMin * 100)
   const maxCents = Math.round(rangeMax * 100)
+  const rangeWidth = Math.max(1, maxCents - minCents)
+  const minPosition = ((Math.round(min * 100) - minCents) / rangeWidth) * 100
+  const maxPosition = ((Math.round(max * 100) - minCents) / rangeWidth) * 100
 
   return (
     <form
@@ -66,28 +71,35 @@ function PriceRangeFilter({
       }}
     >
       <h3 className="mb-3 font-bold text-[#f5f1eb]">Faixa de preço</h3>
-      <label className="sr-only" htmlFor="min-price">Preço mínimo em ETH</label>
-      <input
-        id="min-price"
-        type="range"
-        min={minCents}
-        max={Math.max(minCents, Math.round(max * 100))}
-        step="1"
-        value={Math.round(min * 100)}
-        onChange={(event) => setMin(Number(event.target.value) / 100)}
-        className="mb-2 w-full accent-[#e69a55]"
-      />
-      <label className="sr-only" htmlFor="max-price">Preço máximo em ETH</label>
-      <input
-        id="max-price"
-        type="range"
-        min={Math.min(maxCents, Math.round(min * 100))}
-        max={maxCents}
-        step="1"
-        value={Math.round(max * 100)}
-        onChange={(event) => setMax(Number(event.target.value) / 100)}
-        className="w-full accent-[#e69a55]"
-      />
+      <div className="relative h-6">
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-2 top-1/2 h-1 -translate-y-1/2 rounded-full"
+          style={{ background: `linear-gradient(to right, #75685e ${minPosition}%, #e69a55 ${minPosition}% ${maxPosition}%, #75685e ${maxPosition}%)` }}
+        />
+        <label className="sr-only" htmlFor="min-price">Preço mínimo em ETH</label>
+        <input
+          id="min-price"
+          type="range"
+          min={minCents}
+          max={Math.max(minCents, Math.round(max * 100))}
+          step="1"
+          value={Math.round(min * 100)}
+          onChange={(event) => setMin(Number(event.target.value) / 100)}
+          className="price-range-thumb"
+        />
+        <label className="sr-only" htmlFor="max-price">Preço máximo em ETH</label>
+        <input
+          id="max-price"
+          type="range"
+          min={Math.min(maxCents, Math.round(min * 100))}
+          max={maxCents}
+          step="1"
+          value={Math.round(max * 100)}
+          onChange={(event) => setMax(Number(event.target.value) / 100)}
+          className="price-range-thumb"
+        />
+      </div>
       <p className="my-3 text-xs text-[#b8aa9b]">
         Preço: {min.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} – {max.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} ETH
       </p>
@@ -101,7 +113,6 @@ function PriceRangeFilter({
 function App() {
   const search = useSearch({ from: '/' })
   const navigate = useNavigate({ from: '/' })
-  const { favorites, cart } = useCommerce()
   const { data, isPending, isError, refetch } = useNFTs({
     search: search.search,
     category: search.category,
@@ -153,9 +164,9 @@ function App() {
   const totalPages = Math.ceil((data?.total ?? 0) / PAGE_SIZE)
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-[1440px] bg-[#110b08] px-5 py-8 text-left text-[#f5f1eb] sm:px-8 lg:px-[120px]">
-      <header className="mb-8 flex items-center justify-between border-b border-[#49372b] pb-5 font-mono text-sm text-[#ead8c5] md:grid md:grid-cols-[1fr_auto_1fr]">
-        <a href="/" aria-label="Kurio — início" className="inline-flex items-center">
+    <main className="mx-auto min-h-screen w-full max-w-[1440px] bg-[#110b08] px-5 pt-3 pb-8 text-left text-[#f5f1eb] sm:px-8 lg:px-[120px]">
+      <header className="mb-0 flex items-center justify-between border-b border-[#49372b] pb-2 font-mono text-sm text-[#ead8c5] md:grid md:grid-cols-[1fr_auto_1fr]">
+        <a href="/" aria-label="Kurio — início" className="inline-flex items-center md:col-start-1 md:justify-self-start">
           <img src={kurioWordmark} alt="KURIO" className="h-[22px] w-[100px] sm:h-[35px] sm:w-[160px]" />
         </a>
 
@@ -163,33 +174,29 @@ function App() {
           <a
             href="/"
             aria-current="page"
-            className="border-b-2 border-[#e69a55] py-2 font-bold text-[#e69a55] sm:py-5"
+            className="border-b-2 border-[#e69a55] py-1 font-bold text-[#e69a55] sm:py-2"
           >
             Início
           </a>
-          <a href="#catalogo" className="py-2 text-[#b8aa9b] transition-colors hover:text-[#f5f1eb] sm:py-5">
+          <a href="#catalogo" className="py-1 text-[#b8aa9b] transition-colors hover:text-[#f5f1eb] sm:py-2">
             Mercado
           </a>
-          <span aria-disabled="true" title="Área ainda não disponível" className="py-2 text-[#75685e] sm:py-5">
+          <span aria-disabled="true" title="Área ainda não disponível" className="py-1 text-[#75685e] sm:py-2">
             Criadores
           </span>
-          <span aria-disabled="true" title="Área ainda não disponível" className="py-2 text-[#75685e] sm:py-5">
+          <span aria-disabled="true" title="Área ainda não disponível" className="py-1 text-[#75685e] sm:py-2">
             Aprenda
           </span>
         </nav>
-        <div className="hidden items-center justify-end gap-4 font-mono text-xs md:flex">
-          <Link to="/favorites" search={search} className="text-[#b8aa9b] hover:text-[#e69a55]">Favoritos ({favorites.length})</Link>
-          <Link to="/cart" search={search} className="text-[#b8aa9b] hover:text-[#e69a55]">Carrinho ({cart.length})</Link>
-        </div>
       </header>
 
-      <section className="grid min-h-[450px] items-center gap-10 py-0 md:grid-cols-[1fr_0.8fr]">
-        <div className="max-w-2xl font-mono md:pl-10">
+      <section className="grid min-h-[450px] items-center py-0 md:mb-[120px] md:grid-cols-[600px_120px]">
+        <div className="max-w-[560px] font-mono md:pl-10">
           <p className="mb-5 text-sm tracking-[0.16em] text-[#f5f1eb]">
             Bem-vindo à Kurio
           </p>
 
-          <h1 className="mb-4 text-[40px] font-bold uppercase leading-[1.65] tracking-normal text-[#f5f1eb]">
+          <h1 className="mb-4 text-[48px] font-bold uppercase leading-[1.5] tracking-normal text-[#f5f1eb]">
             Seja dono do futuro
             <br />
             da arte digital
@@ -209,12 +216,7 @@ function App() {
           </a>
         </div>
 
-        <div className="hidden flex-col items-center gap-8 md:flex">
-          <img
-            src={heroArtwork}
-            alt="NFT Emerald Ape com óculos e jaqueta verde"
-            className="aspect-square w-full max-w-[450px] rounded-2xl object-cover"
-          />
+        <div className="hidden self-stretch flex-col items-center justify-end gap-8 pb-2 md:-ml-10 md:flex">
           <div aria-hidden="true" className="flex items-center justify-center gap-2">
             <span className="size-2 rounded-full bg-[#e69a55]" />
             <span className="size-2 rounded-full bg-[#e69a55]" />
@@ -355,9 +357,9 @@ function App() {
                         className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e69a55]"
                       >
                         <img src={nft.imageUrl} alt={nft.name} className="aspect-square w-full object-cover transition-transform group-hover:scale-[1.02]" loading="lazy" />
-                        <div className="flex items-center justify-between gap-3 py-3">
+                        <div className="space-y-1 py-3">
                           <h3 className="truncate font-mono text-sm">{nft.name}</h3>
-                          <p className="shrink-0 font-mono font-bold text-[#e69a55]">{nft.priceEth} ETH</p>
+                          <p className="font-mono font-bold text-[#e69a55]">{nft.priceEth} ETH</p>
                         </div>
                       </Link>
                     </li>

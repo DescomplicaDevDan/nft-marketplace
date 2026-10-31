@@ -11,13 +11,15 @@ export default function NFTDetailPage() {
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-[1440px] px-5 py-8 text-[#f5f1eb] sm:px-8 lg:px-[120px]">
-      <header className="mb-10 flex items-center justify-between border-b border-[#49372b] pb-5">
+      <header className="mb-10 flex items-center justify-between gap-4 border-b border-[#49372b] pb-5">
         <Link to="/" search={search} aria-label="Kurio — início">
           <img src={kurioWordmark} alt="KURIO" className="h-[22px] w-[100px] sm:h-[35px] sm:w-[160px]" />
         </Link>
-        <Link to="/" search={search} className="font-mono text-sm text-[#e69a55] hover:text-[#f5f1eb]">
-          ← Voltar ao mercado
-        </Link>
+        <nav className="flex items-center gap-4 font-mono text-xs sm:text-sm">
+          <Link to="/favorites" search={search} className="text-[#b8aa9b] hover:text-[#e69a55]">Favoritos ({favorites.length})</Link>
+          <Link to="/cart" search={search} className="text-[#b8aa9b] hover:text-[#e69a55]">Carrinho ({cart.length})</Link>
+          <Link to="/" search={search} className="text-[#e69a55] hover:text-[#f5f1eb]">← Mercado</Link>
+        </nav>
       </header>
 
       {isPending && <p role="status" className="py-16 text-center text-[#b8aa9b]">Carregando NFT…</p>}
