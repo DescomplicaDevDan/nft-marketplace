@@ -1,21 +1,17 @@
 import { http, HttpResponse } from 'msw'
-import { nfts } from './data/nfts'
+import { inventoryNFTs } from './inventory'
+import { readCommerce, writeCommerce, type StoredCart } from './commerceStore'
 import { ethToWei, weiToEth } from '@/lib/eth'
 import type { CartQuote } from '@/features/commerce/quoteTypes'
 
-type Line = { id: string; quantity: number }
-type StoredCart = { lines: Line[]; version: number; coupon?: string; quote?: CartQuote }
-const KEY = 'kurio-mock-carts'
 const empty = (): StoredCart => ({ lines: [], version: 0 })
 
 function database(): Record<string, StoredCart> {
-  try {
-    const value = JSON.parse(localStorage.getItem(KEY) ?? '{}')
-    return value && typeof value === 'object' && !Array.isArray(value) ? value : {}
-  } catch { return {} }
+  return readCommerce().carts
 }
 
 function response(cart: StoredCart, notices: string[] = []) {
+  const nfts = inventoryNFTs()
   return { items: cart.lines.flatMap((line) => {
     const nft = nfts.find((item) => item.id === line.id)
     return nft ? [{ ...nft, quantity: line.quantity }] : []
@@ -44,7 +40,8 @@ function couponRate(code: string) {
   return coupon.basisPoints
 }
 
-function quoteCart(cart: StoredCart): CartQuote {
+export function quoteCart(cart: StoredCart): CartQuote {
+  const nfts = inventoryNFTs()
   if (!cart.lines.length) throw new QuoteError('Seu carrinho está vazio.', 400, 'cart_empty')
   const items = cart.lines.map((line) => {
     const nft = nfts.find((item) => item.id === line.id)
@@ -60,7 +57,7 @@ function quoteCart(cart: StoredCart): CartQuote {
   return { ...calculated, id: `quote-${crypto.randomUUID()}`, expiresAt: new Date(Date.now() + 120000).toISOString() }
 }
 
-function quoteFailure(error: unknown) {
+export function quoteFailure(error: unknown) {
   return error instanceof QuoteError
     ? HttpResponse.json({ message: error.message, code: error.code }, { status: error.status })
     : HttpResponse.json({ message: 'Não foi possível calcular o total. Tente novamente.', code: 'quote_failed' }, { status: 500 })
@@ -74,7 +71,7 @@ export function cartHandlers(userId: (request: Request) => string | undefined) {
     return user ? `user:${user}` : guest && /^[a-z0-9-]{16,80}$/i.test(guest) ? `guest:${guest}` : null
   }
   const unauthorized = () => HttpResponse.json({ message: 'Não foi possível identificar o carrinho. Entre novamente ou atualize a página.' }, { status: 401 })
-  function persist(state: Record<string, StoredCart>) { localStorage.setItem(KEY, JSON.stringify(state)) }
+  function persist(carts: Record<string, StoredCart>) { writeCommerce({ ...readCommerce(), carts }) }
   return [
     http.post('/api/cart/quote', ({ request }) => {
       const owner = identity(request)
@@ -134,6 +131,7 @@ export function cartHandlers(userId: (request: Request) => string | undefined) {
       const source = state[`guest:${guest}`] ?? empty()
       const notices: string[] = []
       if (source.lines.length) {
+        const nfts = inventoryNFTs()
         if (!target.coupon && source.coupon) target.coupon = source.coupon
         for (const line of source.lines) {
           const nft = nfts.find((item) => item.id === line.id)
@@ -157,7 +155,7 @@ export function cartHandlers(userId: (request: Request) => string | undefined) {
       if (!owner) return unauthorized()
       const body = await request.json().catch(() => null) as { quantity?: unknown; operation?: unknown } | null
       if (!body || !Number.isSafeInteger(body.quantity) || Number(body.quantity) < 1 || !['add', 'set'].includes(String(body.operation))) return HttpResponse.json({ message: 'Informe uma quantidade inteira maior que zero.' }, { status: 400 })
-      const nft = nfts.find((item) => item.id === params.id)
+      const nft = inventoryNFTs().find((item) => item.id === params.id)
       if (!nft) return HttpResponse.json({ message: 'NFT não encontrado.' }, { status: 404 })
       const state = database()
       const cart = state[owner] ?? empty()

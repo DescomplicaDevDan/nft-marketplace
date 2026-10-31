@@ -28,6 +28,10 @@ function connections(): Record<string, WalletConnection> {
   } catch { return {} }
 }
 
+export function sessionWalletConnection(request: Request) {
+  return connections()[request.headers.get('authorization') ?? ''] ?? null
+}
+
 export function walletHandlers(userId: (request: Request) => string | undefined) {
   return [
     http.get('/api/wallet-connection', ({ request }) => {

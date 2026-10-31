@@ -4,6 +4,8 @@ import type { NFTListResponse } from '@/features/catalog/types'
 import type { CollectorProfile, ProfileUpdate } from '@/features/profile/api'
 import { walletHandlers } from './wallets'
 import { cartHandlers } from './cart'
+import { orderHandlers } from './orders'
+import { inventoryNFTs } from './inventory'
 
 type MockUser = { id: string; username: string; email: string; passwordHash: string; profile?: CollectorProfile }
 type MockAuthState = { users: MockUser[]; sessions: Record<string, string> }
@@ -65,6 +67,7 @@ function ethToWei(value: string): bigint {
 }
 
 export const handlers = [
+  ...orderHandlers((request) => sessionUser(request, readAuthState())?.id),
   ...cartHandlers((request) => sessionUser(request, readAuthState())?.id),
   ...walletHandlers((request) => sessionUser(request, readAuthState())?.id),
   http.get('/api/profile', ({ request }) => {
@@ -105,6 +108,7 @@ export const handlers = [
     return HttpResponse.json(normalized)
   }),
   http.get('/api/favorites', ({ request }) => {
+    const nfts = inventoryNFTs()
     const user = sessionUser(request, readAuthState())
     if (!user) return HttpResponse.json({ message: 'Entre para acessar seus favoritos.' }, { status: 401 })
     const ids = readFavorites()[user.id] ?? []
@@ -175,12 +179,14 @@ export const handlers = [
     return new HttpResponse(null, { status: 204 })
   }),
   http.get('/api/nfts/:id', ({ params }) => {
+    const nfts = inventoryNFTs()
     const nft = nfts.find((item) => item.id === params.id)
     return nft
       ? HttpResponse.json(nft)
       : HttpResponse.json({ message: 'NFT não encontrado' }, { status: 404 })
   }),
   http.get('/api/nfts', ({ request }) => {
+    const nfts = inventoryNFTs()
     const url = new URL(request.url)
     const search = url.searchParams.get('search')?.trim().toLowerCase() ?? ''
     const category = url.searchParams.get('category')?.trim().toLowerCase() ?? ''
