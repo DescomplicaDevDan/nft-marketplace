@@ -1,9 +1,9 @@
+import { AuthButton } from '@/features/auth/AuthProvider'
 import { useState } from 'react'
 import { Link, useSearch } from '@tanstack/react-router'
 import { useNFTs } from '@/features/catalog/api'
 import searchIcon from '@/assets/icons/Search Icon.svg'
 import cartIcon from '@/assets/icons/Cart Icon.svg'
-import loginIcon from '@/assets/icons/Logout.svg'
 import { useCommerce } from './CommerceProvider'
 import SiteFooter from '@/components/SiteFooter'
 import './cart.css'
@@ -47,7 +47,7 @@ export default function CartPage() {
         <div className="cart-header-actions">
           <Link to="/" search={search} hash="catalogo" aria-label="Buscar NFTs"><img src={searchIcon} alt="" /></Link>
           <Link to="/cart" search={search} aria-label="Carrinho"><img src={cartIcon} alt="" /></Link>
-          <button type="button"><img src={loginIcon} alt="" />Entrar</button>
+          <AuthButton />
         </div>
       </header>
 

@@ -1,3 +1,4 @@
+import { AuthProvider } from './features/auth/AuthProvider'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -18,7 +19,7 @@ async function startApp() {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <CommerceProvider>
-          <RouterProvider router={router} />
+          <AuthProvider><RouterProvider router={router} /></AuthProvider>
         </CommerceProvider>
       </QueryClientProvider>
     </StrictMode>,

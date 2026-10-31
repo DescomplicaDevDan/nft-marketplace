@@ -1,7 +1,7 @@
+import { AuthButton } from '@/features/auth/AuthProvider'
 import { useState } from 'react'
 import { Link, useParams, useSearch } from '@tanstack/react-router'
 import cartIcon from '@/assets/icons/Cart Icon.svg'
-import loginIcon from '@/assets/icons/Logout.svg'
 import searchIcon from '@/assets/icons/Search Icon.svg'
 import linkedinIcon from '@/assets/icons/linkedin.svg'
 import twitterIcon from '@/assets/icons/twitter.svg'
@@ -49,7 +49,7 @@ export default function NFTDetailPage() {
               <div className="flex items-center justify-self-end gap-1 sm:gap-3 lg:gap-4">
                 <button type="button" aria-label="Buscar" className="p-1"><img src={searchIcon} alt="" className="size-4" /></button>
                 <Link to="/cart" search={search} aria-label="Abrir carrinho" className="relative p-1"><img src={cartIcon} alt="" className="size-4" />{cart.length === 6 && <span className="absolute -right-1 -top-1 grid size-3.5 place-items-center rounded-full bg-[#d28a4c] text-[8px] font-bold text-[#140d0a]">6</span>}</Link>
-                <button type="button" className="inline-flex items-center gap-1 rounded bg-[#d28a4c] px-2.5 py-1 text-xs font-bold text-[#140d0a]"><img src={loginIcon} alt="" className="size-3.5" />Entrar</button>
+                <AuthButton />
               </div>
             </header>
 

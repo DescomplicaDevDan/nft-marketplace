@@ -1,8 +1,8 @@
+import { AuthButton } from '@/features/auth/AuthProvider'
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import searchIcon from './assets/icons/Search Icon.svg'
 import cartIcon from './assets/icons/Cart Icon.svg'
-import loginIcon from './assets/icons/Logout.svg'
 import heroArtwork from './assets/img/Frame 136.png'
 import kurioWordmark from './assets/img/Logo.svg'
 import { useNFTs } from '@/features/catalog/api'
@@ -205,7 +205,7 @@ function App() {
             <img src={cartIcon} alt="" className="size-4" />
             {cart.length === 6 && <span aria-hidden="true" className="absolute -right-1 -top-1 grid size-3.5 place-items-center rounded-full bg-[#e69a55] text-[8px] font-bold leading-none text-[#1b1310]">6</span>}
           </Link>
-          <button type="button" title="Entrar em breve" className="inline-flex items-center gap-1 rounded bg-[#e69a55] px-2.5 py-1 text-xs font-bold text-[#1b1310]"><img src={loginIcon} alt="" className="size-3.5" />Entrar</button>
+          <AuthButton />
         </div>
       </header>
 
