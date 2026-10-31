@@ -7,12 +7,70 @@ import linkedinIcon from '@/assets/icons/linkedin.svg'
 import twitterIcon from '@/assets/icons/twitter.svg'
 import kurioWordmark from '@/assets/img/Logo.svg'
 import { useCommerce } from '@/features/commerce/CommerceProvider'
+import { footerGroups, footerHighlights, socialLinks } from '@/mocks/data/homeContent'
 import { useNFT, useNFTs } from './api'
 
 const description = [
   'Emerald Ape #042 é uma obra digital 1/50 finalizada à mão da coleção Kurio Editions. Cada atributo fica armazenado nos metadados do token e verificado na Ethereum. A obra explora identidade, movimento e luz em um mundo digital sem fronteiras.',
   'A propriedade inclui a arte em alta resolução, lançamentos exclusivos para colecionadores e um registro permanente de procedência registrada na rede. Nova Sato recebe 5% de direitos autorais nas vendas secundárias, apoiando novos trabalhos e lançamentos da comunidade.',
 ]
+
+function DetailFooter() {
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)
+
+  return (
+    <section className="flex flex-col gap-3">
+      <footer className="bg-[#241612] font-mono text-[#f5f1eb]">
+        <section aria-label="Benefícios e novidades" className="grid grid-cols-1 gap-6 px-6 py-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:px-10">
+          {footerHighlights.map((item) => (
+            <article key={item.title} className="border-[#9b6031] lg:border-r lg:px-4 first:lg:pl-0">
+              <span className="mb-3 grid size-16 place-items-center rounded-full bg-[#d28a4c] text-lg font-bold text-[#140d0a]">{item.icon}</span>
+              <h2 className="mb-2 text-sm font-bold">{item.title}</h2>
+              <p className="max-w-[220px] text-xs leading-5 text-[#b8aa9b]">{item.description}</p>
+            </article>
+          ))}
+          <form className="lg:pl-4" onSubmit={(event) => { event.preventDefault(); setNewsletterSubmitted(true) }}>
+            <label htmlFor="detail-newsletter-email" className="mb-3 block text-sm font-bold leading-tight">Antecipe-se ao próximo lançamento</label>
+            <div className="flex">
+              <input id="detail-newsletter-email" type="email" required placeholder="digite seu e-mail..." className="min-w-0 flex-1 rounded-l border border-[#49372b] bg-[#140d0a] px-3 py-2 text-xs outline-none placeholder:text-[#b8aa9b] focus-visible:ring-2 focus-visible:ring-[#e89b55]" />
+              <button type="submit" className="rounded-r bg-[#d28a4c] px-3 text-xs font-bold text-[#140d0a]">Enviar</button>
+            </div>
+            <p className="mt-3 text-xs leading-5 text-[#b8aa9b]">Receba lançamentos selecionados, histórias de criadores e novidades do mercado.</p>
+            {newsletterSubmitted && <p role="status" className="mt-2 text-xs text-[#e89b55]">Inscrição de demonstração confirmada.</p>}
+          </form>
+        </section>
+
+        <div className="grid grid-cols-1 gap-4 bg-[#3b2412] px-6 py-5 text-xs sm:grid-cols-2 lg:grid-cols-4 lg:items-center lg:px-10">
+          <a href="#topo" aria-label="Kurio — início" className="inline-flex"><img src={kurioWordmark} alt="KURIO" className="h-7 w-[120px] object-contain object-left" /></a>
+          <p>Feito para colecionadores,<br />criadores e cultura</p>
+          <a href="mailto:contato@email.com" className="hover:text-[#e89b55]">contato@email.com</a>
+          <a href="tel:+551140028922" className="hover:text-[#e89b55]">+55 11 4002 8922</a>
+        </div>
+
+        <section aria-label="Links do rodapé" className="grid grid-cols-1 gap-8 px-6 py-7 sm:grid-cols-2 lg:grid-cols-4 lg:px-10">
+          {footerGroups.map((group) => (
+            <nav key={group.title} aria-label={group.title}>
+              <h2 className="mb-3 text-sm font-bold">{group.title}</h2>
+              <ul className="list-none space-y-2 p-0 text-xs text-[#d2c4b7]">
+                {group.links.map((label) => <li key={label}><a href="/#catalogo" className="hover:text-[#e89b55]">{label}</a></li>)}
+              </ul>
+            </nav>
+          ))}
+          <div>
+            <h2 className="mb-3 text-sm font-bold">Redes sociais</h2>
+            <div className="mb-5 flex gap-2">
+              {socialLinks.map((social) => <a key={social.name} href="#redes-sociais" aria-label={social.name} className="grid size-7 place-items-center rounded border border-[#9b6031] hover:bg-[#3b2412]"><img src={social.icon} alt="" className="size-4" /></a>)}
+              <a href="#redes-sociais" aria-label="YouTube" className="grid size-7 place-items-center rounded border border-[#9b6031] text-xs text-[#d28a4c]">▶</a>
+            </div>
+            <h3 className="mb-2 text-sm font-bold">Carteiras compatíveis</h3>
+            <p className="inline-block rounded bg-[#4a2c15] px-2 py-1 text-[8px] uppercase tracking-wide text-[#e69a55]">MetaMask · WalletConnect · Coinbase</p>
+          </div>
+        </section>
+      </footer>
+      <p className="py-2 text-center text-xs text-[#b8aa9b]">© 2026 Kurio. Propriedade digital para todos.</p>
+    </section>
+  )
+}
 
 export default function NFTDetailPage() {
   const { nftId } = useParams({ from: '/nft/$nftId' })
@@ -107,6 +165,7 @@ export default function NFTDetailPage() {
               ))}
             </nav>
           </section>
+          <DetailFooter />
         </>
       )}
       {zoomOpen && nft && <button type="button" aria-label="Fechar imagem ampliada" onClick={() => setZoomOpen(false)} className="fixed inset-0 z-50 grid place-items-center bg-[#140d0a]/90 p-8"><img src={nft.imageUrl} alt={nft.name} className="max-h-full max-w-full rounded-2xl object-contain" /></button>}
