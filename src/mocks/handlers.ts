@@ -44,6 +44,17 @@ function sessionUser(request: Request, state: MockAuthState) {
   return state.users.find((user) => user.id === id)
 }
 
+const FAVORITES_KEY = 'kurio-mock-favorites'
+function readFavorites(): Record<string, string[]> {
+  try {
+    const parsed: unknown = JSON.parse(localStorage.getItem(FAVORITES_KEY) ?? '{}')
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return Object.fromEntries(Object.entries(parsed).filter(([, ids]) => Array.isArray(ids) && ids.every((id) => typeof id === 'string')))
+    }
+  } catch { /* Use empty collections when the mock storage is invalid. */ }
+  return {}
+}
+
 function ethToWei(value: string): bigint {
   const [whole, fraction = ''] = value.split('.')
   const paddedFraction = fraction.padEnd(18, '0').slice(0, 18)
@@ -51,6 +62,30 @@ function ethToWei(value: string): bigint {
 }
 
 export const handlers = [
+  http.get('/api/favorites', ({ request }) => {
+    const user = sessionUser(request, readAuthState())
+    if (!user) return HttpResponse.json({ message: 'Entre para acessar seus favoritos.' }, { status: 401 })
+    const ids = readFavorites()[user.id] ?? []
+    return HttpResponse.json({ ids, items: nfts.filter((nft) => ids.includes(nft.id)) })
+  }),
+  http.put('/api/favorites/:id', ({ request, params }) => {
+    const user = sessionUser(request, readAuthState())
+    if (!user) return HttpResponse.json({ message: 'Entre para salvar favoritos.' }, { status: 401 })
+    const id = String(params.id)
+    if (!nfts.some((nft) => nft.id === id)) return HttpResponse.json({ message: 'NFT não encontrado.' }, { status: 404 })
+    const favorites = readFavorites()
+    favorites[user.id] = [...new Set([...(favorites[user.id] ?? []), id])]
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites))
+    return new HttpResponse(null, { status: 204 })
+  }),
+  http.delete('/api/favorites/:id', ({ request, params }) => {
+    const user = sessionUser(request, readAuthState())
+    if (!user) return HttpResponse.json({ message: 'Entre para remover favoritos.' }, { status: 401 })
+    const favorites = readFavorites()
+    favorites[user.id] = (favorites[user.id] ?? []).filter((id) => id !== params.id)
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites))
+    return new HttpResponse(null, { status: 204 })
+  }),
   http.post('/api/auth/signup', async ({ request }) => {
     const body = await request.json().catch(() => null) as { username?: unknown; email?: unknown; password?: unknown } | null
     const username = typeof body?.username === 'string' ? body.username.trim() : ''

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { NFT } from '@/features/catalog/types'
+import { useFavoriteActions } from './favorites'
 
 export interface Order {
   id: string
@@ -13,12 +14,12 @@ export interface Order {
 
 interface CommerceState {
   quantities: Record<string, number>
-  favorites: string[]
   cart: string[]
   orders: Order[]
 }
 
 interface CommerceContextValue extends CommerceState {
+  favorites: string[]
   setCartQuantity: (id: string, quantity: number) => void
   toggleFavorite: (id: string) => void
   addToCart: (id: string) => void
@@ -27,7 +28,7 @@ interface CommerceContextValue extends CommerceState {
 }
 
 const STORAGE_KEY = 'kurio-commerce'
-const emptyState: CommerceState = { favorites: [], cart: [], orders: [], quantities: {} }
+const emptyState: CommerceState = { cart: [], orders: [], quantities: {} }
 const CommerceContext = createContext<CommerceContextValue | null>(null)
 
 function loadState(): CommerceState {
@@ -39,7 +40,6 @@ function loadState(): CommerceState {
     const value = parsed as Record<string, unknown>
     return {
       quantities: typeof value.quantities === 'object' && value.quantities !== null ? Object.fromEntries(Object.entries(value.quantities).filter(([, quantity]) => typeof quantity === 'number' && Number.isSafeInteger(quantity) && quantity > 0)) : {},
-      favorites: Array.isArray(value.favorites) ? value.favorites.filter((id): id is string => typeof id === 'string') : [],
       cart: Array.isArray(value.cart) ? value.cart.filter((id): id is string => typeof id === 'string') : [],
       orders: Array.isArray(value.orders) ? value.orders as Order[] : [],
     }
@@ -50,6 +50,7 @@ function loadState(): CommerceState {
 
 export function CommerceProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState(loadState)
+  const favoriteActions = useFavoriteActions()
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
@@ -58,12 +59,8 @@ export function CommerceProvider({ children }: { children: ReactNode }) {
   const value: CommerceContextValue = {
     ...state,
     setCartQuantity: (id, quantity) => setState((current) => ({ ...current, quantities: { ...current.quantities, [id]: Math.max(1, Math.floor(quantity)) } })),
-    toggleFavorite: (id) => setState((current) => ({
-      ...current,
-      favorites: current.favorites.includes(id)
-        ? current.favorites.filter((favorite) => favorite !== id)
-        : [...current.favorites, id],
-    })),
+    favorites: favoriteActions.favorites,
+    toggleFavorite: favoriteActions.toggleFavorite,
     addToCart: (id) => setState((current) => current.cart.includes(id)
       ? current
       : { ...current, cart: [...current.cart, id] }),
@@ -78,7 +75,7 @@ export function CommerceProvider({ children }: { children: ReactNode }) {
     })),
   }
 
-  return <CommerceContext.Provider value={value}>{children}</CommerceContext.Provider>
+  return <CommerceContext.Provider value={value}>{children}<p role="status" aria-live="polite" className="sr-only">{favoriteActions.message}</p>{favoriteActions.message.includes('desfeita') && <p role="alert" className="fixed bottom-4 left-4 right-4 z-50 rounded border border-[#d28a4c] bg-[#241612] p-4 text-[#f5f1eb]">{favoriteActions.message}</p>}</CommerceContext.Provider>
 }
 
 export function useCommerce() {

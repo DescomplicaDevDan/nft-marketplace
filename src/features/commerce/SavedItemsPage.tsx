@@ -1,5 +1,5 @@
 import { Link, useSearch } from '@tanstack/react-router'
-import { useNFTs } from '@/features/catalog/api'
+import { useFavoriteCollection } from './favorites'
 import type { CatalogSearch } from '@/features/catalog/types'
 import { useCommerce } from './CommerceProvider'
 import CartScreen from './CartPage'
@@ -7,7 +7,7 @@ import CartScreen from './CartPage'
 type Mode = 'cart' | 'favorites'
 
 function StoredItemsPage({ mode, search }: { mode: Mode; search: CatalogSearch }) {
-  const { data, isPending, isError } = useNFTs({ page: 1, pageSize: 24 })
+  const { data, isPending, isError, refetch } = useFavoriteCollection()
   const { cart, favorites, addToCart, removeFromCart, toggleFavorite } = useCommerce()
   const ids = mode === 'cart' ? cart : favorites
   const items = data?.items.filter((nft) => ids.includes(nft.id)) ?? []
@@ -32,7 +32,7 @@ function StoredItemsPage({ mode, search }: { mode: Mode; search: CatalogSearch }
         )}
       </div>
       {isPending && <p role="status" className="text-[#b8aa9b]">Carregando itens…</p>}
-      {isError && <p role="alert" className="text-[#e69a55]">Não foi possível carregar seus itens.</p>}
+      {isError && <div role="alert" className="text-[#e69a55]"><p>Não foi possível carregar seus itens.</p><button type="button" onClick={() => { void refetch() }} className="underline">Tentar novamente</button></div>}
       {!isPending && !isError && items.length === 0 && (
         <div className="border border-[#49372b] p-8 text-center">
           <p className="mb-4 text-[#b8aa9b]">{isCart ? 'Seu carrinho está vazio.' : 'Você ainda não salvou NFTs.'}</p>

@@ -18,9 +18,9 @@ async function startApp() {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <CommerceProvider>
-          <AuthProvider><RouterProvider router={router} /></AuthProvider>
-        </CommerceProvider>
+        <AuthProvider>
+          <CommerceProvider><RouterProvider router={router} /></CommerceProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </StrictMode>,
   )
