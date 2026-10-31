@@ -35,6 +35,11 @@ export interface NFT {
   network: NFTNetwork
   priceEth: string
   previousPriceEth?: string
+  summary?: string
+  displayCollection?: string
+  attributes?: string[]
+  rating?: number
+  reviewsCount?: number
   imageFrame?: { width: number; height: number; left: number; top: number }
   available: number
   createdAt: string

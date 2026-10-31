@@ -89,11 +89,14 @@ export function useCartApi() {
     couponMutation.mutate({ code, owner, token, guest })
   }
 
-  function change(id: string, operation: Change['operation'], quantity?: number) {
-    if (locked.current || loading || !query.isSuccess) return
+  async function change(id: string, operation: Change['operation'], quantity?: number): Promise<boolean> {
+    if (locked.current || loading || !query.isSuccess) return false
     locked.current = true
     setNotice(null)
-    mutation.mutate({ id, operation, quantity, owner, token, guest })
+    try {
+      await mutation.mutateAsync({ id, operation, quantity, owner, token, guest })
+      return true
+    } catch { return false }
   }
 
   return {

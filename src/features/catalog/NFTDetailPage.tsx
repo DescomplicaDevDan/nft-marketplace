@@ -9,6 +9,8 @@ import kurioWordmark from '@/assets/img/Logo.svg'
 import { useCommerce } from '@/features/commerce/CommerceProvider'
 import SiteFooter from '@/components/SiteFooter'
 import { useNFT, useNFTs } from './api'
+import { MobileNFTDetail } from './MobileNFTDetail'
+import { isAxiosError } from 'axios'
 
 const description = [
   'Emerald Ape #042 é uma obra digital 1/50 finalizada à mão da coleção Kurio Editions. Cada atributo fica armazenado nos metadados do token e verificado na Ethereum. A obra explora identidade, movimento e luz em um mundo digital sem fronteiras.',
@@ -18,7 +20,7 @@ const description = [
 export default function NFTDetailPage() {
   const { nftId } = useParams({ from: '/nft/$nftId' })
   const search = useSearch({ from: '/nft/$nftId' })
-  const { data: nft, isPending, isError } = useNFT(nftId)
+  const { data: nft, isPending, isError, error, refetch } = useNFT(nftId)
   const { data: catalog } = useNFTs({ page: 1, pageSize: 24 })
   const { favorites, cart, toggleFavorite, addToCart, cartBusy } = useCommerce()
   const [selectedImage, setSelectedImage] = useState(1)
@@ -32,7 +34,9 @@ export default function NFTDetailPage() {
   const visibleRelatedItems = relatedItems.slice(relatedPage * 2, relatedPage * 2 + 5)
 
   return (
-    <main className="nft-detail-page mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-12 bg-[#140d0a] px-5 pt-6 pb-6 font-mono text-[#f5f1eb] sm:px-8 md:gap-24 min-[1440px]:px-[120px]">
+    <>
+    <MobileNFTDetail key={nftId} nft={nft} loading={isPending} error={isError} notFound={isAxiosError(error) && error.response?.status === 404} retry={() => { void refetch() }} />
+    <main className="desktop-nft-detail nft-detail-page mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-12 bg-[#140d0a] px-5 pt-6 pb-6 font-mono text-[#f5f1eb] sm:px-8 md:gap-24 min-[1440px]:px-[120px]">
       {isPending && <p role="status" className="py-16 text-center text-[#b8aa9b]">Carregando NFT…</p>}
       {isError && <div role="alert" className="py-16 text-center"><h1 className="mb-3 text-2xl font-bold">NFT não encontrado</h1><Link to="/" search={search} className="text-[#e89b55] underline">Voltar ao catálogo</Link></div>}
 
@@ -113,5 +117,6 @@ export default function NFTDetailPage() {
       )}
       {zoomOpen && nft && <button type="button" aria-label="Fechar imagem ampliada" onClick={() => setZoomOpen(false)} className="fixed inset-0 z-50 grid place-items-center bg-[#140d0a]/90 p-8"><img src={nft.imageUrl} alt={nft.name} className="max-h-full max-w-full rounded-2xl object-contain" /></button>}
     </main>
+    </>
   )
 }

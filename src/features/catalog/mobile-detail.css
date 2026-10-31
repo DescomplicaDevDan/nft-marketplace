@@ -1,0 +1,61 @@
+.mobile-nft-detail { display: none; }
+
+@media (max-width: 767px) {
+  .desktop-nft-detail { display: none !important; }
+  .mobile-nft-detail { display: flex; flex-direction: column; min-width: 0; min-height: 100svh; background: radial-gradient(ellipse at 20% 0%, #49301d35, transparent 55%), #241612; color: #f5f1eb; font: 13.5px/1.6 'Roboto Mono Variable', monospace; letter-spacing: 0; }
+  .mobile-detail-nav { display: flex; justify-content: space-between; flex: 0 0 auto; padding: calc(20px + env(safe-area-inset-top, 0px)) 26px 8px; }
+  .mobile-detail-nav > a, .mobile-detail-nav > button { display: grid; place-items: center; width: 34px; height: 34px; padding: 7px; border: 1px solid #49301d; border-radius: 50%; background: #321e13; }
+  .mobile-detail-nav img { display: block; width: 18px; height: 18px; object-fit: contain; }
+  .mobile-detail-nav > button > img { width: 16px; height: 16px; }
+  .mobile-detail-artwork { flex-shrink: 0; aspect-ratio: 1; margin: 0 26px; overflow: hidden; border-radius: 22px; }
+  .mobile-detail-artwork > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .mobile-detail-info { position: relative; flex: 1; margin-top: -32px; padding: 32px 22px 28px; border-radius: 28px 28px 0 0; background: #241612; }
+  .mobile-detail-title-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .mobile-detail-title-row h1 { min-width: 0; margin: 0; overflow-wrap: anywhere; font-size: 18.5px; font-weight: 700; line-height: 26px; }
+  .mobile-detail-rating { display: inline-flex; align-items: center; flex-shrink: 0; gap: 3px; padding: 0 5px; border: 1px solid #b57642; border-radius: 12px; color: #cfb28c; font-size: 12px; line-height: 22px; }
+  .mobile-detail-rating img { width: 14px; height: 14px; }
+  .mobile-detail-summary { margin: 12px 0 0; color: #cfb28c; font-size: 13.5px; line-height: 23px; }
+  .mobile-detail-edition { margin-top: 10px; }
+  .mobile-detail-edition h2 { margin: 0; font-size: 14px; font-weight: 700; line-height: 19px; }
+  .mobile-detail-edition > div { display: flex; gap: 7px; margin-top: 6px; color: #cfb28c; }
+  .mobile-detail-edition span { display: inline-flex; align-items: center; min-height: 24px; padding: 0 5px; border: 1px solid #49301d; border-radius: 14px; font-size: 13px; line-height: 20px; }
+  .mobile-detail-edition .selected { border-color: #d28a4c; color: #e89b55; }
+  .mobile-detail-metadata { display: grid; gap: 8px; margin: 12px 0 0; color: #b39463; font-size: 13.5px; line-height: 22px; }
+  .mobile-detail-metadata > div { display: flex; flex-wrap: wrap; gap: 6px; }
+  .mobile-detail-metadata dd { margin: 0; overflow-wrap: anywhere; }
+  .mobile-detail-purchase { position: sticky; bottom: 0; z-index: 5; flex-shrink: 0; padding: 22px 22px calc(30px + env(safe-area-inset-bottom, 0px)); border-radius: 32px 32px 0 0; background: #291913; box-shadow: 0 -10px 28px #140d0a35; }
+  .mobile-detail-purchase-row { display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
+  .mobile-detail-quantity { display: flex; align-items: center; gap: 12px; }
+  .mobile-detail-quantity > span { color: #cfb28c; }
+  .mobile-detail-quantity button { display: grid; place-items: center; width: 18px; height: 28px; padding: 0; border: 0; border-radius: 12px; background: #d28a4c; color: #140d0a; font: 17px 'Roboto Mono Variable', monospace; }
+  .mobile-detail-quantity output { min-width: 8px; text-align: center; }
+  .mobile-detail-purchase-row > p { color: #e89b55; font-size: 18px; font-weight: 700; white-space: nowrap; }
+  .mobile-detail-actions { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
+  .mobile-detail-buy { width: 186px; height: 56px; padding: 0 18px; border: 0; border-radius: 32px; background: linear-gradient(100deg, #d28a4c, #b57642); color: #140d0a; font: 700 13px 'Roboto Mono Variable', monospace; }
+  .mobile-detail-cart { display: grid; place-items: center; width: 56px; height: 56px; padding: 16px; border: 1px solid #49301d; border-radius: 50%; background: #321e13; }
+  .mobile-detail-cart img { width: 18px; height: 18px; }
+  .mobile-nft-detail button { cursor: pointer; }
+  .mobile-nft-detail button:disabled { cursor: not-allowed; opacity: .5; }
+  .mobile-nft-detail :is(a, button):focus-visible { outline: 2px solid #e89b55; outline-offset: 3px; }
+  .mobile-detail-warning { margin-top: 12px; color: #e89b55; font-size: 12px; }
+  .mobile-detail-warning button { border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; }
+  .mobile-detail-loading { padding: 0 26px; }
+  .mobile-detail-loading > div { aspect-ratio: 1; border-radius: 22px; background: #49301d; animation: mobile-detail-pulse 1.4s ease-in-out infinite; }
+  .mobile-detail-loading i { display: block; width: 75%; height: 18px; margin-top: 22px; background: #49301d; }
+  .mobile-detail-loading i:last-of-type { width: 55%; }
+  .mobile-detail-error { margin: 30px 22px; }
+  .mobile-detail-error h1 { font-size: 20px; }
+  .mobile-detail-error button { margin-top: 20px; border: 1px solid #d28a4c; border-radius: 6px; background: none; color: #d28a4c; padding: 10px; font: inherit; }
+  body:has(.mobile-nft-detail) .commerce-cart-toast { bottom: calc(170px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (max-width: 359px) {
+  .mobile-detail-nav { padding-inline: 22px; }
+  .mobile-detail-artwork { margin-inline: 22px; }
+  .mobile-detail-info { padding-inline: 18px; }
+  .mobile-detail-title-row h1 { font-size: 16px; }
+  .mobile-detail-rating { font-size: 10px; }
+  .mobile-detail-summary, .mobile-detail-metadata { font-size: 12px; }
+  .mobile-detail-purchase { padding-inline: 18px; }
+}
+@keyframes mobile-detail-pulse { 50% { opacity: .5; } }
+@media (prefers-reduced-motion: reduce) { .mobile-detail-loading > div { animation: none; } }

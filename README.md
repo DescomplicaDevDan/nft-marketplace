@@ -267,7 +267,17 @@ Os ícones e imagens são os assets locais fornecidos. O selo RARO identifica Ne
 
 Checagens isoladas: renderização em 390 px, busca pela URL, abertura/fechamento dos filtros, restauração de rolagem, ausência de overflow horizontal em 320/390 px, exibição da composição desktop em 1440 px e solicitação de login pelo atalho de perfil. A validação visual final com os frames do Figma e os testes versionados permanecem pendentes.
 
-### Scripts de execução
+### Detalhe do NFT mobile
+
+A tela `/nft/:id` abaixo de 768 px segue o segundo print mobile: voltar/favoritar no topo, artwork grande, painel sobreposto com nome/avaliação/resumo/edição/metadados e área inferior de compra. O layout-base é 390 × 844 px, com rolagem quando necessária e respeito à área segura inferior. O detalhe desktop conserva a composição anterior; o mobile não mostra rodapé nem a navegação inferior da home nesse recorte.
+
+Resumo, avaliação, quantidade de avaliações, coleção de exibição e atributos do Emerald Ape estão na fixture tipada do MSW. Outros NFTs usam seus próprios campos de coleção/rede. Os selos de edição reproduzem os rótulos do print (incluindo os dois `1/10`) e são informativos nesta etapa; seleção e estoque discriminados por edição ainda precisam da revisão funcional antes da entrega.
+
+O seletor de quantidade considera o estoque atual e o que já está no carrinho. O botão Comprar NFT aguarda a resposta de adição pela API e então abre o carrinho para revisão. O ícone ao lado adiciona a quantidade sem navegar. Falhas mantêm a tela e exibem a mensagem da API; cliques concorrentes ficam bloqueados. Favoritar usa a sessão e a coleção privada já implementadas. Os ícones reutilizam os assets locais fornecidos.
+
+Checagens isoladas: quantidade escolhida persistida no carrinho pela API, navegação após a confirmação, adição sem sair da tela, ausência de overflow em 320/390 px e exibição do detalhe desktop em 1440 px. O quadro em 390 px foi conferido visualmente com a referência; a aprovação dos ajustes finos e a suíte E2E completa permanecem pendentes.
+
+### Executar e compilar
 
 | Comando | Descrição |
 | --- | --- |
@@ -282,7 +292,7 @@ Catálogo, detalhe, favoritos, perfil, carteiras, carrinho, cotação e pedidos 
 
 1. Ajustar as demais telas mobile conforme as referências e revisar 390, 768 e 1440 px.
 2. Completar shimmer de carregamento e acessibilidade.
-3. Versionar testes Playwright E2E/visuais, cobrindo isolamento, falhas e Socket.IO.
+3. Completar seleção/estoque por edição e versionar testes Playwright E2E/visuais, cobrindo isolamento, falhas e Socket.IO.
 4. Auditar Lighthouse, otimizar desempenho e documentar a arquitetura.
 5. Publicar a aplicação e registrar a URL.
 
