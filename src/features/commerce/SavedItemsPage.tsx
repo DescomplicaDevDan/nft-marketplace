@@ -2,6 +2,7 @@ import { Link, useSearch } from '@tanstack/react-router'
 import { useNFTs } from '@/features/catalog/api'
 import type { CatalogSearch } from '@/features/catalog/types'
 import { useCommerce } from './CommerceProvider'
+import CartScreen from './CartPage'
 
 type Mode = 'cart' | 'favorites'
 
@@ -71,8 +72,7 @@ function StoredItemsPage({ mode, search }: { mode: Mode; search: CatalogSearch }
 }
 
 export function CartPage() {
-  const search = useSearch({ from: '/cart' })
-  return <StoredItemsPage mode="cart" search={search} />
+  return <CartScreen />
 }
 
 export function FavoritesPage() {
