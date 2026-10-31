@@ -8,30 +8,20 @@ import { useCommerce } from './CommerceProvider'
 import './cart.css'
 import './checkout.css'
 
-function toWei(value: string) {
-  const [whole, fraction = ''] = value.split('.')
-  return BigInt(whole) * 10n ** 18n + BigInt(fraction.padEnd(18, '0'))
-}
-function eth(value: bigint) {
-  return `${value / 10n ** 18n}.${String(value % 10n ** 18n).padStart(18, '0').replace(/0+$/, '').padEnd(2, '0')}`
-}
-
 export default function CheckoutScreen() {
   const search = useSearch({ from: '/checkout' })
   const navigate = useNavigate({ from: '/checkout' })
-  const { cart, quantities, placeOrder, cartItems: items, cartLoading: isPending, cartError: isError, cartBusy } = useCommerce()
+  const { cart, quantities, placeOrder, cartItems: items, cartLoading: isPending, cartError: isError, cartBusy, quote, quoteLoading, quoteBusy, quoteError, retryQuote } = useCommerce()
   const [otherWallet, setOtherWallet] = useState(false)
   const [wallet, setWallet] = useState('coinbase')
   const [submitted, setSubmitted] = useState(false)
-  const subtotal = items.reduce((sum, item) => sum + toWei(item.priceEth) * BigInt(quantities[item.id] ?? 1), 0n)
-  const fee = toWei('0.016')
 
   function confirm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (submitted || cartBusy || isError || items.length === 0 || items.length !== cart.length) return
+    if (submitted || cartBusy || isError || !quote || quoteBusy || quoteError || items.length === 0 || items.length !== cart.length) return
     setSubmitted(true)
     const id = `KURIO-${Date.now().toString(36).toUpperCase()}`
-    placeOrder({ id, createdAt: new Date().toISOString(), wallet: wallet === 'coinbase' ? 'Coinbase Wallet' : wallet === 'metamask' ? 'MetaMask' : 'WalletConnect', networkFeeEth: eth(fee), totalEth: eth(subtotal + fee), items: items.map((item) => ({ ...item, quantity: quantities[item.id] ?? 1, priceEth: eth(toWei(item.priceEth) * BigInt(quantities[item.id] ?? 1)) })) })
+    placeOrder({ id, createdAt: new Date().toISOString(), wallet: wallet === 'coinbase' ? 'Coinbase Wallet' : wallet === 'metamask' ? 'MetaMask' : 'WalletConnect', networkFeeEth: quote.networkFeeEth, discountEth: quote.discountEth, totalEth: quote.totalEth, items: quote.items.map((item) => ({ ...item, priceEth: item.lineTotalEth })) })
     void navigate({ to: '/orders/$orderId', params: { orderId: id }, search })
   }
 
@@ -69,13 +59,15 @@ export default function CheckoutScreen() {
         <aside className="checkout-order" aria-labelledby="checkout-order-title">
           <h2 id="checkout-order-title">Seus NFTs</h2>
           <div className="checkout-list-heading"><strong>NFTs</strong><span>Subtotal</span></div>
-          <ul className="checkout-items">{items.map((item) => <li key={item.id}><img src={item.imageUrl} alt="" /><div><strong>{item.name}</strong><small>ID do token: #{(item.name.match(/#(\d+)$/)?.[1] ?? '').padStart(4, '0')}</small></div><span className="checkout-item-quantity">(× {quantities[item.id] ?? 1})</span><b>{eth(toWei(item.priceEth) * BigInt(quantities[item.id] ?? 1))} ETH</b></li>)}</ul>
+          <ul className="checkout-items">{items.map((item) => <li key={item.id}><img src={item.imageUrl} alt="" /><div><strong>{item.name}</strong><small>ID do token: #{(item.name.match(/#(\d+)$/)?.[1] ?? '').padStart(4, '0')}</small></div><span className="checkout-item-quantity">(× {quantities[item.id] ?? 1})</span><b>{quote?.items.find((line) => line.id === item.id)?.lineTotalEth ?? '—'} ETH</b></li>)}</ul>
           <Link to="/cart" search={search} className="checkout-promo-link">Tem um código promocional? Aplique aqui</Link>
-          <dl className="cart-summary-values"><div><dt>Subtotal</dt><dd>{eth(subtotal)} ETH</dd></div><div><dt>Desconto do lançamento</dt><dd>(−) 00.00</dd></div><div><dt>Taxa de rede</dt><dd>{eth(fee)} ETH</dd></div></dl>
+          {(quoteLoading || quoteBusy) && <p role="status">Atualizando total…</p>}
+          {quoteError && <div role="alert"><p>{quoteError}</p><button type="button" onClick={retryQuote}>Recalcular total</button></div>}
+          <dl className="cart-summary-values"><div><dt>Subtotal</dt><dd>{quote?.subtotalEth ?? '—'} ETH</dd></div><div><dt>Desconto do lançamento</dt><dd>(−) {quote?.discountEth ?? '—'} ETH</dd></div><div><dt>Taxa de rede</dt><dd>{quote?.networkFeeEth ?? '—'} ETH</dd></div></dl>
           <p className="cart-fee-note">Taxa estimada</p>
-          <div className="checkout-total"><strong>Total</strong><strong>{eth(subtotal + fee)} ETH</strong></div>
+          <div className="checkout-total"><strong>Total</strong><strong>{quote?.totalEth ?? '—'} ETH</strong></div>
           <fieldset className="checkout-wallets"><legend>Carteira e rede</legend>{[['walletconnect', 'METAMASK · WALLETCONNECT · COINBASE'], ['metamask', 'MetaMask'], ['coinbase', 'Coinbase Wallet']].map(([value, label]) => <label key={value} className={wallet === value ? 'selected' : ''}><input type="radio" name="paymentWallet" value={value} checked={wallet === value} onChange={() => setWallet(value)} />{label}</label>)}</fieldset>
-          <button className="checkout-confirm" type="submit" disabled={submitted || items.length !== cart.length}>Confirmar compra</button>
+          <button className="checkout-confirm" type="submit" disabled={submitted || cartBusy || quoteBusy || !!quoteError || !quote || items.length !== cart.length}>Confirmar compra</button>
           <p className="checkout-demo">Compra demonstrativa, sem transferência de fundos.</p>
         </aside>
       </form>}

@@ -2,7 +2,7 @@
 
 Frontend de um marketplace de NFTs desenvolvido para um desafio técnico. O objetivo é implementar descoberta de NFTs, compra simulada e área do colecionador com React e TypeScript.
 
-> Em desenvolvimento: as telas desktop estão montadas; catálogo, autenticação, favoritos, perfil, carteiras e carrinho já usam a API simulada. Cotação, cupons e pedidos ainda precisam ser integrados antes da revisão funcional e mobile.
+> Em desenvolvimento: as telas desktop estão montadas; catálogo, autenticação, favoritos, perfil, carteiras, carrinho, cotação e cupons já usam a API simulada. Pedidos ainda precisam ser integrados antes da revisão funcional e mobile.
 
 ## Links
 
@@ -92,7 +92,21 @@ O carrinho usa `GET /api/cart`, `PUT /api/cart/items/:id` (adicionar ou definir 
 
 Ao carregar o carrinho autenticado, a API une os itens do visitante aos da conta, soma quantidades e ajusta ao estoque com aviso. A gravação e o esvaziamento do carrinho visitante ocorrem juntos, permitindo repetir a operação sem duplicar itens. A leitura autenticada repete essa operação idempotente para recuperar falhas de rede. Logout não transforma os itens privados em itens de visitante.
 
-A quantidade selecionada no detalhe é enviada ao carrinho. A API recusa quantidades inválidas ou acima do estoque. Alterações aguardam confirmação, bloqueiam cliques concorrentes e mostram falhas; a lista retorna todos os itens, sem o limite da primeira página do catálogo. O carrinho compartilhado antigo não é importado. O checkout já lê os itens da API; cotação, cupons e criação/confirmação de pedidos ainda são demonstrativos. Nesta etapa, a confirmação antiga não esvazia o carrinho da API; a remoção das quantidades compradas será responsabilidade da futura API de pedidos. Compilação verificada; testes completos seguem para a revisão final.
+A quantidade selecionada no detalhe é enviada ao carrinho. A API recusa quantidades inválidas ou acima do estoque. Alterações aguardam confirmação, bloqueiam cliques concorrentes e mostram falhas; a lista retorna todos os itens, sem o limite da primeira página do catálogo. O carrinho compartilhado antigo não é importado. O checkout lê itens e totais da API; a criação/confirmação de pedidos ainda é demonstrativa. Nesta etapa, a confirmação antiga não esvazia o carrinho da API; a remoção das quantidades compradas será responsabilidade da futura API de pedidos. Compilação verificada; testes completos seguem para a revisão final.
+
+### Cotação e cupons
+
+`POST /api/cart/quote` cria uma cotação com ID, versão do carrinho, itens, subtotais por item, desconto, taxa e total em strings decimais de ETH. Os cálculos usam inteiros em wei (18 casas), sem ponto flutuante. O desconto percentual é arredondado para baixo ao wei. A taxa simulada é `0.016 ETH`. Uma cotação válida com os mesmos dados é reutilizada por até dois minutos. O cache usa `['quote', owner, cartVersion]` e revalida a cada minuto enquanto a aplicação está aberta.
+
+`PUT /api/cart/coupon` aplica um código; `DELETE /api/cart/coupon` remove. O cupom pertence ao carrinho e persiste após atualizar a página. Na união de carrinhos, o cupom da conta tem prioridade; se não houver, usa o do visitante. Alterar itens ou cupom gera uma nova versão e recalcula os totais. Carrinho e pagamento usam a mesma resposta da API; avançar fica bloqueado enquanto calcula ou se a cotação falhar.
+
+| Código de demonstração | Resultado |
+| --- | --- |
+| `KURIO10` | Desconto de 10% sobre o subtotal, sem desconto na taxa |
+| `EXPIRADO` | Erro de cupom expirado (`422`, `coupon_expired`) |
+| Qualquer outro | Erro de cupom inválido (`422`, `coupon_invalid`) |
+
+Exemplo: subtotal `1.19`, desconto `0.119`, taxa `0.016`, total `1.087 ETH`. Aplicações recusadas preservam o cupom e os totais anteriores. Estoque insuficiente bloqueia a cotação com `409`. A revalidação final com reconfirmação de mudanças e o processamento idempotente serão implementados junto à API de pedidos. Build verificado; testes completos ficam para a revisão final.
 
 ### Comandos de execução
 
@@ -107,8 +121,8 @@ A quantidade selecionada no detalhe é enviada ao carrinho. A API recusa quantid
 
 Catálogo, detalhe, favoritos, perfil, carteiras e carrinho usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos ainda usam armazenamento local e não estão isolados por conta. O checkout ainda não depende de uma confirmação de pedido do servidor simulado. Socket.IO está instalado, mas não integrado. Playwright, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
 
-1. Integrar cotação e cupons ao carrinho, com totais calculados pela API.
-2. Implementar cotação, cupons, pedidos idempotentes e estados de pagamento simulados.
+1. Integrar carteiras salvas ao pagamento e simular conexão, recusa e desconexão.
+2. Implementar revalidação da cotação, pedidos idempotentes e estados de pagamento simulados.
 3. Integrar eventos Socket.IO simulados e cenários de reconciliação/falha.
 4. Revisar mobile e acessibilidade; adicionar testes Playwright, documentação de arquitetura e auditorias Lighthouse.
 5. Publicar a aplicação e registrar a URL.

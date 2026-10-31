@@ -26,7 +26,7 @@ export default function OrderConfirmation() {
           <h2>Detalhes da transação</h2>
           <div className="confirmation-columns"><strong>NFTs</strong><strong>Edições</strong><strong>Subtotal</strong></div>
           <ul className="confirmation-items">{order.items.map((item) => <li key={item.id}><div className="confirmation-nft"><img src={item.imageUrl} alt="" /><div><strong>{item.name}</strong><small>ID do token: #{(item.name.match(/#(\d+)$/)?.[1] ?? '').padStart(4, '0')}</small></div></div><span>(× {item.quantity ?? 1})</span><b>{item.priceEth} ETH</b></li>)}</ul>
-          <dl className="confirmation-totals"><div><dt>Taxa de rede</dt><dd>{order.networkFeeEth ?? '0.00'} ETH</dd></div><div><dt>Total</dt><dd>{order.totalEth} ETH</dd></div></dl>
+          <dl className="confirmation-totals">{order.discountEth && order.discountEth !== '0.00' && <div><dt>Desconto</dt><dd>− {order.discountEth} ETH</dd></div>}<div><dt>Taxa de rede</dt><dd>{order.networkFeeEth ?? '0.00'} ETH</dd></div><div><dt>Total</dt><dd>{order.totalEth} ETH</dd></div></dl>
           <p className="confirmation-message">Pedido demonstrativo confirmado. Nenhuma transferência de fundos ou de NFTs foi realizada na rede.</p>
           {order.transactionHash && /^0x[0-9a-fA-F]{64}$/.test(order.transactionHash) ? <a className="confirmation-explorer" href={`https://etherscan.io/tx/${order.transactionHash}`} target="_blank" rel="noreferrer">Ver no Etherscan</a> : <button className="confirmation-explorer" type="button" disabled title="Disponível quando houver uma transação real na rede">Ver no Etherscan</button>}
         </div>

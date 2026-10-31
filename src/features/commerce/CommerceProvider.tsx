@@ -2,12 +2,14 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import type { NFT } from '@/features/catalog/types'
 import { useFavoriteActions } from './favorites'
 import { useCartApi, type CartItem } from './cartApi'
+import type { CartQuote } from './quoteTypes'
 
 export interface Order {
   id: string
   items: Array<Pick<NFT, 'id' | 'name' | 'collection' | 'priceEth' | 'imageUrl'> & { quantity?: number }>
   wallet?: string
   networkFeeEth?: string
+  discountEth?: string
   transactionHash?: string
   totalEth: string
   createdAt: string
@@ -26,6 +28,13 @@ interface CommerceContextValue extends CommerceState {
   cartError: boolean
   cartBusy: boolean
   cartMessage: string
+  quote: CartQuote | undefined
+  quoteLoading: boolean
+  quoteError: string
+  quoteBusy: boolean
+  couponMessage: string
+  applyCoupon: (code: string | null) => void
+  retryQuote: () => void
   retryCart: () => void
   setCartQuantity: (id: string, quantity: number) => void
   toggleFavorite: (id: string) => void
@@ -71,6 +80,13 @@ export function CommerceProvider({ children }: { children: ReactNode }) {
     cartError: cartApi.isError,
     cartBusy: cartApi.busy,
     cartMessage: cartApi.message,
+    quote: cartApi.quote,
+    quoteLoading: cartApi.quoteLoading,
+    quoteError: cartApi.quoteError,
+    quoteBusy: cartApi.quoteBusy,
+    couponMessage: cartApi.couponMessage,
+    applyCoupon: cartApi.applyCoupon,
+    retryQuote: cartApi.retryQuote,
     retryCart: () => { void cartApi.refetch() },
     setCartQuantity: cartApi.setQuantity,
     favorites: favoriteActions.favorites,

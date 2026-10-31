@@ -5,6 +5,7 @@ import { api } from '@/lib/api'
 import { guestCartId } from '@/lib/guestCart'
 import { useAuth } from '@/features/auth/AuthProvider'
 import type { NFT } from '@/features/catalog/types'
+import type { CartQuote } from './quoteTypes'
 
 export type CartItem = NFT & { quantity: number }
 type CartResponse = { items: CartItem[]; version: number; notices: string[] }
@@ -19,6 +20,7 @@ export function useCartApi() {
   const queryClient = useQueryClient()
   const locked = useRef(false)
   const [notice, setNotice] = useState<{ owner: string; text: string } | null>(null)
+  const [couponNotice, setCouponNotice] = useState<{ owner: string; text: string } | null>(null)
   const query = useQuery({
     queryKey: ['cart', owner],
     enabled: !loading,
@@ -53,6 +55,40 @@ export function useCartApi() {
     },
   })
 
+  const quote = useQuery({
+    queryKey: ['quote', owner, query.data?.version],
+    enabled: query.isSuccess && !query.isFetching && !!query.data.items.length && !mutation.isPending,
+    queryFn: async ({ signal }) => (await api.post<CartQuote>('/cart/quote', {}, { signal, headers })).data,
+    retry: (count, error) => count < 1 && (!isAxiosError(error) || !error.response || error.response.status >= 500),
+    refetchInterval: 60000,
+  })
+
+  const couponMutation = useMutation({
+    mutationFn: async (change: { code: string | null; owner: string; token: string; guest: string }) => {
+      const config = { headers: { Authorization: change.token ? `Bearer ${change.token}` : '', 'X-Guest-Cart': change.guest } }
+      return change.code === null
+        ? (await api.delete<{ cart: CartResponse; quote: CartQuote }>('/cart/coupon', config)).data
+        : (await api.put<{ cart: CartResponse; quote: CartQuote }>('/cart/coupon', { code: change.code }, config)).data
+    },
+    retry: false,
+    onSuccess: (data, change) => {
+      queryClient.setQueryData(['cart', change.owner], data.cart)
+      queryClient.setQueryData(['quote', change.owner, data.cart.version], data.quote)
+      setCouponNotice({ owner: change.owner, text: change.code === null ? 'Cupom removido.' : 'Cupom aplicado.' })
+    },
+    onError: (error, change) => {
+      setCouponNotice({ owner: change.owner, text: isAxiosError<{ message: string }>(error) ? error.response?.data?.message ?? 'Não foi possível alterar o cupom. Tente novamente.' : 'Não foi possível alterar o cupom.' })
+    },
+    onSettled: () => { locked.current = false },
+  })
+
+  function applyCoupon(code: string | null) {
+    if (locked.current || !query.isSuccess || !query.data.items.length) return
+    locked.current = true
+    setCouponNotice(null)
+    couponMutation.mutate({ code, owner, token, guest })
+  }
+
   function change(id: string, operation: Change['operation'], quantity?: number) {
     if (locked.current || loading || !query.isSuccess) return
     locked.current = true
@@ -62,9 +98,16 @@ export function useCartApi() {
 
   return {
     items: query.data?.items ?? [],
+    quote: query.data?.items.length && !quote.isError ? quote.data : undefined,
+    quoteLoading: quote.isPending && !!query.data?.items.length,
+    quoteError: quote.isError ? (isAxiosError<{ message: string }>(quote.error) ? quote.error.response?.data?.message ?? 'Não foi possível calcular o total.' : 'Não foi possível calcular o total.') : '',
+    quoteBusy: quote.isFetching || couponMutation.isPending,
+    retryQuote: () => { void quote.refetch() },
+    couponMessage: couponNotice?.owner === owner ? couponNotice.text : '',
+    applyCoupon,
     isPending: loading || query.isPending,
     isError: query.isError,
-    busy: mutation.isPending || query.isFetching,
+    busy: mutation.isPending || query.isFetching || couponMutation.isPending,
     message: notice?.owner === owner ? notice.text : query.data?.notices.join(' ') ?? '',
     refetch: query.refetch,
     add: (id: string, quantity = 1) => change(id, 'add', quantity),

@@ -8,27 +8,14 @@ import { useCommerce } from './CommerceProvider'
 import SiteFooter from '@/components/SiteFooter'
 import './cart.css'
 
-function ethToWei(value: string) {
-  const [whole, fraction = ''] = value.split('.')
-  return BigInt(whole) * 10n ** 18n + BigInt(fraction.padEnd(18, '0'))
-}
-
-function formatEth(value: bigint) {
-  const whole = value / 10n ** 18n
-  const fraction = String(value % 10n ** 18n).padStart(18, '0').replace(/0+$/, '').padEnd(2, '0')
-  return `${whole}.${fraction}`
-}
-
 export default function CartPage() {
   const search = useSearch({ from: '/cart' })
-  const { cartItems: items, cartLoading: isPending, cartError: isError, cartBusy, retryCart, removeFromCart, quantities, setCartQuantity } = useCommerce()
+  const { cartItems: items, cartLoading: isPending, cartError: isError, cartBusy, retryCart, removeFromCart, quantities, setCartQuantity, quote, quoteLoading, quoteError, quoteBusy, retryQuote, applyCoupon, couponMessage } = useCommerce()
   const { data } = useNFTs({ page: 1, pageSize: 24 })
   const [promoCode, setPromoCode] = useState('')
-  const [promoMessage, setPromoMessage] = useState('')
   const [recommendationPage, setRecommendationPage] = useState(1)
   const recommendations = data?.items.slice(recommendationPage * 3, recommendationPage * 3 + 5) ?? []
-  const subtotal = items.reduce((sum, item) => sum + ethToWei(item.priceEth) * BigInt(quantities[item.id] ?? 1), 0n)
-  const networkFee = ethToWei('0.016')
+  const cannotCheckout = cartBusy || isError || !quote || quoteBusy || !!quoteError
 
   function changeQuantity(id: string, amount: number) {
     setCartQuantity(id, Math.max(1, (quantities[id] ?? 1) + amount))
@@ -68,7 +55,7 @@ export default function CartPage() {
                 {items.map((item) => {
                   const quantity = quantities[item.id] ?? 1
                   const token = item.name.match(/#(\d+)$/)?.[1] ?? ''
-                  const total = formatEth(ethToWei(item.priceEth) * BigInt(quantity))
+                  const total = quote?.items.find((line) => line.id === item.id)?.lineTotalEth ?? '—'
                   return (
                     <tr key={item.id}>
                       <td><Link className="cart-nft" to="/nft/$nftId" params={{ nftId: item.id }} search={search}><img src={item.imageUrl} alt="" /><span><strong>{item.name}</strong><small>ID do token: #{token.padStart(4, '0')}</small></span></Link></td>
@@ -84,19 +71,22 @@ export default function CartPage() {
           </div>
           <aside className="cart-summary" aria-labelledby="cart-summary-title">
             <h2 id="cart-summary-title">Resumo da carteira</h2>
-            <form className="cart-promo" onSubmit={(event) => { event.preventDefault(); setPromoMessage(promoCode.trim() ? 'Código promocional não encontrado.' : 'Digite um código promocional.') }}>
+            <form className="cart-promo" onSubmit={(event) => { event.preventDefault(); applyCoupon(promoCode) }}>
               <label htmlFor="cart-promo-code">Código promocional</label>
-              <div><input id="cart-promo-code" value={promoCode} onChange={(event) => { setPromoCode(event.target.value); setPromoMessage('') }} placeholder="Digite o código promocional..." /><button type="submit">Aplicar</button></div>
-              {promoMessage && <p role="status">{promoMessage}</p>}
+              <div><input id="cart-promo-code" value={promoCode} onChange={(event) => setPromoCode(event.target.value)} aria-describedby={couponMessage ? 'cart-promo-message' : undefined} placeholder="Digite o código promocional..." disabled={cartBusy} /><button type="submit" disabled={cartBusy || quoteBusy}>Aplicar</button></div>
+              {couponMessage && <p id="cart-promo-message" role="status">{couponMessage}</p>}
             </form>
+            {quote?.coupon && <p className="cart-applied-coupon">{quote.coupon} <button type="button" disabled={cartBusy || quoteBusy} onClick={() => applyCoupon(null)}>Remover cupom</button></p>}
+            {(quoteLoading || quoteBusy) && <p role="status">Atualizando total…</p>}
+            {quoteError && <div role="alert"><p>{quoteError}</p><button type="button" onClick={retryQuote}>Recalcular total</button></div>}
             <dl className="cart-summary-values" aria-live="polite">
-              <div><dt>Subtotal</dt><dd>{formatEth(subtotal)} ETH</dd></div>
-              <div><dt>Desconto do lançamento</dt><dd>(−) 00.00</dd></div>
-              <div><dt>Taxa de rede</dt><dd>{formatEth(networkFee)} ETH</dd></div>
+              <div><dt>Subtotal</dt><dd>{quote?.subtotalEth ?? '—'} ETH</dd></div>
+              <div><dt>Desconto do lançamento</dt><dd>(−) {quote?.discountEth ?? '—'} ETH</dd></div>
+              <div><dt>Taxa de rede</dt><dd>{quote?.networkFeeEth ?? '—'} ETH</dd></div>
             </dl>
             <p className="cart-fee-note">Taxa estimada</p>
-            <div className="cart-summary-total"><strong>Total</strong><strong>{formatEth(subtotal + networkFee)} ETH</strong></div>
-            <Link to="/checkout" search={search} className="cart-finalize" aria-disabled={cartBusy || isError} onClick={(event) => { if (cartBusy || isError) event.preventDefault() }}>Conectar e finalizar</Link>
+            <div className="cart-summary-total"><strong>Total</strong><strong>{quote?.totalEth ?? '—'} ETH</strong></div>
+            <Link to="/checkout" search={search} className="cart-finalize" aria-disabled={cannotCheckout} onClick={(event) => { if (cannotCheckout) event.preventDefault() }}>Conectar e finalizar</Link>
             <Link to="/" search={search} hash="catalogo" className="cart-continue">Continuar explorando</Link>
           </aside>
         </div>
