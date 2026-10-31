@@ -1,8 +1,9 @@
 import { http, HttpResponse } from 'msw'
 import { categoryCounts, featuredNFT, networkCounts, nfts } from './data/nfts'
 import type { NFTListResponse } from '@/features/catalog/types'
+import type { CollectorProfile, ProfileUpdate } from '@/features/profile/api'
 
-type MockUser = { id: string; username: string; email: string; passwordHash: string }
+type MockUser = { id: string; username: string; email: string; passwordHash: string; profile?: CollectorProfile }
 type MockAuthState = { users: MockUser[]; sessions: Record<string, string> }
 const AUTH_DB_KEY = 'kurio-auth-mock-db'
 const demoAuthState: MockAuthState = {
@@ -62,6 +63,43 @@ function ethToWei(value: string): bigint {
 }
 
 export const handlers = [
+  http.get('/api/profile', ({ request }) => {
+    const user = sessionUser(request, readAuthState())
+    if (!user) return HttpResponse.json({ message: 'Entre para acessar seu perfil.' }, { status: 401 })
+    return HttpResponse.json(user.profile ?? { displayName: user.username, username: user.username, email: user.email, walletAlias: '', ens: '', avatar: '' })
+  }),
+  http.put('/api/profile', async ({ request }) => {
+    const state = readAuthState()
+    const user = sessionUser(request, state)
+    if (!user) return HttpResponse.json({ message: 'Entre para atualizar seu perfil.' }, { status: 401 })
+    const body = await request.json().catch(() => null) as ProfileUpdate | null
+    const profile = body?.profile
+    if (!profile || ['displayName', 'username', 'email', 'walletAlias', 'ens', 'avatar'].some((key) => typeof profile[key as keyof CollectorProfile] !== 'string')) {
+      return HttpResponse.json({ message: 'Preencha os dados do perfil.' }, { status: 400 })
+    }
+    const normalized: CollectorProfile = { displayName: profile.displayName.trim(), username: profile.username.trim(), email: profile.email.trim().toLowerCase(), walletAlias: profile.walletAlias.trim(), ens: profile.ens.trim(), avatar: profile.avatar }
+    if (!normalized.displayName || normalized.username.length < 2 || !/^\S+@\S+\.\S+$/.test(normalized.email) || !normalized.walletAlias || !normalized.ens) {
+      return HttpResponse.json({ message: 'Preencha nome, usuário, e-mail, apelido da carteira e ENS corretamente.' }, { status: 400 })
+    }
+    if (normalized.avatar && (!/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/]+=*$/.test(normalized.avatar) || normalized.avatar.length > 2_800_000)) {
+      return HttpResponse.json({ message: 'Escolha uma imagem PNG, JPEG ou WebP de até 2 MB.' }, { status: 400 })
+    }
+    if (state.users.some((other) => other.id !== user.id && (other.email === normalized.email || other.username.toLowerCase() === normalized.username.toLowerCase()))) {
+      return HttpResponse.json({ message: 'Este e-mail ou nome de usuário já está cadastrado.' }, { status: 409 })
+    }
+    let nextHash = user.passwordHash
+    if (body?.currentPassword || body?.newPassword) {
+      if (typeof body.currentPassword !== 'string' || typeof body.newPassword !== 'string' || body.newPassword.length < 8) return HttpResponse.json({ message: 'Informe a senha atual e uma nova senha de pelo menos 8 caracteres.' }, { status: 400 })
+      if (await passwordHash(body.currentPassword) !== user.passwordHash) return HttpResponse.json({ message: 'A senha atual está incorreta.' }, { status: 400 })
+      nextHash = await passwordHash(body.newPassword)
+    }
+    user.username = normalized.username
+    user.email = normalized.email
+    user.profile = normalized
+    user.passwordHash = nextHash
+    try { writeAuthState(state) } catch { return HttpResponse.json({ message: 'Não foi possível salvar o perfil. Tente uma imagem menor.' }, { status: 507 }) }
+    return HttpResponse.json(normalized)
+  }),
   http.get('/api/favorites', ({ request }) => {
     const user = sessionUser(request, readAuthState())
     if (!user) return HttpResponse.json({ message: 'Entre para acessar seus favoritos.' }, { status: 401 })

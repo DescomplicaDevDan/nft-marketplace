@@ -29,6 +29,8 @@
 .profile-passwords img { width: 18px; height: 18px; }
 .profile-save { min-width: 130px; }
 .profile-message { color: #cfb28c; font-size: 12px; margin-top: 16px; }
+.profile-edit-fields { border: 0; margin: 0; padding: 0; min-width: 0; }
+.profile-edit-fields:disabled { opacity: .7; }
 @media (max-width: 1100px) { .profile-layout { grid-template-columns: 230px minmax(0, 1fr); gap: 24px; } }
 @media (max-width: 760px) { .profile-layout { grid-template-columns: 1fr; } .profile-sidebar nav { display: grid; grid-template-columns: 1fr 1fr; } }
 @media (max-width: 539px) { .profile-fields { grid-template-columns: 1fr; } .profile-passwords { width: 100%; } }

@@ -2,7 +2,7 @@
 
 Frontend de um marketplace de NFTs desenvolvido para um desafio técnico. O objetivo é implementar descoberta de NFTs, compra simulada e área do colecionador com React e TypeScript.
 
-> Em desenvolvimento: as telas desktop estão montadas; catálogo, autenticação e favoritos já usam a API simulada. Carrinho, perfil, carteiras e pedidos ainda serão migrados para a API simulada antes da revisão funcional e mobile.
+> Em desenvolvimento: as telas desktop estão montadas; catálogo, autenticação, favoritos e perfil já usam a API simulada. Carrinho, carteiras e pedidos ainda serão migrados para a API simulada antes da revisão funcional e mobile.
 
 ## Links
 
@@ -70,6 +70,14 @@ O TanStack Query usa a chave `['favorites', userId]`. A interface atualiza imedi
 
 Para conferir: entre como colecionador, favorite um NFT no detalhe e atualize a página. Depois saia, entre como Sato e abra `/favorites`: o favorito da outra conta não deve aparecer. A verificação desta etapa cobriu persistência e isolamento no navegador; a suíte E2E versionada ainda está pendente.
 
+### Perfil, avatar e senha
+
+A tela `/profile` usa `GET /api/profile` e `PUT /api/profile` pelo Axios. O MSW identifica a conta pela sessão; o cache usa `['profile', userId]`. Os dados antigos da chave compartilhada `kurio-profile` não são importados. Novas contas começam com usuário/e-mail cadastrados e os demais campos vazios.
+
+O botão Salvar envia os dados e, se preenchida, a alteração de senha em uma operação: a API valida tudo antes de persistir. Usuário/e-mail duplicados retornam conflito; senha atual incorreta é recusada. Avatar aceita PNG, JPEG ou WebP de até 2 MB; Alterar/Remover só são persistidos após Salvar. A API guarda o hash da nova senha e atualiza as credenciais de login quando o e-mail muda. Nenhuma senha é salva em texto puro. Falhas preservam os campos para correção e o formulário bloqueia envios enquanto salva.
+
+Verificação desta etapa no navegador: recusa de senha atual incorreta, gravação do perfil, restauração após atualizar a página e login com a nova senha. A sessão de teste usa armazenamento isolado e não altera as contas do navegador de uso manual.
+
 ### Scripts
 
 | Comando | Descrição |
@@ -81,9 +89,9 @@ Para conferir: entre como colecionador, favorite um NFT no detalhe e atualize a 
 
 ## Estado e próximos passos
 
-Catálogo, detalhe e favoritos usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Carrinho, perfil, carteiras e pedidos ainda usam armazenamento local ou estado de demonstração e não estão isolados por conta. O checkout ainda não depende de uma confirmação de pedido do servidor simulado. Socket.IO está instalado, mas não integrado. Playwright, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
+Catálogo, detalhe, favoritos e perfil usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Carrinho, carteiras e pedidos ainda usam armazenamento local ou estado de demonstração e não estão isolados por conta. O checkout ainda não depende de uma confirmação de pedido do servidor simulado. Socket.IO está instalado, mas não integrado. Playwright, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
 
-1. Migrar perfil, carteiras e carrinho para handlers REST com dados separados por usuário.
+1. Migrar carteiras e carrinho para handlers REST com dados separados por usuário.
 2. Implementar cotação, cupons, pedidos idempotentes e estados de pagamento simulados.
 3. Integrar eventos Socket.IO simulados e cenários de reconciliação/falha.
 4. Revisar mobile e acessibilidade; adicionar testes Playwright, documentação de arquitetura e auditorias Lighthouse.
