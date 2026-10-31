@@ -7,6 +7,7 @@ import heroArtwork from './assets/img/Frame 136.png'
 import kurioWordmark from './assets/img/Logo.svg'
 import { useNFTs } from '@/features/catalog/api'
 import type { NFTNetwork } from '@/features/catalog/types'
+import { featuredCollections, journalArticles } from '@/mocks/data/homeContent'
 
 const PAGE_SIZE = 9
 
@@ -398,6 +399,39 @@ function App() {
               </>
             )}
           </div>
+        </div>
+      </section>
+
+      <section aria-label="Coleções em destaque" className="mt-16 grid grid-cols-1 gap-5 md:grid-cols-2">
+        {featuredCollections.map((collection) => (
+          <article key={collection.title} className="flex min-h-[220px] overflow-hidden bg-[#211511]">
+            <img src={collection.image} alt="" className="w-1/2 object-cover" loading="lazy" />
+            <div className="flex w-1/2 flex-col items-center justify-center px-4 py-6 text-center font-mono">
+              <h2 className="mb-3 text-base font-bold leading-snug text-[#f5f1eb]">{collection.title}</h2>
+              <p className="mb-3 text-xs leading-5 text-[#b8aa9b]">{collection.description}</p>
+              <a href="#catalogo" className="rounded bg-[#e69a55] px-5 py-2 text-xs font-bold text-[#1b1310]">Explorar →</a>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section aria-labelledby="journal-title" className="mt-16 pb-12">
+        <header className="mb-8 text-center font-mono">
+          <h2 id="journal-title" className="text-3xl font-bold text-[#f5f1eb]">Diário da Cunhagem</h2>
+          <p className="mt-3 text-sm text-[#b8aa9b]">Histórias, guias e insights para colecionadores sobre o universo da propriedade digital.</p>
+        </header>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          {journalArticles.map((article) => (
+            <article key={article.title} className="overflow-hidden bg-[#211511] font-mono">
+              <img src={article.image} alt="" className="aspect-[1.2] w-full object-cover" loading="lazy" />
+              <div className="p-4">
+                <p className="mb-3 text-[11px] text-[#b8aa9b]">{article.date} <span className="px-2">|</span> Leitura de {article.readingTime}</p>
+                <h3 className="mb-2 text-sm font-bold leading-snug text-[#f5f1eb]">{article.title}</h3>
+                <p className="mb-3 text-xs leading-5 text-[#b8aa9b]">{article.summary}</p>
+                <a href="#journal-title" className="text-xs font-bold text-[#e69a55] hover:underline">Ler mais →</a>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
     </main>
