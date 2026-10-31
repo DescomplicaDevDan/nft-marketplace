@@ -11,6 +11,13 @@
 .checkout-profile .checkout-ens { width: 78px; }
 .checkout-ens-field { display: flex; gap: 8px; }
 .checkout-ens-field .checkout-ens { flex: 0 0 78px; }
+.checkout-saved-wallet { margin-bottom: 24px; }
+.checkout-saved-wallet p { margin-top: 8px; font-size: 12px; color: #cfb28c; }
+.checkout-connection { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; font-size: 12px; color: #cfb28c; }
+.checkout-connection select { display: block; width: 100%; min-height: 36px; margin-top: 6px; padding: 6px 8px; border: 1px solid #49372b; border-radius: 3px; background: #140d0a; color: #f5f1eb; font: inherit; }
+.checkout-connection button { min-height: 36px; border: 1px solid #d28a4c; border-radius: 3px; background: transparent; color: #d28a4c; font: inherit; cursor: pointer; }
+.checkout-connection button:disabled, .checkout-confirm:disabled { cursor: not-allowed; opacity: .5; }
+.checkout-connected-address { overflow-wrap: anywhere; }
 .checkout-other { display: flex !important; align-items: center; gap: 8px; margin: 24px 0; }
 .checkout-other input, .checkout-wallets input { appearance: none; width: 16px; height: 16px; flex: 0 0 16px; margin: 0; border: 1px solid #d28a4c; border-radius: 50%; background: transparent; }
 .checkout-other input:checked, .checkout-wallets input:checked { background: #d28a4c; box-shadow: inset 0 0 0 3px #140d0a; }

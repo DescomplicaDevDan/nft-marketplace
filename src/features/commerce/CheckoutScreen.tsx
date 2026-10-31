@@ -5,6 +5,9 @@ import SiteFooter from '@/components/SiteFooter'
 import searchIcon from '@/assets/icons/Search Icon.svg'
 import cartIcon from '@/assets/icons/Cart Icon.svg'
 import { useCommerce } from './CommerceProvider'
+import { blankWallet, useWallets, type Wallet } from '@/features/profile/walletApi'
+import { useProfile } from '@/features/profile/api'
+import { useWalletConnection } from './walletConnection'
 import './cart.css'
 import './checkout.css'
 
@@ -13,15 +16,39 @@ export default function CheckoutScreen() {
   const navigate = useNavigate({ from: '/checkout' })
   const { cart, quantities, placeOrder, cartItems: items, cartLoading: isPending, cartError: isError, cartBusy, quote, quoteLoading, quoteBusy, quoteError, retryQuote } = useCommerce()
   const [otherWallet, setOtherWallet] = useState(false)
-  const [wallet, setWallet] = useState('coinbase')
+  const [collector, setCollector] = useState({ ...blankWallet, type: 'Coinbase Wallet', username: '', ensSuffix: '.eth' })
+  const [source, setSource] = useState<'manual' | 'primary' | 'secondary'>('manual')
+  const [alternativeAddress, setAlternativeAddress] = useState('')
+  const [outcome, setOutcome] = useState<'accept' | 'reject'>('accept')
+  const savedWallets = useWallets()
+  const profile = useProfile()
+  const connection = useWalletConnection()
   const [submitted, setSubmitted] = useState(false)
+  const address = (otherWallet ? alternativeAddress : collector.address).trim()
+  const sameAddress = collector.network === 'Solana' ? connection.connection?.address === address : connection.connection?.address.toLowerCase() === address.toLowerCase()
+  const connected = !!connection.connection && sameAddress && connection.connection.network === collector.network && connection.connection.provider === collector.type && !connection.error
+
+  function updateCollector(key: keyof typeof collector, value: string) {
+    setCollector((current) => ({ ...current, [key]: value }))
+    setSource('manual')
+  }
+
+  function selectWallet(value: 'manual' | 'primary' | 'secondary') {
+    setSource(value)
+    const saved = savedWallets.data
+    const selected: Wallet | null | undefined = value === 'primary' ? saved?.primary : value === 'secondary' ? saved?.same ? saved.primary : saved?.secondary : null
+    if (selected) {
+      setCollector((current) => ({ ...current, ...selected, username: profile.data?.username ?? selected.profileName }))
+      setOtherWallet(false)
+    }
+  }
 
   function confirm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (submitted || cartBusy || isError || !quote || quoteBusy || quoteError || items.length === 0 || items.length !== cart.length) return
+    if (submitted || !connected || connection.busy || cartBusy || isError || !quote || quoteBusy || quoteError || items.length === 0 || items.length !== cart.length) return
     setSubmitted(true)
     const id = `KURIO-${Date.now().toString(36).toUpperCase()}`
-    placeOrder({ id, createdAt: new Date().toISOString(), wallet: wallet === 'coinbase' ? 'Coinbase Wallet' : wallet === 'metamask' ? 'MetaMask' : 'WalletConnect', networkFeeEth: quote.networkFeeEth, discountEth: quote.discountEth, totalEth: quote.totalEth, items: quote.items.map((item) => ({ ...item, priceEth: item.lineTotalEth })) })
+    placeOrder({ id, createdAt: new Date().toISOString(), wallet: connection.connection!.provider, networkFeeEth: quote.networkFeeEth, discountEth: quote.discountEth, totalEth: quote.totalEth, items: quote.items.map((item) => ({ ...item, priceEth: item.lineTotalEth })) })
     void navigate({ to: '/orders/$orderId', params: { orderId: id }, search })
   }
 
@@ -40,20 +67,26 @@ export default function CheckoutScreen() {
       {items.length > 0 && <form className="checkout-layout" onSubmit={confirm}>
         <section className="checkout-profile" aria-labelledby="collector-title">
           <h2 id="collector-title">Perfil do colecionador</h2>
+          <div className="checkout-saved-wallet">
+            <label>Carteira salva<select value={source} onChange={(event) => selectWallet(event.target.value as typeof source)} disabled={connection.busy}><option value="manual">Preencher manualmente</option>{savedWallets.data?.primary && <option value="primary">Principal — {savedWallets.data.primary.alias}</option>}{(savedWallets.data?.same ? savedWallets.data.primary : savedWallets.data?.secondary) && <option value="secondary">Secundária — {savedWallets.data?.same ? savedWallets.data.primary?.alias : savedWallets.data?.secondary?.alias}</option>}</select></label>
+            {savedWallets.isPending && <p role="status">Carregando carteiras salvas…</p>}
+            {savedWallets.isError && <p role="alert">Não foi possível carregar suas carteiras. <button type="button" onClick={() => { void savedWallets.refetch() }}>Tentar novamente</button></p>}
+            {savedWallets.isSuccess && !savedWallets.data.primary && !savedWallets.data.secondary && <p>Nenhuma carteira salva. <Link to="/wallets" search={search}>Cadastrar carteira</Link></p>}
+          </div>
           <div className="checkout-fields">
-            <label>Nome de exibição<span>*</span><input name="displayName" autoComplete="name" required /></label>
-            <label>Nome de usuário<span>*</span><input name="username" autoComplete="username" required /></label>
-            <label>Rede<span>*</span><select name="network" defaultValue="" required><option value="" disabled>Selecione uma rede</option><option>Ethereum</option><option>Polygon</option><option>Solana</option></select></label>
-            <label>Nome do perfil<span>*</span><input name="profileName" required /></label>
-            <label>Endereço da carteira<span>*</span><input name="walletAddress" placeholder="Endereço 0x da carteira" required /></label>
-            <label className="checkout-secondary-wallet"><span className="sr-only">ENS ou carteira secundária</span><input name="secondaryWallet" placeholder="ENS ou carteira secundária (opcional)" /></label>
-            <label>Tipo de carteira<span>*</span><select name="walletType" defaultValue="" required><option value="" disabled>Selecione uma carteira</option><option>MetaMask</option><option>WalletConnect</option><option>Coinbase Wallet</option></select></label>
-            <label>Código de indicação<span>*</span><input name="referral" required /></label>
-            <label>E-mail<span>*</span><input name="email" type="email" autoComplete="email" required /></label>
-            <label>Nome ENS<span>*</span><div className="checkout-ens-field"><select name="ensSuffix" className="checkout-ens" aria-label="Sufixo ENS"><option>.eth</option><option>.crypto</option></select><input name="ens" aria-label="Nome ENS" required /></div></label>
+            <label>Nome de exibição<span>*</span><input name="displayName" value={collector.displayName} onChange={(event) => updateCollector('displayName', event.target.value)} autoComplete="name" required /></label>
+            <label>Nome de usuário<span>*</span><input name="username" value={collector.username} onChange={(event) => updateCollector('username', event.target.value)} autoComplete="username" required /></label>
+            <label>Rede<span>*</span><select name="network" value={collector.network} onChange={(event) => updateCollector('network', event.target.value)} required><option value="" disabled>Selecione uma rede</option><option>Ethereum</option><option>Polygon</option><option>Solana</option></select></label>
+            <label>Nome do perfil<span>*</span><input name="profileName" value={collector.profileName} onChange={(event) => updateCollector('profileName', event.target.value)} required /></label>
+            <label>Endereço da carteira<span>*</span><input name="walletAddress" value={collector.address} onChange={(event) => updateCollector('address', event.target.value)} placeholder="Endereço 0x da carteira" required /></label>
+            <label className="checkout-secondary-wallet"><span className="sr-only">ENS ou carteira secundária</span><input name="secondaryWallet" value={collector.secondaryAddress} onChange={(event) => updateCollector('secondaryAddress', event.target.value)} placeholder="ENS ou carteira secundária (opcional)" /></label>
+            <label>Tipo de carteira<span>*</span><select name="walletType" value={collector.type} onChange={(event) => updateCollector('type', event.target.value)} required><option value="" disabled>Selecione uma carteira</option><option>MetaMask</option><option>WalletConnect</option><option>Coinbase Wallet</option></select></label>
+            <label>Código de indicação<span>*</span><input name="referral" value={collector.referral} onChange={(event) => updateCollector('referral', event.target.value)} required /></label>
+            <label>E-mail<span>*</span><input name="email" type="email" value={collector.email} onChange={(event) => updateCollector('email', event.target.value)} autoComplete="email" required /></label>
+            <label>Nome ENS<span>*</span><div className="checkout-ens-field"><select name="ensSuffix" className="checkout-ens" aria-label="Sufixo ENS" value={collector.ensSuffix} onChange={(event) => updateCollector('ensSuffix', event.target.value)}><option>.eth</option><option>.crypto</option></select><input name="ens" aria-label="Nome ENS" value={collector.ens} onChange={(event) => updateCollector('ens', event.target.value)} required /></div></label>
           </div>
           <label className="checkout-other"><input type="checkbox" checked={otherWallet} onChange={(event) => setOtherWallet(event.target.checked)} />Usar outra carteira?</label>
-          {otherWallet && <label className="checkout-alternative">Outra carteira<input name="alternativeWallet" placeholder="Endereço da outra carteira" required /></label>}
+          {otherWallet && <label className="checkout-alternative">Outra carteira<input name="alternativeWallet" value={alternativeAddress} onChange={(event) => setAlternativeAddress(event.target.value)} placeholder="Endereço da outra carteira" required /></label>}
           <label className="checkout-notes">Observação do colecionador (opcional)<textarea name="notes" rows={6} /></label>
         </section>
         <aside className="checkout-order" aria-labelledby="checkout-order-title">
@@ -66,8 +99,16 @@ export default function CheckoutScreen() {
           <dl className="cart-summary-values"><div><dt>Subtotal</dt><dd>{quote?.subtotalEth ?? '—'} ETH</dd></div><div><dt>Desconto do lançamento</dt><dd>(−) {quote?.discountEth ?? '—'} ETH</dd></div><div><dt>Taxa de rede</dt><dd>{quote?.networkFeeEth ?? '—'} ETH</dd></div></dl>
           <p className="cart-fee-note">Taxa estimada</p>
           <div className="checkout-total"><strong>Total</strong><strong>{quote?.totalEth ?? '—'} ETH</strong></div>
-          <fieldset className="checkout-wallets"><legend>Carteira e rede</legend>{[['walletconnect', 'METAMASK · WALLETCONNECT · COINBASE'], ['metamask', 'MetaMask'], ['coinbase', 'Coinbase Wallet']].map(([value, label]) => <label key={value} className={wallet === value ? 'selected' : ''}><input type="radio" name="paymentWallet" value={value} checked={wallet === value} onChange={() => setWallet(value)} />{label}</label>)}</fieldset>
-          <button className="checkout-confirm" type="submit" disabled={submitted || cartBusy || quoteBusy || !!quoteError || !quote || items.length !== cart.length}>Confirmar compra</button>
+          <fieldset className="checkout-wallets" disabled={connection.busy}><legend>Carteira e rede</legend>{[['WalletConnect', 'METAMASK · WALLETCONNECT · COINBASE'], ['MetaMask', 'MetaMask'], ['Coinbase Wallet', 'Coinbase Wallet']].map(([value, label]) => <label key={value} className={collector.type === value ? 'selected' : ''}><input type="radio" name="paymentWallet" value={value} checked={collector.type === value} onChange={() => updateCollector('type', value)} />{label}</label>)}</fieldset>
+          <div className="checkout-connection">
+            <label>Resposta da carteira (demonstração)<select value={outcome} onChange={(event) => setOutcome(event.target.value as typeof outcome)} disabled={connection.busy}><option value="accept">Autorizar conexão</option><option value="reject">Recusar conexão</option></select></label>
+            <button type="button" disabled={connection.busy} onClick={() => connection.connect({ ...(source !== 'manual' && !otherWallet ? { slot: source } : {}), address, network: collector.network, provider: collector.type, outcome })}>{connection.busy ? 'Aguarde…' : 'Conectar carteira'}</button>
+            {connection.connection && <><p>Conectada: {connection.connection.provider} · {connection.connection.network}<br /><span className="checkout-connected-address">{connection.connection.address}</span></p><button type="button" onClick={connection.disconnect} disabled={connection.busy}>Desconectar</button></>}
+            {connection.connection && !connected && <p role="status">Os dados mudaram. Conecte a carteira selecionada para continuar.</p>}
+            {connection.message && <p role="status">{connection.message}</p>}
+            {connection.error && <p role="alert">Não foi possível verificar a conexão. <button type="button" onClick={connection.retry}>Tentar novamente</button></p>}
+          </div>
+          <button className="checkout-confirm" type="submit" disabled={submitted || !connected || connection.busy || cartBusy || quoteBusy || !!quoteError || !quote || items.length !== cart.length}>Confirmar compra</button>
           <p className="checkout-demo">Compra demonstrativa, sem transferência de fundos.</p>
         </aside>
       </form>}

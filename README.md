@@ -82,7 +82,7 @@ Verificação desta etapa no navegador: recusa de senha atual incorreta, gravaç
 
 A tela `/wallets` usa `GET /api/wallets`, `PUT /api/wallets` e `DELETE /api/wallets/:slot` (`primary` ou `secondary`). O MSW identifica a conta pela sessão e separa seus registros; o cache usa `['wallets', userId]`. O armazenamento compartilhado antigo não é importado.
 
-É possível criar, editar e remover as carteiras principal e secundária. “Igual à carteira principal” exige uma principal salva e reutiliza seus dados; remover a principal desativa essa opção. Campos obrigatórios incluem indicação e ENS. A API verifica e-mail, rede, tipo e formato do endereço: Ethereum/Polygon com `0x` e 40 caracteres hexadecimais; Solana com 32 a 44 caracteres Base58. A validação é de formato, sem consulta à blockchain. Falhas preservam o formulário; mudanças só aparecem como salvas após a resposta da API. A seleção dessas carteiras no checkout será integrada na etapa de compra.
+É possível criar, editar e remover as carteiras principal e secundária. “Igual à carteira principal” exige uma principal salva e reutiliza seus dados; remover a principal desativa essa opção. Campos obrigatórios incluem indicação e ENS. A API verifica e-mail, rede, tipo e formato do endereço: Ethereum/Polygon com `0x` e 40 caracteres hexadecimais; Solana com 32 a 44 caracteres Base58. A validação é de formato, sem consulta à blockchain. Falhas preservam o formulário; mudanças só aparecem como salvas após a resposta da API. As carteiras salvas podem ser selecionadas no pagamento.
 
 ENS e indicação também são obrigatórios no formulário de pagamento. Os testes completos dos fluxos serão realizados na revisão final solicitada; esta etapa passou pela compilação TypeScript/Vite.
 
@@ -108,7 +108,17 @@ A quantidade selecionada no detalhe é enviada ao carrinho. A API recusa quantid
 
 Exemplo: subtotal `1.19`, desconto `0.119`, taxa `0.016`, total `1.087 ETH`. Aplicações recusadas preservam o cupom e os totais anteriores. Estoque insuficiente bloqueia a cotação com `409`. A revalidação final com reconfirmação de mudanças e o processamento idempotente serão implementados junto à API de pedidos. Build verificado; testes completos ficam para a revisão final.
 
-### Comandos de execução
+### Conexão de carteira no pagamento
+
+Em `/checkout`, “Carteira salva” permite escolher principal/secundária ou preencher manualmente. A seleção preenche os dados cadastrados e sincroniza o tipo com as opções de pagamento. A opção “Usar outra carteira?” usa o endereço alternativo informado. Os dados editados permanecem no formulário durante falhas de conexão.
+
+`GET /api/wallet-connection` recupera a conexão da sessão, `POST /api/wallet-connection` valida e conecta, e `DELETE /api/wallet-connection` desconecta. O MSW valida formato de endereço, rede e provedor. Para uma carteira salva, confere também se os dados continuam iguais aos cadastrados. A conexão é simulada, sem extensões ou chamadas à blockchain. A API persiste a conexão por sessão; um novo login precisa conectar novamente. O cache usa `['walletConnection', userId]` e é limpo no logout.
+
+Para reproduzir a recusa, selecione “Resposta da carteira (demonstração) → Recusar conexão” e clique em Conectar carteira. A API retorna `403 / wallet_rejected`, encerra a conexão anterior da sessão e preserva carrinho, cupom e formulário. Para continuar, escolha Autorizar conexão e conecte. Desconectar bloqueia a confirmação; alterar endereço, rede ou provedor também exige uma conexão correspondente aos novos dados. Falhas de consulta permitem tentar novamente. A criação/confirmação de pedidos ainda será migrada para a API na próxima etapa.
+
+Compilação e lint passaram nesta etapa; a revisão funcional completa permanece para o final. O build passou a emitir um aviso de tamanho do bundle, que será tratado na etapa de desempenho.
+
+### Scripts
 
 | Comando | Descrição |
 | --- | --- |
@@ -121,8 +131,8 @@ Exemplo: subtotal `1.19`, desconto `0.119`, taxa `0.016`, total `1.087 ETH`. Apl
 
 Catálogo, detalhe, favoritos, perfil, carteiras e carrinho usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos ainda usam armazenamento local e não estão isolados por conta. O checkout ainda não depende de uma confirmação de pedido do servidor simulado. Socket.IO está instalado, mas não integrado. Playwright, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
 
-1. Integrar carteiras salvas ao pagamento e simular conexão, recusa e desconexão.
-2. Implementar revalidação da cotação, pedidos idempotentes e estados de pagamento simulados.
+1. Implementar revalidação da cotação, pedidos idempotentes e estados de pagamento simulados.
+2. Completar cenários de expiração de sessão e recuperação dos fluxos privados.
 3. Integrar eventos Socket.IO simulados e cenários de reconciliação/falha.
 4. Revisar mobile e acessibilidade; adicionar testes Playwright, documentação de arquitetura e auditorias Lighthouse.
 5. Publicar a aplicação e registrar a URL.
