@@ -10,6 +10,26 @@ import {
   type NFTSort,
 } from './features/catalog/types'
 import App from './App'
+import NFTDetailPage from './features/catalog/NFTDetailPage'
+
+function validateCatalogSearch(search: Record<string, unknown>) {
+  const sort: NFTSort | undefined =
+    search.sort === 'recent'
+      ? 'recent'
+      : search.sort === 'popular'
+        ? 'popular'
+        : undefined
+
+  return {
+    search: typeof search.search === 'string' ? search.search : '',
+    category: NFT_CATEGORIES.find((category) => category === search.category),
+    network: NFT_NETWORKS.find((network) => network === search.network),
+    minPrice: typeof search.minPrice === 'string' ? search.minPrice : undefined,
+    maxPrice: typeof search.maxPrice === 'string' ? search.maxPrice : undefined,
+    sort,
+    page: Math.max(1, Number(search.page) || 1),
+  }
+}
 
 const rootRoute = createRootRoute({
   component: Outlet,
@@ -18,28 +38,18 @@ const rootRoute = createRootRoute({
 const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  validateSearch: (search: Record<string, unknown>) => {
-    const sort: NFTSort | undefined =
-      search.sort === 'recent'
-        ? 'recent'
-        : search.sort === 'popular'
-          ? 'popular'
-          : undefined
-
-    return {
-      search: typeof search.search === 'string' ? search.search : '',
-      category: NFT_CATEGORIES.find((category) => category === search.category),
-      network: NFT_NETWORKS.find((network) => network === search.network),
-      minPrice: typeof search.minPrice === 'string' ? search.minPrice : undefined,
-      maxPrice: typeof search.maxPrice === 'string' ? search.maxPrice : undefined,
-      sort,
-      page: Math.max(1, Number(search.page) || 1),
-    }
-  },
+  validateSearch: validateCatalogSearch,
   component: App,
 })
 
-const routeTree = rootRoute.addChildren([homeRoute])
+const nftDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/nft/$nftId',
+  validateSearch: validateCatalogSearch,
+  component: NFTDetailPage,
+})
+
+const routeTree = rootRoute.addChildren([homeRoute, nftDetailRoute])
 
 export const router = createRouter({ routeTree })
 

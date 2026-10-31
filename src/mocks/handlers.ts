@@ -13,6 +13,12 @@ function ethToWei(value: string): bigint {
 }
 
 export const handlers = [
+  http.get('/api/nfts/:id', ({ params }) => {
+    const nft = nfts.find((item) => item.id === params.id)
+    return nft
+      ? HttpResponse.json(nft)
+      : HttpResponse.json({ message: 'NFT não encontrado' }, { status: 404 })
+  }),
   http.get('/api/nfts', ({ request }) => {
     const url = new URL(request.url)
     const search = url.searchParams.get('search')?.trim().toLowerCase() ?? ''

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { useNavigate, useSearch } from '@tanstack/react-router'
+import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import heroArtwork from './assets/img/Frame 136.png'
 import kurioWordmark from './assets/img/Logo.svg'
 import { useNFTs } from '@/features/catalog/api'
@@ -342,11 +342,18 @@ function App() {
                 <ul className="grid list-none grid-cols-1 gap-5 p-0 sm:grid-cols-2 xl:grid-cols-3">
                   {data.items.map((nft) => (
                     <li key={nft.id} className="overflow-hidden bg-[#1b1310] text-[#f5f1eb]">
-                      <img src={nft.imageUrl} alt={nft.name} className="aspect-square w-full object-cover" loading="lazy" />
-                      <div className="flex items-center justify-between gap-3 py-3">
-                        <h3 className="truncate font-mono text-sm">{nft.name}</h3>
-                        <p className="shrink-0 font-mono font-bold text-[#e69a55]">{nft.priceEth} ETH</p>
-                      </div>
+                      <Link
+                        to="/nft/$nftId"
+                        params={{ nftId: nft.id }}
+                        search={search}
+                        className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e69a55]"
+                      >
+                        <img src={nft.imageUrl} alt={nft.name} className="aspect-square w-full object-cover transition-transform group-hover:scale-[1.02]" loading="lazy" />
+                        <div className="flex items-center justify-between gap-3 py-3">
+                          <h3 className="truncate font-mono text-sm">{nft.name}</h3>
+                          <p className="shrink-0 font-mono font-bold text-[#e69a55]">{nft.priceEth} ETH</p>
+                        </div>
+                      </Link>
                     </li>
                   ))}
                 </ul>

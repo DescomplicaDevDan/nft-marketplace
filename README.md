@@ -60,19 +60,18 @@ npm run preview
 
 ## Estado atual
 
-Já estão configurados o roteamento em `/`, os provedores do TanStack Query, o cliente Axios, o MSW com dados de exemplo, o Tailwind CSS e o shadcn/ui. A página inicial tem cabeçalho e hero baseados no frame desktop do Figma, além de um catálogo simulado com busca, paginação e filtros funcionais de categoria, preço e rede. As abas “Todos os NFTs”, “Novos lançamentos” e “Em alta” atualizam a ordenação. Esses parâmetros são mantidos na URL e aplicados pelo MSW. As artes do catálogo são assets locais do Figma. Ainda falta validar responsividade e refinar a correspondência visual. Não há detalhe do NFT, autenticação, compra, Socket.IO em uso, testes E2E, auditoria Lighthouse nem deploy.
+Já estão configurados o roteamento, os provedores do TanStack Query, o cliente Axios, o MSW com dados de exemplo, o Tailwind CSS e o shadcn/ui. A página inicial tem cabeçalho e hero baseados no frame desktop do Figma, além de um catálogo simulado com busca, paginação e filtros funcionais de categoria, preço e rede. As abas “Todos os NFTs”, “Novos lançamentos” e “Em alta” atualizam a ordenação. Esses parâmetros são mantidos na URL e aplicados pelo MSW. Os cards abrem uma página de detalhe por NFT, com dados carregados pelo ID; o retorno preserva a busca e os filtros do catálogo. Ainda falta validar responsividade e refinar a correspondência visual. Não há autenticação, favoritos, carrinho, compra, Socket.IO em uso, testes E2E, auditoria Lighthouse nem deploy.
 
 A compilação (`npm run build`) passou após a configuração atual. O lint executa, com um aviso no componente de botão gerado pelo shadcn/ui.
 
 ## Próximas etapas
 
-1. Validar a página inicial em mobile e refinar os últimos detalhes visuais conforme o Figma.
-2. Implementar detalhe do NFT mantendo os parâmetros do catálogo na URL.
-3. Implementar sessão, favoritos e carrinho.
-4. Implementar checkout e pedidos simulados.
-5. Integrar eventos Socket.IO simulados e cenários de falha.
-6. Adicionar testes Playwright, documentação de arquitetura e auditorias.
-7. Publicar a aplicação e registrar a URL.
+1. Refinar a correspondência visual da página inicial desktop com o Figma e validar responsividade.
+2. Implementar sessão, favoritos e carrinho.
+3. Implementar checkout e pedidos simulados.
+4. Integrar eventos Socket.IO simulados e cenários de falha.
+5. Adicionar testes Playwright, documentação de arquitetura e auditorias.
+6. Publicar a aplicação e registrar a URL.
 
 ## Escopo da simulação
 
