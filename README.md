@@ -32,7 +32,7 @@ npm ci
 npm run dev
 ```
 
-O servidor mostra o endereço local ao iniciar. Em desenvolvimento, o MSW é iniciado automaticamente. A API simulada do catálogo responde a `GET /api/nfts` com busca e paginação; a interface ainda não consome essa consulta.
+O servidor mostra o endereço local ao iniciar. Em desenvolvimento, o MSW é iniciado automaticamente. A página inicial consome `GET /api/nfts` por Axios e TanStack Query; busca e paginação são guardadas na URL.
 
 Para ativar mocks num build de demonstração:
 
@@ -60,19 +60,18 @@ npm run preview
 
 ## Estado atual
 
-Já estão configurados o roteamento inicial em `/`, os provedores do TanStack Query, o cliente Axios, o MSW com dados de exemplo, o Tailwind CSS e a configuração inicial do shadcn/ui. A tela ainda é a tela padrão do Vite. Não há autenticação, compra, Socket.IO em uso, testes E2E, auditoria Lighthouse nem deploy.
+Já estão configurados o roteamento em `/`, os provedores do TanStack Query, o cliente Axios, o MSW com dados de exemplo, o Tailwind CSS e o shadcn/ui. A página inicial exibe o catálogo simulado com busca, paginação, estados de carregamento, erro e resultado vazio. Não há filtros combinados, detalhe do NFT, autenticação, compra, Socket.IO em uso, testes E2E, auditoria Lighthouse nem deploy.
 
 A compilação (`npm run build`) passou após a configuração atual. O lint executa, com um aviso no componente de botão gerado pelo shadcn/ui.
 
 ## Próximas etapas
 
-1. Implementar o catálogo consumindo a API simulada.
-2. Adicionar busca, filtros e detalhe do NFT com estado na URL.
-3. Implementar sessão, favoritos e carrinho.
-4. Implementar checkout e pedidos simulados.
-5. Integrar eventos Socket.IO simulados e cenários de falha.
-6. Adicionar testes Playwright, documentação de arquitetura e auditorias.
-7. Publicar a aplicação e registrar a URL.
+1. Adicionar filtros combinados, ordenação e detalhe do NFT com estado na URL.
+2. Implementar sessão, favoritos e carrinho.
+3. Implementar checkout e pedidos simulados.
+4. Integrar eventos Socket.IO simulados e cenários de falha.
+5. Adicionar testes Playwright, documentação de arquitetura e auditorias.
+6. Publicar a aplicação e registrar a URL.
 
 ## Escopo da simulação
 
