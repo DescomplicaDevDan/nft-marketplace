@@ -25,7 +25,9 @@ export default function CartPage() {
   const [quantities, setQuantities] = useState<Record<string, number>>({})
   const [promoCode, setPromoCode] = useState('')
   const [promoMessage, setPromoMessage] = useState('')
+  const [recommendationPage, setRecommendationPage] = useState(1)
   const items = data?.items.filter((item) => cart.includes(item.id)) ?? []
+  const recommendations = data?.items.slice(recommendationPage * 3, recommendationPage * 3 + 5) ?? []
   const subtotal = items.reduce((sum, item) => sum + ethToWei(item.priceEth) * BigInt(quantities[item.id] ?? 1), 0n)
   const networkFee = ethToWei('0.016')
 
@@ -99,6 +101,25 @@ export default function CartPage() {
             <Link to="/" search={search} hash="catalogo" className="cart-continue">Continuar explorando</Link>
           </aside>
         </div>
+      )}
+      {recommendations.length > 0 && (
+        <section className="cart-recommendations" aria-labelledby="cart-recommendations-title">
+          <h2 id="cart-recommendations-title">Colecionadores também viram</h2>
+          <div className="cart-recommendation-grid">
+            {recommendations.map((item) => (
+              <Link key={item.id} to="/nft/$nftId" params={{ nftId: item.id }} search={search} className="cart-recommendation-card">
+                <div className="cart-recommendation-artwork">
+                  <img src={item.imageUrl} alt={item.name} loading="lazy" style={{ aspectRatio: `${item.imageFrame?.width ?? 250} / ${item.imageFrame?.height ?? 250}` }} />
+                </div>
+                <h3>{item.name}</h3>
+                <p>{item.priceEth} ETH</p>
+              </Link>
+            ))}
+          </div>
+          <nav aria-label="Grupos de NFTs recomendados" className="cart-recommendation-dots">
+            {[0, 1, 2].map((page) => <button key={page} type="button" aria-label={`Mostrar grupo ${page + 1}`} aria-pressed={recommendationPage === page} onClick={() => setRecommendationPage(page)} />)}
+          </nav>
+        </section>
       )}
     </main>
   )
