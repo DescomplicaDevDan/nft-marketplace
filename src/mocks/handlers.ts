@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw'
 import { categoryCounts, featuredNFT, networkCounts, nfts } from './data/nfts'
 import type { NFTListResponse } from '@/features/catalog/types'
 import type { CollectorProfile, ProfileUpdate } from '@/features/profile/api'
+import { walletHandlers } from './wallets'
 
 type MockUser = { id: string; username: string; email: string; passwordHash: string; profile?: CollectorProfile }
 type MockAuthState = { users: MockUser[]; sessions: Record<string, string> }
@@ -63,6 +64,7 @@ function ethToWei(value: string): bigint {
 }
 
 export const handlers = [
+  ...walletHandlers((request) => sessionUser(request, readAuthState())?.id),
   http.get('/api/profile', ({ request }) => {
     const user = sessionUser(request, readAuthState())
     if (!user) return HttpResponse.json({ message: 'Entre para acessar seu perfil.' }, { status: 401 })

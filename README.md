@@ -2,7 +2,7 @@
 
 Frontend de um marketplace de NFTs desenvolvido para um desafio técnico. O objetivo é implementar descoberta de NFTs, compra simulada e área do colecionador com React e TypeScript.
 
-> Em desenvolvimento: as telas desktop estão montadas; catálogo, autenticação, favoritos e perfil já usam a API simulada. Carrinho, carteiras e pedidos ainda serão migrados para a API simulada antes da revisão funcional e mobile.
+> Em desenvolvimento: as telas desktop estão montadas; catálogo, autenticação, favoritos, perfil e carteiras já usam a API simulada. Carrinho e pedidos ainda serão migrados para a API simulada antes da revisão funcional e mobile.
 
 ## Links
 
@@ -78,7 +78,15 @@ O botão Salvar envia os dados e, se preenchida, a alteração de senha em uma o
 
 Verificação desta etapa no navegador: recusa de senha atual incorreta, gravação do perfil, restauração após atualizar a página e login com a nova senha. A sessão de teste usa armazenamento isolado e não altera as contas do navegador de uso manual.
 
-### Scripts
+### Carteiras por usuário
+
+A tela `/wallets` usa `GET /api/wallets`, `PUT /api/wallets` e `DELETE /api/wallets/:slot` (`primary` ou `secondary`). O MSW identifica a conta pela sessão e separa seus registros; o cache usa `['wallets', userId]`. O armazenamento compartilhado antigo não é importado.
+
+É possível criar, editar e remover as carteiras principal e secundária. “Igual à carteira principal” exige uma principal salva e reutiliza seus dados; remover a principal desativa essa opção. Campos obrigatórios incluem indicação e ENS. A API verifica e-mail, rede, tipo e formato do endereço: Ethereum/Polygon com `0x` e 40 caracteres hexadecimais; Solana com 32 a 44 caracteres Base58. A validação é de formato, sem consulta à blockchain. Falhas preservam o formulário; mudanças só aparecem como salvas após a resposta da API. A seleção dessas carteiras no checkout será integrada na etapa de compra.
+
+ENS e indicação também são obrigatórios no formulário de pagamento. Os testes completos dos fluxos serão realizados na revisão final solicitada; esta etapa passou pela compilação TypeScript/Vite.
+
+### Scripts disponíveis
 
 | Comando | Descrição |
 | --- | --- |
@@ -89,9 +97,9 @@ Verificação desta etapa no navegador: recusa de senha atual incorreta, gravaç
 
 ## Estado e próximos passos
 
-Catálogo, detalhe, favoritos e perfil usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Carrinho, carteiras e pedidos ainda usam armazenamento local ou estado de demonstração e não estão isolados por conta. O checkout ainda não depende de uma confirmação de pedido do servidor simulado. Socket.IO está instalado, mas não integrado. Playwright, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
+Catálogo, detalhe, favoritos, perfil e carteiras usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Carrinho e pedidos ainda usam armazenamento local ou estado de demonstração e não estão isolados por conta. O checkout ainda não depende de uma confirmação de pedido do servidor simulado. Socket.IO está instalado, mas não integrado. Playwright, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
 
-1. Migrar carteiras e carrinho para handlers REST com dados separados por usuário.
+1. Migrar carrinho para handlers REST com dados separados por usuário e mesclar o carrinho visitante ao entrar.
 2. Implementar cotação, cupons, pedidos idempotentes e estados de pagamento simulados.
 3. Integrar eventos Socket.IO simulados e cenários de reconciliação/falha.
 4. Revisar mobile e acessibilidade; adicionar testes Playwright, documentação de arquitetura e auditorias Lighthouse.
