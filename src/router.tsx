@@ -4,6 +4,11 @@ import {
   createRouter,
   Outlet,
 } from '@tanstack/react-router'
+import {
+  NFT_CATEGORIES,
+  NFT_NETWORKS,
+  type NFTSort,
+} from './features/catalog/types'
 import App from './App'
 
 const rootRoute = createRootRoute({
@@ -13,10 +18,24 @@ const rootRoute = createRootRoute({
 const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  validateSearch: (search: Record<string, unknown>) => ({
-    search: typeof search.search === 'string' ? search.search : '',
-    page: Math.max(1, Number(search.page) || 1),
-  }),
+  validateSearch: (search: Record<string, unknown>) => {
+    const sort: NFTSort | undefined =
+      search.sort === 'recent'
+        ? 'recent'
+        : search.sort === 'popular'
+          ? 'popular'
+          : undefined
+
+    return {
+      search: typeof search.search === 'string' ? search.search : '',
+      category: NFT_CATEGORIES.find((category) => category === search.category),
+      network: NFT_NETWORKS.find((network) => network === search.network),
+      minPrice: typeof search.minPrice === 'string' ? search.minPrice : undefined,
+      maxPrice: typeof search.maxPrice === 'string' ? search.maxPrice : undefined,
+      sort,
+      page: Math.max(1, Number(search.page) || 1),
+    }
+  },
   component: App,
 })
 
