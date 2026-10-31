@@ -1,11 +1,13 @@
 import { Link, useParams, useSearch } from '@tanstack/react-router'
 import kurioWordmark from '@/assets/img/Logo.svg'
 import { useNFT } from './api'
+import { useCommerce } from '@/features/commerce/CommerceProvider'
 
 export default function NFTDetailPage() {
   const { nftId } = useParams({ from: '/nft/$nftId' })
   const search = useSearch({ from: '/nft/$nftId' })
   const { data: nft, isPending, isError } = useNFT(nftId)
+  const { favorites, cart, toggleFavorite, addToCart } = useCommerce()
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-[1440px] px-5 py-8 text-[#f5f1eb] sm:px-8 lg:px-[120px]">
@@ -44,6 +46,25 @@ export default function NFTDetailPage() {
                 <p className="mb-1 text-xs text-[#b8aa9b]">Disponíveis</p>
                 <p className="text-xl font-bold">{nft.available}</p>
               </div>
+            </div>
+
+            <div className="mb-8 flex flex-wrap gap-3 font-sans text-sm">
+              <button
+                type="button"
+                aria-pressed={favorites.includes(nft.id)}
+                onClick={() => toggleFavorite(nft.id)}
+                className="border border-[#e69a55] px-4 py-3 text-[#e69a55] hover:bg-[#211511]"
+              >
+                {favorites.includes(nft.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+              </button>
+              <button
+                type="button"
+                onClick={() => addToCart(nft.id)}
+                disabled={cart.includes(nft.id)}
+                className="bg-[#e69a55] px-4 py-3 font-bold text-[#1b1310] hover:brightness-110 disabled:cursor-default disabled:opacity-60"
+              >
+                {cart.includes(nft.id) ? 'Adicionado ao carrinho' : 'Adicionar ao carrinho'}
+              </button>
             </div>
 
             <dl className="grid grid-cols-2 gap-x-6 gap-y-5 text-sm">

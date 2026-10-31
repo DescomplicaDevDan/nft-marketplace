@@ -15,6 +15,16 @@ export const NFT_NETWORKS = ['Ethereum', 'Polygon', 'Solana'] as const
 export type NFTNetwork = (typeof NFT_NETWORKS)[number]
 export type NFTSort = 'recent' | 'popular'
 
+export interface CatalogSearch {
+  search: string
+  category: NFTCategory | undefined
+  network: NFTNetwork | undefined
+  minPrice: string | undefined
+  maxPrice: string | undefined
+  sort: NFTSort | undefined
+  page: number
+}
+
 export interface NFT {
   id: string
   name: string

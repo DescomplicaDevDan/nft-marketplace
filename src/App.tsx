@@ -4,6 +4,7 @@ import heroArtwork from './assets/img/Frame 136.png'
 import kurioWordmark from './assets/img/Logo.svg'
 import { useNFTs } from '@/features/catalog/api'
 import type { NFTNetwork } from '@/features/catalog/types'
+import { useCommerce } from '@/features/commerce/CommerceProvider'
 
 const PAGE_SIZE = 4
 
@@ -100,6 +101,7 @@ function PriceRangeFilter({
 function App() {
   const search = useSearch({ from: '/' })
   const navigate = useNavigate({ from: '/' })
+  const { favorites, cart } = useCommerce()
   const { data, isPending, isError, refetch } = useNFTs({
     search: search.search,
     category: search.category,
@@ -175,6 +177,10 @@ function App() {
             Aprenda
           </span>
         </nav>
+        <div className="hidden items-center justify-end gap-4 font-mono text-xs md:flex">
+          <Link to="/favorites" search={search} className="text-[#b8aa9b] hover:text-[#e69a55]">Favoritos ({favorites.length})</Link>
+          <Link to="/cart" search={search} className="text-[#b8aa9b] hover:text-[#e69a55]">Carrinho ({cart.length})</Link>
+        </div>
       </header>
 
       <section className="grid min-h-[450px] items-center gap-10 py-0 md:grid-cols-[1fr_0.8fr]">

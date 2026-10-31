@@ -7,12 +7,14 @@ import {
 import {
   NFT_CATEGORIES,
   NFT_NETWORKS,
+  type CatalogSearch,
   type NFTSort,
 } from './features/catalog/types'
 import App from './App'
 import NFTDetailPage from './features/catalog/NFTDetailPage'
+import { CartPage, FavoritesPage } from './features/commerce/SavedItemsPage'
 
-function validateCatalogSearch(search: Record<string, unknown>) {
+function validateCatalogSearch(search: Record<string, unknown>): CatalogSearch {
   const sort: NFTSort | undefined =
     search.sort === 'recent'
       ? 'recent'
@@ -49,7 +51,21 @@ const nftDetailRoute = createRoute({
   component: NFTDetailPage,
 })
 
-const routeTree = rootRoute.addChildren([homeRoute, nftDetailRoute])
+const cartRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/cart',
+  validateSearch: validateCatalogSearch,
+  component: CartPage,
+})
+
+const favoritesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/favorites',
+  validateSearch: validateCatalogSearch,
+  component: FavoritesPage,
+})
+
+const routeTree = rootRoute.addChildren([homeRoute, nftDetailRoute, cartRoute, favoritesRoute])
 
 export const router = createRouter({ routeTree })
 

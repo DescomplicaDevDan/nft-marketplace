@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 import './index.css'
 import { router } from './router'
+import { CommerceProvider } from './features/commerce/CommerceProvider'
 
 const queryClient = new QueryClient()
 
@@ -16,7 +17,9 @@ async function startApp() {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <CommerceProvider>
+          <RouterProvider router={router} />
+        </CommerceProvider>
       </QueryClientProvider>
     </StrictMode>,
   )
