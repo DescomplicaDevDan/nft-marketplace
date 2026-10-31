@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent, type ChangeEvent } from 'react'
-import { Link, useSearch } from '@tanstack/react-router'
-import { AuthButton } from '@/features/auth/AuthProvider'
+import { Link, useNavigate, useSearch } from '@tanstack/react-router'
+import { AuthButton, useAuth } from '@/features/auth/AuthProvider'
 import searchIcon from '@/assets/icons/Search Icon.svg'
 import cartIcon from '@/assets/icons/Cart Icon.svg'
 import hideIcon from '@/assets/icons/Hide.svg'
@@ -18,6 +18,8 @@ function loadProfile() {
 
 export default function ProfilePage() {
   const search = useSearch({ from: '/profile' })
+  const navigate = useNavigate()
+  const { logout } = useAuth()
   const [profile, setProfile] = useState(loadProfile)
   const [message, setMessage] = useState('')
   const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({})
@@ -75,7 +77,7 @@ export default function ProfilePage() {
             <Link to="/orders" search={search}><span aria-hidden="true">♧</span>Atividade</Link>
             <Link to="/favorites" search={search}><span aria-hidden="true">♡</span>Lista de interesse</Link>
             {['Ofertas', 'Arquivos baixados', 'Suporte'].map((label) => <button key={label} type="button" onClick={() => setMessage(`${label}: área ainda não disponível.`)}><span aria-hidden="true">◇</span>{label}</button>)}
-            <Link to="/" search={search} className="profile-exit"><span aria-hidden="true">↪</span>Sair</Link>
+            <button type="button" className="profile-exit" onClick={() => { void logout().finally(() => navigate({ to: '/', search })) }}><span aria-hidden="true">↪</span>Sair</button>
           </nav>
         </aside>
         <form className="profile-form" onSubmit={save}>

@@ -16,6 +16,7 @@ import WalletsPage from './features/profile/WalletsPage'
 import NFTDetailPage from './features/catalog/NFTDetailPage'
 import { CartPage, FavoritesPage } from './features/commerce/SavedItemsPage'
 import { CheckoutPage, OrderConfirmationPage, OrdersPage } from './features/commerce/CheckoutPages'
+import { RequireAuthentication } from './features/auth/AuthProvider'
 
 function validateCatalogSearch(search: Record<string, unknown>): CatalogSearch {
   const sort: NFTSort | undefined =
@@ -69,39 +70,39 @@ const favoritesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/favorites',
   validateSearch: validateCatalogSearch,
-  component: FavoritesPage,
+  component: () => <RequireAuthentication><FavoritesPage /></RequireAuthentication>,
 })
 
 const checkoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/checkout',
   validateSearch: validateCatalogSearch,
-  component: CheckoutPage,
+  component: () => <RequireAuthentication><CheckoutPage /></RequireAuthentication>,
 })
 
 const ordersRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/orders',
   validateSearch: validateCatalogSearch,
-  component: OrdersPage,
+  component: () => <RequireAuthentication><OrdersPage /></RequireAuthentication>,
 })
 
 const orderConfirmationRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/orders/$orderId',
   validateSearch: validateCatalogSearch,
-  component: OrderConfirmationPage,
+  component: () => <RequireAuthentication><OrderConfirmationPage /></RequireAuthentication>,
 })
 
 const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/profile',
   validateSearch: validateCatalogSearch,
-  component: ProfilePage,
+  component: () => <RequireAuthentication><ProfilePage /></RequireAuthentication>,
 })
 
 const routeTree = rootRoute.addChildren([
-  createRoute({ getParentRoute: () => rootRoute, path: '/wallets', validateSearch: validateCatalogSearch, component: WalletsPage }),
+  createRoute({ getParentRoute: () => rootRoute, path: '/wallets', validateSearch: validateCatalogSearch, component: () => <RequireAuthentication><WalletsPage /></RequireAuthentication> }),
   profileRoute,
   homeRoute,
   nftDetailRoute,
