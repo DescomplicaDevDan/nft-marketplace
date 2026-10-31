@@ -26,6 +26,24 @@
 .cart-checkout-link { display: inline-block; margin-top: 20px; color: #e89b55 !important; }
 .cart-empty { padding: 40px 0; }
 .cart-empty a { color: #e89b55; }
+.cart-summary { padding-top: 12px; min-width: 0; }
+.cart-summary h2 { margin: 0 0 22px; padding-bottom: 6px; border-bottom: 1px solid #49372b; font-size: 16px; font-weight: 700; }
+.cart-promo { margin-bottom: 24px; }
+.cart-promo label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 700; }
+.cart-promo > div { display: flex; }
+.cart-promo input { width: 0; flex: 1; min-width: 0; border: 1px solid #b39463; background: transparent; color: #f5f1eb; padding: 10px 6px; font: 10px 'Roboto Mono Variable', monospace; }
+.cart-promo input::placeholder { color: #b39463; }
+.cart-promo button { border: 0; padding: 8px 18px; background: #d28a4c; color: #140d0a; font: 700 14px 'Roboto Mono Variable', monospace; cursor: pointer; }
+.cart-promo > p { margin-top: 8px; font-size: 12px; color: #e89b55; }
+.cart-summary-values { margin: 0; }
+.cart-summary-values > div { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; font-size: 12px; }
+.cart-summary-values dd { margin: 0; white-space: nowrap; }
+.cart-summary-values > div:first-child dd, .cart-summary-values > div:last-child dd { font-size: 16px; }
+.cart-fee-note { text-align: right; font-size: 10px; color: #e89b55; }
+.cart-summary-total { display: flex; justify-content: space-between; gap: 12px; margin: 22px 0 18px; }
+.cart-summary-total strong:last-child { color: #e89b55; font-size: 18px; white-space: nowrap; }
+.cart-page .cart-finalize { display: block; padding: 10px; text-align: center; background: #d28a4c; color: #140d0a; font-size: 13px; font-weight: 700; border-radius: 3px; }
+.cart-page .cart-continue { display: block; margin-top: 12px; text-align: center; color: #e89b55; font-size: 13px; }
 @media (max-width: 1279px) { .cart-page { padding: 24px 40px; } .cart-content { grid-template-columns: minmax(0, 2.3fr) minmax(0, 1fr); gap: 40px; } }
 @media (max-width: 900px) { .cart-content { grid-template-columns: 1fr; } .cart-header { grid-template-columns: auto 1fr auto; gap: 12px; } .cart-header nav { gap: 12px; font-size: 12px; } .cart-header-actions { gap: 10px; } }
 @media (max-width: 639px) { .cart-page { padding: 20px; } .cart-header { display: flex; flex-wrap: wrap; justify-content: space-between; } .cart-header nav { order: 3; width: 100%; justify-content: center; } .cart-table-scroll { overflow-x: auto; } .cart-table { min-width: 650px; } }

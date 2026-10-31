@@ -7,12 +7,27 @@ import loginIcon from '@/assets/icons/Logout.svg'
 import { useCommerce } from './CommerceProvider'
 import './cart.css'
 
+function ethToWei(value: string) {
+  const [whole, fraction = ''] = value.split('.')
+  return BigInt(whole) * 10n ** 18n + BigInt(fraction.padEnd(18, '0'))
+}
+
+function formatEth(value: bigint) {
+  const whole = value / 10n ** 18n
+  const fraction = String(value % 10n ** 18n).padStart(18, '0').replace(/0+$/, '').padEnd(2, '0')
+  return `${whole}.${fraction}`
+}
+
 export default function CartPage() {
   const search = useSearch({ from: '/cart' })
   const { cart, removeFromCart } = useCommerce()
   const { data, isPending, isError } = useNFTs({ page: 1, pageSize: 24 })
   const [quantities, setQuantities] = useState<Record<string, number>>({})
+  const [promoCode, setPromoCode] = useState('')
+  const [promoMessage, setPromoMessage] = useState('')
   const items = data?.items.filter((item) => cart.includes(item.id)) ?? []
+  const subtotal = items.reduce((sum, item) => sum + ethToWei(item.priceEth) * BigInt(quantities[item.id] ?? 1), 0n)
+  const networkFee = ethToWei('0.016')
 
   function changeQuantity(id: string, amount: number) {
     setQuantities((current) => ({ ...current, [id]: Math.max(1, (current[id] ?? 1) + amount) }))
@@ -52,9 +67,7 @@ export default function CartPage() {
                 {items.map((item) => {
                   const quantity = quantities[item.id] ?? 1
                   const token = item.name.match(/#(\d+)$/)?.[1] ?? ''
-                  const [whole, fraction = ''] = item.priceEth.split('.')
-                  const totalCents = (BigInt(whole) * 100n + BigInt(fraction.padEnd(2, '0'))) * BigInt(quantity)
-                  const total = `${totalCents / 100n}.${String(totalCents % 100n).padStart(2, '0')}`
+                  const total = formatEth(ethToWei(item.priceEth) * BigInt(quantity))
                   return (
                     <tr key={item.id}>
                       <td><Link className="cart-nft" to="/nft/$nftId" params={{ nftId: item.id }} search={search}><img src={item.imageUrl} alt="" /><span><strong>{item.name}</strong><small>ID do token: #{token.padStart(4, '0')}</small></span></Link></td>
@@ -67,8 +80,24 @@ export default function CartPage() {
                 })}
               </tbody>
             </table>
-            <Link to="/checkout" search={search} className="cart-checkout-link">Continuar para pagamento →</Link>
           </div>
+          <aside className="cart-summary" aria-labelledby="cart-summary-title">
+            <h2 id="cart-summary-title">Resumo da carteira</h2>
+            <form className="cart-promo" onSubmit={(event) => { event.preventDefault(); setPromoMessage(promoCode.trim() ? 'Código promocional não encontrado.' : 'Digite um código promocional.') }}>
+              <label htmlFor="cart-promo-code">Código promocional</label>
+              <div><input id="cart-promo-code" value={promoCode} onChange={(event) => { setPromoCode(event.target.value); setPromoMessage('') }} placeholder="Digite o código promocional..." /><button type="submit">Aplicar</button></div>
+              {promoMessage && <p role="status">{promoMessage}</p>}
+            </form>
+            <dl className="cart-summary-values" aria-live="polite">
+              <div><dt>Subtotal</dt><dd>{formatEth(subtotal)} ETH</dd></div>
+              <div><dt>Desconto do lançamento</dt><dd>(−) 00.00</dd></div>
+              <div><dt>Taxa de rede</dt><dd>{formatEth(networkFee)} ETH</dd></div>
+            </dl>
+            <p className="cart-fee-note">Taxa estimada</p>
+            <div className="cart-summary-total"><strong>Total</strong><strong>{formatEth(subtotal + networkFee)} ETH</strong></div>
+            <Link to="/checkout" search={search} className="cart-finalize">Conectar e finalizar</Link>
+            <Link to="/" search={search} hash="catalogo" className="cart-continue">Continuar explorando</Link>
+          </aside>
         </div>
       )}
     </main>
