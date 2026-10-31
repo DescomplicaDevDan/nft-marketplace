@@ -7,7 +7,7 @@ import linkedinIcon from '@/assets/icons/linkedin.svg'
 import twitterIcon from '@/assets/icons/twitter.svg'
 import kurioWordmark from '@/assets/img/Logo.svg'
 import { useCommerce } from '@/features/commerce/CommerceProvider'
-import { useNFT } from './api'
+import { useNFT, useNFTs } from './api'
 
 const description = [
   'Emerald Ape #042 é uma obra digital 1/50 finalizada à mão da coleção Kurio Editions. Cada atributo fica armazenado nos metadados do token e verificado na Ethereum. A obra explora identidade, movimento e luz em um mundo digital sem fronteiras.',
@@ -18,13 +18,17 @@ export default function NFTDetailPage() {
   const { nftId } = useParams({ from: '/nft/$nftId' })
   const search = useSearch({ from: '/nft/$nftId' })
   const { data: nft, isPending, isError } = useNFT(nftId)
+  const { data: catalog } = useNFTs({ page: 1, pageSize: 24 })
   const { favorites, cart, toggleFavorite, addToCart } = useCommerce()
   const [selectedImage, setSelectedImage] = useState(1)
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState<'details' | 'reviews'>('details')
+  const [relatedPage, setRelatedPage] = useState(1)
   const [zoomOpen, setZoomOpen] = useState(false)
   const isFavorite = nft ? favorites.includes(nft.id) : false
   const tokenNumber = nft?.name.match(/#(\d+)$/)?.[1] ?? '0042'
+  const relatedItems = catalog?.items.filter((item) => item.id !== nftId) ?? []
+  const visibleRelatedItems = relatedItems.slice(relatedPage * 2, relatedPage * 2 + 5)
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-12 bg-[#140d0a] px-5 pt-6 pb-6 font-mono text-[#f5f1eb] sm:px-8 md:gap-24 min-[1440px]:px-[120px]">
@@ -82,6 +86,26 @@ export default function NFTDetailPage() {
               <button type="button" role="tab" aria-selected={activeTab === 'reviews'} onClick={() => setActiveTab('reviews')} className={`pb-2 ${activeTab === 'reviews' ? 'border-b-2 border-[#e89b55] font-bold text-[#e89b55]' : 'text-[#f5f1eb]'}`}>Avaliações de colecionadores (19)</button>
             </div>
             {activeTab === 'details' ? <div className="space-y-6 pt-3 text-sm leading-6 text-[#b39463]">{description.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}<p><strong className="text-[#f5f1eb]">Rede:</strong><br />Cunhado na Ethereum com procedência imutável e metadados armazenados no IPFS.</p><p><strong className="text-[#f5f1eb]">Contrato:</strong><br />Direitos autorais do criador: 5% nas vendas secundárias, pagos automaticamente pelos mercados compatíveis.</p><p><strong className="text-[#f5f1eb]">Direitos autorais:</strong><br />0x7A42...19E8 · Contrato inteligente ERC-721 verificado.</p></div> : <div className="py-5 text-sm text-[#b39463]">★★★★★　4,9 de 5 — 19 avaliações de colecionadores</div>}
+          </section>
+
+          <section aria-labelledby="related-title">
+            <h2 id="related-title" className="border-b border-[#49372b] pb-2 text-base font-bold text-[#e89b55]">Mais desta coleção</h2>
+            <div className="mt-6 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5 lg:gap-6">
+              {visibleRelatedItems.map((item) => (
+                <Link key={item.id} to="/nft/$nftId" params={{ nftId: item.id }} search={search} className="group min-w-0">
+                  <div className="flex h-[250px] items-center justify-center bg-[#241612] p-4 transition-colors group-hover:bg-[#2b1b15]">
+                    <img src={item.imageUrl} alt={item.name} className="max-h-full max-w-full rounded-xl object-contain" loading="lazy" />
+                  </div>
+                  <h3 className="mt-3 truncate text-sm leading-4">{item.name}</h3>
+                  <p className="mt-1 text-sm font-bold leading-4 text-[#e89b55]">{item.priceEth} ETH</p>
+                </Link>
+              ))}
+            </div>
+            <nav aria-label="Páginas de NFTs relacionados" className="mt-7 flex justify-center gap-2">
+              {[0, 1, 2].map((page) => (
+                <button key={page} type="button" aria-label={`Mostrar grupo ${page + 1} de NFTs`} aria-pressed={relatedPage === page} onClick={() => setRelatedPage(page)} className={`size-3 rounded-full border border-[#d28a4c] ${relatedPage === page ? 'bg-[#d28a4c]' : 'bg-transparent hover:bg-[#d28a4c]/40'}`} />
+              ))}
+            </nav>
           </section>
         </>
       )}
