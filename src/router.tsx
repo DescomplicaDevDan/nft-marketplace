@@ -21,6 +21,10 @@ function validateCatalogSearch(search: Record<string, unknown>): CatalogSearch {
       ? 'recent'
       : search.sort === 'popular'
         ? 'popular'
+        : search.sort === 'price-low'
+          ? 'price-low'
+          : search.sort === 'price-high'
+            ? 'price-high'
         : undefined
 
   return {

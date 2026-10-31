@@ -13,7 +13,7 @@ export const NFT_CATEGORIES = [
 export type NFTCategory = (typeof NFT_CATEGORIES)[number]
 export const NFT_NETWORKS = ['Ethereum', 'Polygon', 'Solana'] as const
 export type NFTNetwork = (typeof NFT_NETWORKS)[number]
-export type NFTSort = 'recent' | 'popular'
+export type NFTSort = 'recent' | 'popular' | 'price-low' | 'price-high'
 
 export interface CatalogSearch {
   search: string
@@ -33,6 +33,8 @@ export interface NFT {
   category: NFTCategory
   network: NFTNetwork
   priceEth: string
+  previousPriceEth?: string
+  imageFrame?: { width: number; height: number; left: number; top: number }
   available: number
   createdAt: string
   sales: number

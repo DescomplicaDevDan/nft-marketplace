@@ -48,6 +48,15 @@ export const handlers = [
     const sorted = [...priceFiltered]
     if (sort === 'recent') sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     if (sort === 'popular') sorted.sort((a, b) => b.sales - a.sales)
+    if (sort === 'price-low' || sort === 'price-high') {
+      sorted.sort((a, b) => {
+        const left = ethToWei(a.priceEth)
+        const right = ethToWei(b.priceEth)
+        if (left === right) return 0
+        const ascending = left < right ? -1 : 1
+        return sort === 'price-low' ? ascending : -ascending
+      })
+    }
     const byPrice = [...nfts].sort((a, b) => {
       const left = ethToWei(a.priceEth)
       const right = ethToWei(b.priceEth)

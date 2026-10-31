@@ -6,7 +6,7 @@ import loginIcon from './assets/icons/Logout.svg'
 import heroArtwork from './assets/img/Frame 136.png'
 import kurioWordmark from './assets/img/Logo.svg'
 import { useNFTs } from '@/features/catalog/api'
-import type { NFTNetwork } from '@/features/catalog/types'
+import type { NFTNetwork, NFTSort } from '@/features/catalog/types'
 import { useCommerce } from '@/features/commerce/CommerceProvider'
 import { featuredCollections, footerGroups, footerHighlights, journalArticles, socialLinks } from '@/mocks/data/homeContent'
 
@@ -69,54 +69,57 @@ function PriceRangeFilter({
 
   return (
     <form
-      className="mt-8 border-t border-[#49372b] pt-6"
+      className="mt-10 flex h-[129px] w-[270px] flex-col gap-3"
       onSubmit={(event) => {
         event.preventDefault()
         onApply(min.toFixed(2), max.toFixed(2))
       }}
     >
-      <h3 className="mb-3 font-bold text-[#f5f1eb]">Faixa de preço</h3>
-      <div className="relative h-6">
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-2 top-1/2 h-1 -translate-y-1/2 rounded-full"
-          style={{ background: `linear-gradient(to right, #75685e ${minPosition}%, #e69a55 ${minPosition}% ${maxPosition}%, #75685e ${maxPosition}%)` }}
-        />
-        <label className="sr-only" htmlFor="min-price">Preço mínimo em ETH</label>
-        <input
-          id="min-price"
-          type="range"
-          min={minCents}
-          max={Math.max(minCents, Math.round(max * 100))}
-          step="1"
-          value={Math.round(min * 100)}
-          onChange={(event) => setMin(Number(event.target.value) / 100)}
-          className="price-range-thumb"
-        />
-        <label className="sr-only" htmlFor="max-price">Preço máximo em ETH</label>
-        <input
-          id="max-price"
-          type="range"
-          min={Math.min(maxCents, Math.round(min * 100))}
-          max={maxCents}
-          step="1"
-          value={Math.round(max * 100)}
-          onChange={(event) => setMax(Number(event.target.value) / 100)}
-          className="price-range-thumb"
-        />
+      <h3 className="h-4 text-lg font-bold leading-4 text-[#f5f1eb]">Faixa de preço</h3>
+      <div className="flex flex-col gap-3 pl-3">
+        <div className="relative h-[21px] w-[258px]">
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-[7px] top-1/2 h-1 -translate-y-1/2 rounded-full"
+            style={{ background: `linear-gradient(to right, #D28A4C ${minPosition}%, #D28A4C ${minPosition}% ${maxPosition}%, #D28A4C ${maxPosition}%)` }}
+          />
+          <label className="sr-only" htmlFor="min-price">Preço mínimo em ETH</label>
+          <input
+            id="min-price"
+            type="range"
+            min={minCents}
+            max={Math.max(minCents, Math.round(max * 100))}
+            step="1"
+            value={Math.round(min * 100)}
+            onChange={(event) => setMin(Number(event.target.value) / 100)}
+            className="price-range-thumb"
+          />
+          <label className="sr-only" htmlFor="max-price">Preço máximo em ETH</label>
+          <input
+            id="max-price"
+            type="range"
+            min={Math.min(maxCents, Math.round(min * 100))}
+            max={maxCents}
+            step="1"
+            value={Math.round(max * 100)}
+            onChange={(event) => setMax(Number(event.target.value) / 100)}
+            className="price-range-thumb"
+          />
+        </div>
+        <p className="h-5 text-[15px] leading-5 text-[#f5f1eb]">
+          Preço: {min.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} – {max.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} ETH
+        </p>
+        <button type="submit" className="h-9 w-[92px] rounded-md bg-[#D28A4C] px-3 py-2 font-mono text-base font-bold leading-5 text-[#140D0A] hover:brightness-110">
+          Aplicar
+        </button>
       </div>
-      <p className="my-3 text-xs text-[#b8aa9b]">
-        Preço: {min.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} – {max.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} ETH
-      </p>
-      <button type="submit" className="rounded-md bg-[#e69a55] px-4 py-2 text-sm font-bold text-[#1b1310] hover:brightness-110">
-        Aplicar
-      </button>
     </form>
   )
 }
 
 function App() {
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
   const { cart } = useCommerce()
   const search = useSearch({ from: '/' })
   const navigate = useNavigate({ from: '/' })
@@ -136,6 +139,7 @@ function App() {
       search: (previous) => ({ ...previous, search: value, page: 1 }),
       resetScroll: false,
     })
+    setSearchOpen(false)
   }
 
   function changePage(page: number) {
@@ -161,7 +165,7 @@ function App() {
     })
   }
 
-  function changeSort(sort: 'recent' | 'popular' | undefined) {
+  function changeSort(sort: NFTSort | undefined) {
     void navigate({
       search: (previous) => ({ ...previous, sort, page: 1 }),
       resetScroll: false,
@@ -171,7 +175,7 @@ function App() {
   const totalPages = Math.ceil((data?.total ?? 0) / PAGE_SIZE)
 
   return (
-    <main id="topo" className="mx-auto min-h-screen w-full max-w-[1440px] bg-[#110b08] px-5 pt-3 pb-8 text-left text-[#f5f1eb] sm:px-8 lg:px-[120px]">
+    <main id="topo" className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-12 bg-[#140D0A] px-5 pt-6 pb-6 text-left text-[#f5f1eb] sm:px-8 md:gap-24 lg:px-8 min-[1440px]:px-[120px]">
       <header className="mb-0 flex items-center justify-between border-b border-[#49372b] pb-2 font-mono text-sm text-[#ead8c5] md:grid md:grid-cols-[1fr_auto_1fr]">
         <a href="/" aria-label="Kurio — início" className="inline-flex items-center md:col-start-1 md:justify-self-start">
           <img src={kurioWordmark} alt="KURIO" className="h-[22px] w-[100px] sm:h-[35px] sm:w-[160px]" />
@@ -196,7 +200,7 @@ function App() {
           </span>
         </nav>
         <div className="hidden items-center justify-self-end gap-4 md:flex">
-          <a href="#catalogo" aria-label="Buscar NFTs" className="rounded p-1 hover:bg-[#211511]"><img src={searchIcon} alt="" className="size-4" /></a>
+          <button type="button" aria-label="Abrir busca" aria-expanded={searchOpen} onClick={() => setSearchOpen((open) => !open)} className="rounded p-1 hover:bg-[#211511]"><img src={searchIcon} alt="" className="size-4" /></button>
           <Link to="/cart" search={search} aria-label={`Abrir carrinho${cart.length === 6 ? ' com 6 itens' : ''}`} className="relative rounded p-1 hover:bg-[#211511]">
             <img src={cartIcon} alt="" className="size-4" />
             {cart.length === 6 && <span aria-hidden="true" className="absolute -right-1 -top-1 grid size-3.5 place-items-center rounded-full bg-[#e69a55] text-[8px] font-bold leading-none text-[#1b1310]">6</span>}
@@ -205,8 +209,8 @@ function App() {
         </div>
       </header>
 
-      <section className="relative mt-8 grid min-h-[450px] items-start py-0 md:mb-[108px] md:grid-cols-[600px_450px] md:gap-[166px]">
-        <div className="w-full max-w-[600px] font-mono md:w-[600px] md:max-w-none md:translate-x-10 md:pt-10">
+      <section className="relative grid min-h-[450px] items-start gap-8 py-0 md:grid-cols-[minmax(0,1fr)_minmax(300px,450px)] md:gap-12">
+        <div className="w-full max-w-[600px] min-w-0 font-mono md:pt-10">
           <p className="mb-5 text-sm tracking-[0.16em] text-[#f5f1eb]">
             Bem-vindo à Kurio
           </p>
@@ -234,7 +238,7 @@ function App() {
         <img
           src={heroArtwork}
           alt="NFT Emerald Ape com óculos e jaqueta verde"
-          className="hidden size-[450px] rounded-2xl object-cover md:block"
+          className="hidden aspect-square w-full max-w-[450px] justify-self-end rounded-2xl object-cover md:block"
         />
         <div aria-hidden="true" className="absolute bottom-7 left-[615px] hidden items-center gap-2 md:flex">
           <span className="size-2 rounded-full bg-[#e69a55]" />
@@ -245,11 +249,13 @@ function App() {
 
       <section id="catalogo" aria-labelledby="catalog-title" className="scroll-mt-8">
         <div className="grid gap-8 lg:grid-cols-[310px_minmax(0,1fr)] lg:gap-12">
-          <aside aria-label="Filtros do catálogo" className="self-start bg-[#211511] p-5 font-mono sm:p-6">
-            <h2 className="mb-5 text-xl font-bold text-[#f5f1eb]">Coleções</h2>
-            <ul className="grid list-none grid-cols-2 gap-x-5 gap-y-1 p-0 lg:block">
+          <div className="flex flex-col gap-6">
+          <aside aria-label="Filtros do catálogo" className="self-start w-full bg-[#241612] p-5 font-mono">
+            <h2 className="mb-3 h-4 text-lg font-bold leading-4 text-[#f5f1eb]">Coleções</h2>
+            <ul className="list-none p-0 lg:w-full lg:px-3">
               {data?.categoryCounts.map((item) => {
                 const selected = search.category === item.name
+                const highlighted = selected || (!search.category && item.name === 'Arte digital')
 
                 return (
                   <li key={item.name}>
@@ -264,10 +270,10 @@ function App() {
                         }),
                       resetScroll: false,
                       })}
-                      className={`flex w-full items-center justify-between gap-3 py-2 text-left text-sm transition-colors hover:text-[#e69a55] ${selected ? 'font-semibold text-[#e69a55]' : 'text-[#b8aa9b]'}`}
+                      className={`flex h-10 w-full items-center justify-between gap-3 text-left font-mono text-[15px] leading-10 transition-colors hover:text-[#E89B55] ${highlighted ? 'font-normal text-[#E89B55]' : 'font-normal text-[#CFB28C]'}`}
                     >
                       <span>{item.name}</span>
-                      <span>({item.count})</span>
+                      <span className="font-bold">({item.count})</span>
                     </button>
                   </li>
                 )
@@ -285,9 +291,9 @@ function App() {
               />
             )}
 
-            <div className="mt-8 border-t border-[#49372b] pt-6">
-              <h3 className="mb-3 font-bold text-[#f5f1eb]">Rede</h3>
-              <ul className="list-none space-y-1 p-0">
+            <div className="mt-10">
+              <h3 className="mb-3 h-4 text-lg font-bold leading-4 text-[#f5f1eb]">Rede</h3>
+              <ul className="list-none space-y-0 pl-3">
                 {data?.networkCounts.map((item) => {
                   const selected = search.network === item.name
 
@@ -297,33 +303,35 @@ function App() {
                         type="button"
                         aria-pressed={selected}
                         onClick={() => changeNetwork(item.name)}
-                        className={`flex w-full items-center justify-between gap-3 py-2 text-left text-sm transition-colors hover:text-[#e69a55] ${selected ? 'font-semibold text-[#e69a55]' : 'text-[#b8aa9b]'}`}
+                        className={`flex h-10 w-full items-center justify-between gap-3 text-left font-mono text-[15px] leading-10 transition-colors hover:text-[#E89B55] ${selected ? 'font-semibold text-[#E89B55]' : 'text-[#CFB28C]'}`}
                       >
                         <span>{item.name}</span>
-                        <span>({item.count})</span>
+                <span>({item.count})</span>
                       </button>
                     </li>
                   )
                 })}
               </ul>
             </div>
-            {data?.featuredNFT && (
-              <article className="mt-8 border-t border-[#49372b] pt-6">
-                <p className="mb-1 text-xs font-bold uppercase tracking-wide text-[#e69a55]">NFT em destaque</p>
-                <p className="mb-3 text-[11px] uppercase tracking-wider text-[#b8aa9b]">Oferta limitada</p>
-                <Link to="/nft/$nftId" params={{ nftId: data.featuredNFT.id }} search={search} className="group block">
-                  <img src={data.featuredNFT.imageUrl} alt={data.featuredNFT.name} className="mb-2 aspect-square w-full object-cover" />
-                  <span className="block truncate font-mono text-xs">{data.featuredNFT.name}</span>
-                  <span className="font-mono text-xs font-bold text-[#e69a55]">{data.featuredNFT.priceEth} ETH</span>
-                </Link>
-              </article>
-            )}
           </aside>
+          {data?.featuredNFT && (
+            <article className="h-[470px] w-[310px] flex-none overflow-visible bg-[linear-gradient(180deg,rgba(210,138,76,0.1)_0%,rgba(210,138,76,0.03)_100%)] pt-6 pb-1 font-mono">
+              <div className="flex flex-col items-center gap-4">
+                <h2 className="flex h-8 w-full items-center px-5 text-2xl font-bold uppercase leading-8 text-[#E89B55]">NFT em destaque</h2>
+                <p className="h-4 w-full text-center text-[22px] font-bold uppercase leading-4 text-[#F5F1EB]">Oferta limitada</p>
+              </div>
+              <Link to="/nft/$nftId" params={{ nftId: data.featuredNFT.id }} search={search} className="group block focus-visible:outline-2 focus-visible:outline-[#e69a55]">
+                <img src={data.featuredNFT.imageUrl} alt={data.featuredNFT.name} className="mt-4 block h-[368px] w-[310px] rounded-[22px] object-cover" />
+              </Link>
+            </article>
+          )}
+          </div>
 
-          <div className="min-w-0">
-            <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <nav aria-label="Ordenar catálogo" role="tablist" className="flex flex-wrap gap-5 font-mono text-sm">
+          <div className="min-w-0 lg:flex lg:min-h-[1373px] lg:flex-col">
+            <div className="mb-8">
+              <div className="flex h-[18px] w-full items-center justify-between">
+                <div>
+                  <nav aria-label="Filtrar catálogo" role="tablist" className="flex h-[18px] items-start gap-5 font-mono text-[15px] leading-4">
                   {[
                     { label: 'Todos os NFTs', value: undefined },
                     { label: 'Novos lançamentos', value: 'recent' as const },
@@ -338,26 +346,44 @@ function App() {
                         role="tab"
                         aria-selected={selected}
                         onClick={() => changeSort(tab.value)}
-                        className={`border-b-2 pb-2 transition-colors ${selected ? 'border-[#e69a55] font-bold text-[#e69a55]' : 'border-transparent text-[#b8aa9b] hover:text-[#f5f1eb]'}`}
+                        className={`h-[18px] border-b-2 pb-0 transition-colors ${selected ? 'border-[#E89B55] font-medium text-[#E89B55]' : 'border-transparent font-medium text-[#F5F1EB] hover:text-[#E89B55]'}`}
                       >
                         {tab.label}
                       </button>
                     )
                   })}
-                </nav>
-                <p id="catalog-title" className="mt-2 text-sm text-[#b8aa9b]" aria-live="polite">
-                  {data ? (data.total === 1 ? '1 item disponível' : data.total + ' itens disponíveis') : 'Carregando catálogo'}
-                </p>
+                  </nav>
+                  <p id="catalog-title" className="sr-only" aria-live="polite">
+                    {data ? (data.total === 1 ? '1 item disponível' : data.total + ' itens disponíveis') : 'Carregando catálogo'}
+                  </p>
+                </div>
+                <div className="relative h-[18px] w-[300px] shrink-0 font-mono text-[15px] leading-5 text-[#F5F1EB]">
+                  <label htmlFor="catalog-sort" className="absolute left-0 top-0 h-5 w-[109px] whitespace-nowrap font-normal">Ordenar por:</label>
+                  <div className="absolute left-[110px] top-0 h-5 w-[190px]">
+                    <select
+                      id="catalog-sort"
+                      value={search.sort ?? 'recent'}
+                      onChange={(event) => changeSort(event.target.value as NFTSort)}
+                      className="h-5 w-full appearance-none border-0 bg-transparent py-0 pl-0 pr-6 font-mono text-[15px] font-normal leading-5 text-[#F5F1EB] outline-none focus-visible:ring-2 focus-visible:ring-[#E89B55]"
+                    >
+                      <option value="recent">Listados recentemente</option>
+                      <option value="popular">Mais populares</option>
+                      <option value="price-low">Menor preço</option>
+                      <option value="price-high">Maior preço</option>
+                    </select>
+                    <svg aria-hidden="true" viewBox="0 0 16 16" className="pointer-events-none absolute left-[168px] top-[2px] size-4 fill-none stroke-[#F5F1EB] stroke-[1.5]"><path d="m4 6 4 4 4-4" /></svg>
+                  </div>
+                </div>
               </div>
-              <SearchForm key={search.search} value={search.search} onSearch={submitSearch} />
+              {searchOpen && <div className="mt-4 flex justify-end"><SearchForm key={search.search} value={search.search} onSearch={submitSearch} /></div>}
             </div>
 
             {isPending && (
-              <div aria-label="Carregando NFTs" className="grid grid-cols-1 gap-5 sm:grid-cols-[repeat(auto-fill,250px)]">
+              <div aria-label="Carregando NFTs" className="grid grid-cols-1 gap-x-8 gap-y-8 p-0 sm:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: PAGE_SIZE }, (_, index) => (
-                  <div key={index} className="animate-pulse overflow-hidden rounded-xl border border-[#49372b]">
-                    <div className="aspect-square bg-[#211511]" />
-                    <div className="space-y-3 p-4"><div className="h-4 w-2/3 rounded bg-[#211511]" /><div className="h-4 w-1/3 rounded bg-[#211511]" /></div>
+                  <div key={index} className="h-[350px] w-full animate-pulse">
+                    <div className="h-[300px] bg-[#241612]" />
+                    <div className="mt-3 space-y-2"><div className="h-4 w-2/3 bg-[#241612]" /><div className="h-4 w-1/3 bg-[#241612]" /></div>
                   </div>
                 ))}
               </div>
@@ -376,38 +402,68 @@ function App() {
 
             {data && data.items.length > 0 && (
               <>
-                <ul className="grid list-none grid-cols-1 gap-x-5 gap-y-8 p-0 sm:grid-cols-[repeat(auto-fill,250px)]">
+                <ul className="grid list-none grid-cols-1 gap-x-8 gap-y-8 p-0 sm:grid-cols-2 lg:grid-cols-3">
                   {data.items.map((nft) => (
-                    <li key={nft.id} className="overflow-hidden bg-[#1b1310] text-[#f5f1eb]">
+                    <li key={nft.id} className="flex w-full min-w-0 flex-col gap-3 text-[#F5F1EB]">
                       <Link
                         to="/nft/$nftId"
                         params={{ nftId: nft.id }}
                         search={search}
-                        className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e69a55]"
+                        className="group flex w-full flex-col gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#E89B55]"
                       >
-                        <img src={nft.imageUrl} alt={nft.name} className="aspect-square w-full object-cover transition-transform group-hover:scale-[1.02]" loading="lazy" />
-                        <div className="space-y-1 py-3">
-                          <h3 className="truncate font-mono text-sm">{nft.name}</h3>
-                          <p className="font-mono font-bold text-[#e69a55]">{nft.priceEth} ETH</p>
+                        <div className="relative h-[300px] w-full bg-[#241612]">
+                          <img
+                            src={nft.imageUrl}
+                            alt={nft.name}
+                            style={{
+                              width: `min(${nft.imageFrame?.width ?? 250}px, calc(100% - 8px))`,
+                              aspectRatio: `${nft.imageFrame?.width ?? 250} / ${nft.imageFrame?.height ?? 250}`,
+                              left: '50%',
+                              transform: 'translateX(-50%)',
+                              top: nft.imageFrame?.top ?? 24,
+                            }}
+                            className="absolute h-auto max-h-[286px] rounded-[15px] object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="flex min-h-[38px] flex-col gap-1.5 font-mono">
+                          <h3 className="min-h-4 break-words text-base font-normal leading-4">{nft.name}</h3>
+                          <div className="flex h-4 items-center gap-3">
+                            <p className="text-lg font-bold leading-4 text-[#E89B55]">{nft.priceEth} ETH</p>
+                            {nft.previousPriceEth && <p className="text-lg font-normal leading-4 text-[#B39463]">{nft.previousPriceEth} ETH</p>}
+                          </div>
                         </div>
                       </Link>
                     </li>
                   ))}
                 </ul>
-                {totalPages > 1 && (
-                  <nav aria-label="Paginação do catálogo" className="mt-8 flex items-center justify-center gap-4">
-                    <button disabled={search.page <= 1} onClick={() => changePage(search.page - 1)} className="rounded-md border border-[#49372b] px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40">Anterior</button>
-                    <span aria-live="polite" className="text-sm text-[#b8aa9b]">Página {search.page} de {totalPages}</span>
-                    <button disabled={search.page >= totalPages} onClick={() => changePage(search.page + 1)} className="rounded-md border border-[#49372b] px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40">Próxima</button>
-                  </nav>
-                )}
               </>
+            )}
+            {data && totalPages > 1 && (
+              <nav aria-label="Paginação do catálogo" className="mt-auto flex items-center justify-end gap-2 pt-[88px]">
+                {search.page > 1 && (
+                  <button type="button" aria-label="Página anterior" onClick={() => changePage(search.page - 1)} className="grid size-[35px] place-items-center rounded border border-[#3F2319] text-lg text-[#F5F1EB] hover:border-[#D28A4C]">‹</button>
+                )}
+                {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                  <button
+                    key={page}
+                    type="button"
+                    aria-label={`Página ${page}`}
+                    aria-current={search.page === page ? 'page' : undefined}
+                    onClick={() => changePage(page)}
+                    className={`grid size-[35px] place-items-center rounded border text-lg leading-4 ${search.page === page ? 'border-[#D28A4C] bg-[#D28A4C] font-bold text-[#140D0A]' : 'border-[#3F2319] font-normal text-[#F5F1EB] hover:border-[#D28A4C]'}`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button type="button" aria-label="Próxima página" disabled={search.page >= totalPages} onClick={() => changePage(search.page + 1)} className="grid size-[35px] place-items-center rounded border border-[#3F2319] hover:border-[#D28A4C] disabled:cursor-not-allowed disabled:opacity-40"><svg aria-hidden="true" viewBox="0 0 18 18" className="size-[18px] fill-none stroke-[#F5F1EB] stroke-[1.5]"><path d="m6 3.5 5.5 5.5L6 14.5" /></svg></button>
+              </nav>
             )}
           </div>
         </div>
       </section>
 
-      <section aria-label="Coleções em destaque" className="mt-16 grid grid-cols-1 gap-5 md:grid-cols-2">
+      <section aria-label="Coleções em destaque" className="grid grid-cols-1 gap-5 md:grid-cols-2">
         {featuredCollections.map((collection) => (
           <article key={collection.title} className="flex min-h-[220px] overflow-hidden bg-[#211511]">
             <img src={collection.image} alt="" className="w-1/2 object-cover" loading="lazy" />
@@ -420,7 +476,7 @@ function App() {
         ))}
       </section>
 
-      <section aria-labelledby="journal-title" className="mt-16 pb-12">
+      <section aria-labelledby="journal-title">
         <header className="mb-8 text-center font-mono">
           <h2 id="journal-title" className="text-3xl font-bold text-[#f5f1eb]">Diário da Cunhagem</h2>
           <p className="mt-3 text-sm text-[#b8aa9b]">Histórias, guias e insights para colecionadores sobre o universo da propriedade digital.</p>
@@ -461,7 +517,7 @@ function App() {
         </section>
 
         <div className="grid grid-cols-1 gap-4 bg-[#3b2412] px-6 py-5 text-xs sm:grid-cols-2 lg:grid-cols-4 lg:items-center lg:px-10">
-          <a href="#topo" aria-label="Kurio — início" className="inline-flex"><img src={kurioWordmark} alt="KURIO" className="h-5 w-20 object-contain object-left" /></a>
+          <a href="#topo" aria-label="Kurio — início" className="inline-flex items-center"><img src={kurioWordmark} alt="KURIO" className="h-7 w-[120px] object-contain object-left" /></a>
           <p>Feito para colecionadores,<br /> criadores e cultura</p>
           <a href="mailto:contato@email.com" className="hover:text-[#e69a55]">contato@email.com</a>
           <a href="tel:+551140028922" className="hover:text-[#e69a55]">+55 11 4002 8922</a>
