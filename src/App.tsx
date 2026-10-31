@@ -151,8 +151,8 @@ function App() {
   const totalPages = Math.ceil((data?.total ?? 0) / PAGE_SIZE)
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-7xl bg-[#110b08] px-5 py-8 text-left text-[#f5f1eb] sm:px-8 lg:px-12">
-      <header className="mb-16 flex items-center justify-between border-b border-[#49372b] pb-5 font-mono text-sm text-[#ead8c5]">
+    <main className="mx-auto min-h-screen w-full max-w-[1440px] bg-[#110b08] px-5 py-8 text-left text-[#f5f1eb] sm:px-8 lg:px-[120px]">
+      <header className="mb-8 flex items-center justify-between border-b border-[#49372b] pb-5 font-mono text-sm text-[#ead8c5]">
         <a href="/" aria-label="Kurio — início" className="inline-flex items-center">
           <img src={kurioWordmark} alt="KURIO" className="h-[22px] w-[100px] sm:h-[35px] sm:w-[160px]" />
         </a>
@@ -177,8 +177,8 @@ function App() {
         </nav>
       </header>
 
-      <section className="grid min-h-[520px] items-center gap-10 py-16 md:grid-cols-[1.2fr_0.8fr]">
-        <div className="max-w-2xl font-mono">
+      <section className="grid min-h-[450px] items-center gap-10 py-0 md:grid-cols-[1fr_0.8fr]">
+        <div className="max-w-2xl font-mono md:pl-10">
           <p className="mb-5 text-sm tracking-[0.16em] text-[#f5f1eb]">
             Bem-vindo à Kurio
           </p>
@@ -218,7 +218,7 @@ function App() {
       </section>
 
       <section id="catalogo" aria-labelledby="catalog-title" className="scroll-mt-8">
-        <div className="grid gap-8 lg:grid-cols-[310px_minmax(0,1fr)]">
+        <div className="grid gap-8 lg:grid-cols-[310px_minmax(0,1fr)] lg:gap-12">
           <aside aria-label="Filtros do catálogo" className="self-start bg-[#211511] p-5 font-mono sm:p-6">
             <h2 className="mb-5 text-xl font-bold text-[#f5f1eb]">Coleções</h2>
             <ul className="grid list-none grid-cols-2 gap-x-5 gap-y-1 p-0 lg:block">
