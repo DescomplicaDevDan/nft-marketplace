@@ -152,12 +152,12 @@ function App() {
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-[1440px] bg-[#110b08] px-5 py-8 text-left text-[#f5f1eb] sm:px-8 lg:px-[120px]">
-      <header className="mb-8 flex items-center justify-between border-b border-[#49372b] pb-5 font-mono text-sm text-[#ead8c5]">
+      <header className="mb-8 flex items-center justify-between border-b border-[#49372b] pb-5 font-mono text-sm text-[#ead8c5] md:grid md:grid-cols-[1fr_auto_1fr]">
         <a href="/" aria-label="Kurio — início" className="inline-flex items-center">
           <img src={kurioWordmark} alt="KURIO" className="h-[22px] w-[100px] sm:h-[35px] sm:w-[160px]" />
         </a>
 
-        <nav aria-label="Navegação principal" className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] sm:gap-x-8 sm:text-sm">
+        <nav aria-label="Navegação principal" className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] sm:gap-x-8 sm:text-sm md:col-start-2 md:justify-center">
           <a
             href="/"
             aria-current="page"
