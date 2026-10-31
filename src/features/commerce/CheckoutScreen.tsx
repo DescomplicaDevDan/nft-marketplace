@@ -61,9 +61,9 @@ export default function CheckoutScreen() {
             <label>Endereço da carteira<span>*</span><input name="walletAddress" placeholder="Endereço 0x da carteira" required /></label>
             <label className="checkout-secondary-wallet"><span className="sr-only">ENS ou carteira secundária</span><input name="secondaryWallet" placeholder="ENS ou carteira secundária (opcional)" /></label>
             <label>Tipo de carteira<span>*</span><select name="walletType" defaultValue="" required><option value="" disabled>Selecione uma carteira</option><option>MetaMask</option><option>WalletConnect</option><option>Coinbase Wallet</option></select></label>
-            <label>Código de indicação<input name="referral" /></label>
+            <label>Código de indicação<span>*</span><input name="referral" required /></label>
             <label>E-mail<span>*</span><input name="email" type="email" autoComplete="email" required /></label>
-            <label>Nome ENS<select name="ensSuffix" className="checkout-ens"><option>.eth</option><option>.crypto</option></select></label>
+            <label>Nome ENS<span>*</span><div className="checkout-ens-field"><select name="ensSuffix" className="checkout-ens" aria-label="Sufixo ENS"><option>.eth</option><option>.crypto</option></select><input name="ens" aria-label="Nome ENS" required /></div></label>
           </div>
           <label className="checkout-other"><input type="checkbox" checked={otherWallet} onChange={(event) => setOtherWallet(event.target.checked)} />Usar outra carteira?</label>
           {otherWallet && <label className="checkout-alternative">Outra carteira<input name="alternativeWallet" placeholder="Endereço da outra carteira" required /></label>}
