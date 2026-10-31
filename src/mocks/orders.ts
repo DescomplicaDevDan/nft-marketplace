@@ -3,6 +3,7 @@ import { readCommerce, writeCommerce, type CommerceDatabase, type StoredOrder } 
 import { quoteCart, quoteFailure } from './cart'
 import { sessionWalletConnection } from './wallets'
 import type { CreateOrder, Order } from '@/features/commerce/orderTypes'
+import { bumpInventory, publish, publishInventory } from './eventBus'
 
 function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`
@@ -30,6 +31,7 @@ function settle(state: CommerceDatabase, record: StoredOrder) {
       if (!cart.lines.length) delete cart.coupon
     }
   } else order.reason = 'Pagamento recusado pela carteira simulada. Seus itens foram preservados.'
+  bumpInventory(state, order.items.map((item) => item.id))
   return true
 }
 
@@ -37,8 +39,22 @@ function currentDatabase() {
   const state = readCommerce()
   let changed = false
   for (const record of Object.values(state.orders)) changed = settle(state, record) || changed
-  if (changed) writeCommerce(state)
+  if (changed) {
+    writeCommerce(state)
+    for (const record of Object.values(state.orders)) {
+      if (record.order.status === 'pending') continue
+      publish({ type: 'order.updated', data: { id: `order:${record.order.id}:${record.order.version}`, resourceId: record.order.id, version: record.order.version, userId: record.userId, payload: record.order } })
+    }
+    publishInventory(state, Object.keys(state.inventory))
+  }
   return state
+}
+
+export function resumePendingOrders() {
+  const state = currentDatabase()
+  for (const record of Object.values(state.orders)) {
+    if (record.order.status === 'pending') setTimeout(() => { try { currentDatabase() } catch { /* Retry through REST reconciliation. */ } }, Math.max(0, record.readyAt - Date.now()) + 10)
+  }
 }
 
 export function orderHandlers(userId: (request: Request) => string | undefined) {
@@ -81,7 +97,10 @@ export function orderHandlers(userId: (request: Request) => string | undefined) 
         }
         state.orders[id] = { userId: user, order, payload, readyAt: Date.now() + 2500, outcome: body.scenario === 'rejected' ? 'rejected' : 'confirmed' }
         state.keys[`${user}:${key}`] = id
+        bumpInventory(state, order.items.map((item) => item.id))
         writeCommerce(state)
+        publishInventory(state, order.items.map((item) => item.id))
+        publish({ type: 'order.updated', data: { id: `order:${id}:1`, resourceId: id, version: 1, userId: user, payload: order } })
         setTimeout(() => { try { currentDatabase() } catch { /* REST recovery retries persistence after a transient storage failure. */ } }, 2600)
         if (body.scenario === 'timeout') {
           await delay(10000)

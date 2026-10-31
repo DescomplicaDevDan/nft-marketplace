@@ -26,6 +26,7 @@ export interface CatalogSearch {
 }
 
 export interface NFT {
+  version?: number
   id: string
   name: string
   collection: string

@@ -7,5 +7,5 @@ export function inventoryNFTs(state: CommerceDatabase = readCommerce()) {
     if (record.order.status === 'rejected') continue
     for (const item of record.order.items) reserved.set(item.id, (reserved.get(item.id) ?? 0) + item.quantity)
   }
-  return nfts.map((nft) => ({ ...nft, available: Math.max(0, nft.available - (reserved.get(nft.id) ?? 0)) }))
+  return nfts.map((nft) => ({ ...nft, priceEth: state.inventory[nft.id]?.priceEth ?? nft.priceEth, version: state.inventory[nft.id]?.version ?? 1, available: Math.max(0, (state.inventory[nft.id]?.supply ?? nft.available) - (reserved.get(nft.id) ?? 0)) }))
 }
