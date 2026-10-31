@@ -2,11 +2,12 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import searchIcon from './assets/icons/Search Icon.svg'
 import cartIcon from './assets/icons/Cart Icon.svg'
-import userIcon from './assets/icons/User.svg'
+import loginIcon from './assets/icons/Logout.svg'
 import heroArtwork from './assets/img/Frame 136.png'
 import kurioWordmark from './assets/img/Logo.svg'
 import { useNFTs } from '@/features/catalog/api'
 import type { NFTNetwork } from '@/features/catalog/types'
+import { useCommerce } from '@/features/commerce/CommerceProvider'
 import { featuredCollections, footerGroups, footerHighlights, journalArticles, socialLinks } from '@/mocks/data/homeContent'
 
 const PAGE_SIZE = 9
@@ -115,6 +116,8 @@ function PriceRangeFilter({
 }
 
 function App() {
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)
+  const { cart } = useCommerce()
   const search = useSearch({ from: '/' })
   const navigate = useNavigate({ from: '/' })
   const { data, isPending, isError, refetch } = useNFTs({
@@ -174,7 +177,7 @@ function App() {
           <img src={kurioWordmark} alt="KURIO" className="h-[22px] w-[100px] sm:h-[35px] sm:w-[160px]" />
         </a>
 
-        <nav aria-label="Navegação principal" className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] sm:gap-x-10 sm:text-base md:col-start-2 md:translate-x-10 md:justify-center">
+        <nav aria-label="Navegação principal" className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] sm:gap-x-7 sm:text-base md:col-start-2 md:justify-center">
           <a
             href="/"
             aria-current="page"
@@ -194,9 +197,11 @@ function App() {
         </nav>
         <div className="hidden items-center justify-self-end gap-4 md:flex">
           <a href="#catalogo" aria-label="Buscar NFTs" className="rounded p-1 hover:bg-[#211511]"><img src={searchIcon} alt="" className="size-4" /></a>
-          <Link to="/cart" search={search} aria-label="Abrir carrinho" className="rounded p-1 hover:bg-[#211511]"><img src={cartIcon} alt="" className="size-4" /></Link>
-          <button type="button" title="Entrar em breve" className="rounded bg-[#e69a55] px-3 py-1 text-xs font-bold text-[#1b1310]">Entrar</button>
-          <span className="grid size-9 place-items-center rounded-full bg-[#f5f1eb]"><img src={userIcon} alt="Perfil" className="size-6" /></span>
+          <Link to="/cart" search={search} aria-label={`Abrir carrinho${cart.length === 6 ? ' com 6 itens' : ''}`} className="relative rounded p-1 hover:bg-[#211511]">
+            <img src={cartIcon} alt="" className="size-4" />
+            {cart.length === 6 && <span aria-hidden="true" className="absolute -right-1 -top-1 grid size-3.5 place-items-center rounded-full bg-[#e69a55] text-[8px] font-bold leading-none text-[#1b1310]">6</span>}
+          </Link>
+          <button type="button" title="Entrar em breve" className="inline-flex items-center gap-1 rounded bg-[#e69a55] px-2.5 py-1 text-xs font-bold text-[#1b1310]"><img src={loginIcon} alt="" className="size-3.5" />Entrar</button>
         </div>
       </header>
 
@@ -444,18 +449,19 @@ function App() {
               <p className="max-w-[220px] text-xs leading-5 text-[#b8aa9b]">{item.description}</p>
             </article>
           ))}
-          <form className="lg:pl-4" onSubmit={(event) => event.preventDefault()}>
+          <form className="lg:pl-4" onSubmit={(event) => { event.preventDefault(); setNewsletterSubmitted(true) }}>
             <label htmlFor="newsletter-email" className="mb-3 block text-sm font-bold leading-tight">Antecipe-se ao próximo lançamento</label>
             <div className="flex">
               <input id="newsletter-email" type="email" required placeholder="digite seu e-mail..." className="min-w-0 flex-1 rounded-l border border-[#49372b] bg-[#1b1310] px-3 py-2 text-xs outline-none placeholder:text-[#b8aa9b] focus-visible:ring-2 focus-visible:ring-[#e69a55]" />
               <button type="submit" className="rounded-r bg-[#d28a4c] px-3 text-xs font-bold text-[#1b1310]">Enviar</button>
             </div>
             <p className="mt-3 text-xs leading-5 text-[#b8aa9b]">Receba lançamentos selecionados, histórias de criadores e novidades do mercado.</p>
+            {newsletterSubmitted && <p role="status" className="mt-2 text-xs text-[#e69a55]">Inscrição de demonstração confirmada.</p>}
           </form>
         </section>
 
         <div className="grid grid-cols-1 gap-4 bg-[#3b2412] px-6 py-5 text-xs sm:grid-cols-2 lg:grid-cols-4 lg:items-center lg:px-10">
-          <a href="#topo" aria-label="Kurio — início" className="font-bold tracking-widest">KURIO</a>
+          <a href="#topo" aria-label="Kurio — início" className="inline-flex"><img src={kurioWordmark} alt="KURIO" className="h-5 w-20 object-contain object-left" /></a>
           <p>Feito para colecionadores,<br /> criadores e cultura</p>
           <a href="mailto:contato@email.com" className="hover:text-[#e69a55]">contato@email.com</a>
           <a href="tel:+551140028922" className="hover:text-[#e69a55]">+55 11 4002 8922</a>
