@@ -7,6 +7,7 @@ import { RouterProvider } from '@tanstack/react-router'
 import './index.css'
 import { router } from './router'
 import { CommerceProvider } from './features/commerce/CommerceProvider'
+import { RealtimeProvider } from './features/realtime/RealtimeProvider'
 
 async function startApp() {
   if (import.meta.env.DEV || import.meta.env.VITE_ENABLE_MOCKS === 'true') {
@@ -18,7 +19,7 @@ async function startApp() {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <CommerceProvider><RouterProvider router={router} /></CommerceProvider>
+          <CommerceProvider><RealtimeProvider><RouterProvider router={router} /></RealtimeProvider></CommerceProvider>
         </AuthProvider>
       </QueryClientProvider>
     </StrictMode>,

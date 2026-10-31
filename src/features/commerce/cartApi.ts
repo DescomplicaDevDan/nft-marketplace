@@ -98,7 +98,7 @@ export function useCartApi() {
 
   return {
     items: query.data?.items ?? [],
-    quote: query.data?.items.length && !quote.isError ? quote.data : undefined,
+    quote: query.data?.items.length && !quote.isError && quote.data?.cartVersion === query.data.version ? quote.data : undefined,
     quoteLoading: quote.isPending && !!query.data?.items.length,
     quoteError: quote.isError ? (isAxiosError<{ message: string }>(quote.error) ? quote.error.response?.data?.message ?? 'Não foi possível calcular o total.' : 'Não foi possível calcular o total.') : '',
     quoteBusy: quote.isFetching || couponMutation.isPending,

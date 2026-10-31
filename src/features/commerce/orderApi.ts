@@ -4,6 +4,7 @@ import { isAxiosError } from 'axios'
 import { api } from '@/lib/api'
 import { useAuth } from '@/features/auth/AuthProvider'
 import type { CreateOrder, Order, OrderFailure } from './orderTypes'
+import { useRealtime } from '@/features/realtime/context'
 
 type Attempt = { key: string; payload: CreateOrder; orderId?: string }
 const attemptKey = (userId: string) => `kurio-order-attempt:${userId}`
@@ -15,10 +16,11 @@ function readAttempt(userId: string): Attempt | null {
 }
 
 export function useOrders() {
+  const realtime = useRealtime()
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const handled = useRef('')
-  const query = useQuery({ queryKey: ['orders', user?.id], enabled: !!user, queryFn: async ({ signal }) => (await api.get<Order[]>('/orders', { signal })).data, retry: 1, refetchInterval: (query) => query.state.data?.some((order) => order.status === 'pending') ? 2000 : false })
+  const query = useQuery({ queryKey: ['orders', user?.id], enabled: !!user, queryFn: async ({ signal }) => (await api.get<Order[]>('/orders', { signal })).data, retry: 1, refetchInterval: (query) => !realtime.connected && query.state.data?.some((order) => order.status === 'pending') ? 2000 : false })
   useEffect(() => {
     const signature = query.data?.filter((order) => order.status !== 'pending').map((order) => `${order.id}:${order.version}`).join('|')
     if (!user || !signature || handled.current === signature) return
@@ -31,10 +33,11 @@ export function useOrders() {
 }
 
 export function useOrder(id: string) {
+  const realtime = useRealtime()
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const handled = useRef('')
-  const query = useQuery({ queryKey: ['order', user?.id, id], enabled: !!user, queryFn: async ({ signal }) => (await api.get<Order>(`/orders/${encodeURIComponent(id)}`, { signal })).data, retry: (count, error) => count < 1 && (!isAxiosError(error) || !error.response || error.response.status >= 500), refetchInterval: (query) => query.state.data?.status === 'pending' ? 2000 : false })
+  const query = useQuery({ queryKey: ['order', user?.id, id], enabled: !!user, queryFn: async ({ signal }) => (await api.get<Order>(`/orders/${encodeURIComponent(id)}`, { signal })).data, retry: (count, error) => count < 1 && (!isAxiosError(error) || !error.response || error.response.status >= 500), refetchInterval: (query) => !realtime.connected && query.state.data?.status === 'pending' ? 2000 : false })
   useEffect(() => {
     const order = query.data
     if (!user || !order || order.status === 'pending' || handled.current === `${order.id}:${order.version}`) return

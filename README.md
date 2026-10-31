@@ -2,7 +2,7 @@
 
 Frontend de um marketplace de NFTs desenvolvido para um desafio técnico. O objetivo é implementar descoberta de NFTs, compra simulada e área do colecionador com React e TypeScript.
 
-> Em desenvolvimento: as telas desktop estão montadas; catálogo, autenticação, favoritos, perfil, carteiras, carrinho, cotação, cupons e pedidos já usam a API simulada. Eventos Socket.IO, cenários adicionais, revisão mobile, testes e publicação ainda estão pendentes.
+> Em desenvolvimento: as telas desktop estão montadas; os fluxos usam a API simulada e recebem eventos Socket.IO. Cenários adicionais, revisão mobile, testes completos e publicação ainda estão pendentes.
 
 ## Links
 
@@ -156,7 +156,48 @@ Em “Resultado do pagamento (demonstração)”, escolha:
 - **Recusar pagamento:** pendente → recusado; preserva carrinho e valores anteriores.
 - **Demorar resposta e recuperar pedido:** o MSW demora 10 segundos para responder à criação, ultrapassando o timeout de 8 segundos do Axios. A chave é preservada e o resultado é consultado pela mesma solicitação.
 
-Pedidos pendentes são consultados a cada dois segundos, com recuperação após refresh e nova tentativa após falha. A integração Socket.IO substituirá essa dependência principal de consultas periódicas; as consultas REST continuarão disponíveis para reconciliação. Build/lint verificados; os testes completos e cenários de rede serão executados na revisão final solicitada.
+Pedidos recebem atualizações por Socket.IO. Quando a conexão em tempo real cai, os pendentes são consultados a cada dois segundos; ao reconectar, a API é consultada para recuperar o estado atual. Build/lint verificados; os testes completos e cenários de rede serão executados na revisão final solicitada.
+
+### Atualizações em tempo real
+
+O cliente `socket.io-client` se conecta ao endereço demonstrativo `https://kurio.local`, interceptado pelo MSW. Nenhum servidor externo é necessário. O cliente é importado depois de `worker.start()`, para utilizar o WebSocket interceptado. A extensão local `SocketIoExtension` usa a API de extensões do MSW 3 para negociar Engine.IO v4 e transportar eventos Socket.IO reais. O pacote `@mswjs/socket.io-binding@0.2.0` exige MSW 2 e não foi instalado. A extensão local atende ao escopo de eventos de texto no namespace padrão; namespaces adicionais, ACKs e dados binários não estão implementados. Referências: [WebSocket do MSW](https://mswjs.io/api/ws), [binding oficial](https://github.com/mswjs/socket.io-binding).
+
+| Evento | Efeito |
+| --- | --- |
+| `nft.updated` | Atualiza preço/estoque, invalida catálogo e favoritos; se estiver no carrinho, avisa e recalcula a cotação |
+| `order.updated` | Atualiza o pedido da conta, preservando estados terminais e reconciliando carrinho/recibo |
+| `ready` | Reconcilia catálogo, carrinho, cotação e pedidos pela API após conectar/reconectar |
+| `session.expired` | Revalida a sessão por REST e inicia o fluxo de novo login |
+
+Eventos incluem ID estável, ID do recurso e versão. O cliente descarta duplicados e versões antigas; pedidos confirmados/recusados não voltam a pendente. O backend publica eventos após persistir o estado usado pelos handlers REST. Mudanças de estoque incluem reservas de pedidos pendentes. Logout/troca de conta remove os listeners e desconecta o socket anterior; eventos privados só são enviados e aceitos para a conta autenticada. Atualizações entre abas também são propagadas pelo transporte simulado. O token na URL é restrito ao ambiente fictício interceptado; não representa uma estratégia de autenticação para produção.
+
+Para reproduzir os cenários no console, estando conectado:
+
+```javascript
+const headers = {
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${localStorage.getItem('kurio-session-token')}`,
+  'X-Guest-Cart': localStorage.getItem('kurio-guest-cart-id'),
+}
+
+// Mantenha este NFT no carrinho: muda o preço e envia depois um evento antigo.
+await fetch('/api/demo/nfts/nft-001', {
+  method: 'POST', headers,
+  body: JSON.stringify({ priceEth: '1.25', available: 2, delivery: 'out-of-order' }),
+})
+
+// Use delivery: 'duplicate' para repetir o mesmo evento, ou available: 0 para esgotar.
+// Simula cinco segundos de desconexão; a reconexão confere os dados pela API.
+await fetch('/api/demo/realtime/disconnect', {
+  method: 'POST', headers, body: JSON.stringify({ durationMs: 5000 }),
+})
+
+// Substitua ID_DO_PEDIDO por um pedido da conta: repete o estado atual e envia
+// um evento pendente antigo, que não deve desfazer uma confirmação/recusa.
+await fetch('/api/demo/orders/ID_DO_PEDIDO/events', { method: 'POST', headers })
+```
+
+As alterações de preço/estoque persistem no banco demonstrativo. O reset central de cenários será adicionado na próxima etapa. Nesta etapa foram feitas checagens isoladas no navegador de atualização de preço, recuperação de pedido após refresh, eventos antigos e reconexão com estoque esgotado. Elas não substituem a futura suíte Playwright versionada nem a revisão completa solicitada para o final.
 
 ### Comandos
 
@@ -169,11 +210,11 @@ Pedidos pendentes são consultados a cada dois segundos, com recuperação após
 
 ## Estado e próximos passos
 
-Catálogo, detalhe, favoritos, perfil, carteiras, carrinho, cotação e pedidos usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos e recibos são separados por conta e a confirmação depende da resposta do servidor simulado. Socket.IO está instalado, mas não integrado. Playwright, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
+Catálogo, detalhe, favoritos, perfil, carteiras, carrinho, cotação e pedidos usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos e recibos são separados por conta e a confirmação depende da resposta do servidor simulado. Socket.IO atualiza catálogo/carrinho e pedidos, com reconciliação por REST. A suíte Playwright versionada, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
 
-1. Integrar eventos Socket.IO simulados e cenários de reconciliação/falha.
-2. Padronizar cenários de falha e reset dos dados de demonstração.
-3. Completar uso efetivo dos componentes shadcn/ui.
+1. Padronizar cenários de falha e reset dos dados de demonstração.
+2. Completar uso efetivo dos componentes shadcn/ui.
+3. Revisar isolamento e recuperação em cenários de falha antes da revisão final.
 4. Revisar mobile e acessibilidade; adicionar testes Playwright, documentação de arquitetura e auditorias Lighthouse.
 5. Publicar a aplicação e registrar a URL.
 

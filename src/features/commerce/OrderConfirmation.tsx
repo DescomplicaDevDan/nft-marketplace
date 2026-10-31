@@ -17,7 +17,7 @@ export default function OrderConfirmation() {
         <Link to="/" search={search} hash="catalogo" aria-label="Fechar confirmação e voltar ao mercado" className="confirmation-close">×</Link>
         <header className="confirmation-heading">
           {order.status === 'confirmed' && <svg className="confirmation-icon" viewBox="0 0 72 82" aria-hidden="true"><g fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M8 35 36 12l28 23v42H8Z"/><path d="M13 43V11h46v32M8 77l28-30 28 30M8 35l19 20M64 35 45 55M29 11c2-7 12-7 14 0"/></g><text x="36" y="29" textAnchor="middle" fill="currentColor" fontSize="11" fontWeight="bold">THANK</text><text x="36" y="41" textAnchor="middle" fill="currentColor" fontSize="11" fontWeight="bold">YOU</text></svg>}
-          <h1 id="confirmation-title" role="status">{order.status === 'confirmed' ? 'Seu pedido foi confirmado' : order.status === 'rejected' ? 'Pagamento recusado' : 'Seu pedido está em processamento'}</h1>
+          <h1 id="confirmation-title" aria-live="polite">{order.status === 'confirmed' ? 'Seu pedido foi confirmado' : order.status === 'rejected' ? 'Pagamento recusado' : 'Seu pedido está em processamento'}</h1>
         </header>
         <dl className="confirmation-meta">
           <div><dt>ID do pedido</dt><dd title={order.id}>{order.id}</dd></div>
