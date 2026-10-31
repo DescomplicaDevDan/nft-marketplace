@@ -1,3 +1,4 @@
+import './SiteFooter.css'
 import { useState } from 'react'
 import kurioWordmark from '@/assets/img/Logo.svg'
 import { footerGroups, footerHighlights, socialLinks } from '@/mocks/data/homeContent'
@@ -6,9 +7,9 @@ export default function SiteFooter() {
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)
 
   return (
-    <section className="flex flex-col gap-3">
+    <section className="site-footer flex flex-col gap-3">
       <footer className="bg-[#241612] font-mono text-[#f5f1eb]">
-        <section aria-label="Benefícios e novidades" className="grid grid-cols-1 gap-6 px-6 py-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:px-10">
+        <section aria-label="Benefícios e novidades" className="site-footer-benefits grid grid-cols-1 gap-6 px-6 py-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:px-10">
           {footerHighlights.map((item) => (
             <article key={item.title} className="border-[#9b6031] lg:border-r lg:px-4 first:lg:pl-0">
               <span className="mb-3 grid size-16 place-items-center rounded-full bg-[#d28a4c] text-lg font-bold text-[#140d0a]">{item.icon}</span>
@@ -27,14 +28,14 @@ export default function SiteFooter() {
           </form>
         </section>
 
-        <div className="grid grid-cols-1 gap-4 bg-[#3b2412] px-6 py-5 text-xs sm:grid-cols-2 lg:grid-cols-4 lg:items-center lg:px-10">
+        <div className="site-footer-contact grid grid-cols-1 gap-4 bg-[#3b2412] px-6 py-5 text-xs sm:grid-cols-2 lg:grid-cols-4 lg:items-center lg:px-10">
           <a href="#topo" aria-label="Kurio — início" className="inline-flex"><img src={kurioWordmark} alt="KURIO" className="h-7 w-[120px] object-contain object-left" /></a>
           <p>Feito para colecionadores,<br />criadores e cultura</p>
           <a href="mailto:contato@email.com" className="hover:text-[#e89b55]">contato@email.com</a>
           <a href="tel:+551140028922" className="hover:text-[#e89b55]">+55 11 4002 8922</a>
         </div>
 
-        <section aria-label="Links do rodapé" className="grid grid-cols-1 gap-8 px-6 py-7 sm:grid-cols-2 lg:grid-cols-4 lg:px-10">
+        <section aria-label="Links do rodapé" className="site-footer-links grid grid-cols-1 gap-8 px-6 py-7 sm:grid-cols-2 lg:grid-cols-4 lg:px-10">
           {footerGroups.map((group) => (
             <nav key={group.title} aria-label={group.title}>
               <h2 className="mb-3 text-sm font-bold">{group.title}</h2>
@@ -45,7 +46,7 @@ export default function SiteFooter() {
           ))}
           <div>
             <h2 className="mb-3 text-sm font-bold">Redes sociais</h2>
-            <div className="mb-5 flex gap-2">
+            <div id="redes-sociais" className="mb-5 flex gap-2">
               {socialLinks.map((social) => <a key={social.name} href="#redes-sociais" aria-label={social.name} className="grid size-7 place-items-center rounded border border-[#9b6031] hover:bg-[#3b2412]"><img src={social.icon} alt="" className="size-4" /></a>)}
               <a href="#redes-sociais" aria-label="YouTube" className="grid size-7 place-items-center rounded border border-[#9b6031] text-xs text-[#d28a4c]">▶</a>
             </div>
