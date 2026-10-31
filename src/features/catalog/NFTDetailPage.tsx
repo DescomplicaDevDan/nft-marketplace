@@ -89,21 +89,21 @@ export default function NFTDetailPage() {
   const visibleRelatedItems = relatedItems.slice(relatedPage * 2, relatedPage * 2 + 5)
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-12 bg-[#140d0a] px-5 pt-6 pb-6 font-mono text-[#f5f1eb] sm:px-8 md:gap-24 min-[1440px]:px-[120px]">
+    <main className="nft-detail-page mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-12 bg-[#140d0a] px-5 pt-6 pb-6 font-mono text-[#f5f1eb] sm:px-8 md:gap-24 min-[1440px]:px-[120px]">
       {isPending && <p role="status" className="py-16 text-center text-[#b8aa9b]">Carregando NFT…</p>}
       {isError && <div role="alert" className="py-16 text-center"><h1 className="mb-3 text-2xl font-bold">NFT não encontrado</h1><Link to="/" search={search} className="text-[#e89b55] underline">Voltar ao catálogo</Link></div>}
 
       {nft && (
         <>
-          <section className="flex flex-col gap-8">
-            <header className="grid grid-cols-[1fr_auto_1fr] items-center border-b border-[#49372b] pb-2">
+          <section className="nft-detail-top flex flex-col gap-8">
+            <header className="nft-detail-header grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-b border-[#49372b] pb-2 lg:grid-cols-[1fr_auto_1fr]">
               <Link to="/" search={search} aria-label="Kurio — início" className="justify-self-start"><img src={kurioWordmark} alt="KURIO" className="h-[22px] w-[100px] sm:h-[35px] sm:w-[160px]" /></Link>
-              <nav aria-label="Navegação principal" className="flex items-center gap-7 text-sm">
+              <nav aria-label="Navegação principal" className="nft-detail-nav flex min-w-0 flex-wrap items-center justify-center gap-x-1 text-[9px] sm:gap-x-3 sm:text-xs lg:gap-7 lg:text-sm">
                 <Link to="/" search={search} className="text-[#ead8c5] hover:text-[#e89b55]">Início</Link>
                 <Link to="/" search={search} hash="catalogo" className="border-b-2 border-[#e89b55] py-2 font-bold text-[#e89b55]">Mercado</Link>
                 <span className="text-[#ead8c5]">Criadores</span><span className="text-[#ead8c5]">Aprenda</span>
               </nav>
-              <div className="flex items-center justify-self-end gap-4">
+              <div className="flex items-center justify-self-end gap-1 sm:gap-3 lg:gap-4">
                 <button type="button" aria-label="Buscar" className="p-1"><img src={searchIcon} alt="" className="size-4" /></button>
                 <Link to="/cart" search={search} aria-label="Abrir carrinho" className="relative p-1"><img src={cartIcon} alt="" className="size-4" />{cart.length === 6 && <span className="absolute -right-1 -top-1 grid size-3.5 place-items-center rounded-full bg-[#d28a4c] text-[8px] font-bold text-[#140d0a]">6</span>}</Link>
                 <button type="button" className="inline-flex items-center gap-1 rounded bg-[#d28a4c] px-2.5 py-1 text-xs font-bold text-[#140d0a]"><img src={loginIcon} alt="" className="size-3.5" />Entrar</button>
@@ -112,15 +112,15 @@ export default function NFTDetailPage() {
 
             <div className="space-y-4">
               <nav aria-label="Breadcrumb" className="text-sm"><Link to="/" search={search} className="hover:text-[#e89b55]">Início</Link><span className="px-2 text-[#b8aa9b]">/</span><Link to="/" search={search} hash="catalogo" className="hover:text-[#e89b55]">Mercado</Link></nav>
-              <div className="grid items-start gap-6 md:grid-cols-[72px_minmax(0,0.9fr)_minmax(0,1.1fr)] lg:grid-cols-[96px_450px_minmax(0,1fr)]">
-                <div className="order-2 flex gap-4 overflow-x-auto md:order-1 md:flex-col">
-                  {[0, 1, 2, 3].map((imageIndex) => <button key={imageIndex} type="button" onClick={() => setSelectedImage(imageIndex)} aria-label={`Ver imagem ${imageIndex + 1}`} aria-pressed={selectedImage === imageIndex} className={`size-24 flex-none overflow-hidden rounded-lg border p-1 md:size-[72px] lg:size-24 ${selectedImage === imageIndex ? 'border-[#e89b55]' : 'border-transparent'}`}><img src={nft.imageUrl} alt="" className="size-full rounded-md object-cover" /></button>)}
+              <div className="nft-detail-overview grid items-start gap-4 sm:gap-6 sm:grid-cols-[64px_minmax(0,0.9fr)_minmax(0,1.1fr)] lg:grid-cols-[96px_450px_minmax(0,1fr)]">
+                <div className="nft-detail-thumbnails order-2 flex gap-2 overflow-x-auto sm:order-1 sm:flex-col sm:gap-3 lg:gap-4">
+                  {[0, 1, 2, 3].map((imageIndex) => <button key={imageIndex} type="button" onClick={() => setSelectedImage(imageIndex)} aria-label={`Ver imagem ${imageIndex + 1}`} aria-pressed={selectedImage === imageIndex} className={`nft-detail-thumbnail size-14 flex-none overflow-hidden rounded-lg border p-1 sm:size-16 lg:size-24 ${selectedImage === imageIndex ? 'border-[#e89b55]' : 'border-transparent'}`}><img src={nft.imageUrl} alt="" className="size-full rounded-md object-cover" /></button>)}
                 </div>
-                <div className="relative order-1 flex aspect-square w-full min-h-0 items-center justify-center bg-[#241612] p-5 md:order-2">
+                <div className="nft-detail-artwork relative order-1 flex aspect-square w-full min-w-0 items-center justify-center bg-[#241612] p-4 sm:order-2 lg:p-5">
                   <img src={nft.imageUrl} alt={nft.name} className="size-full rounded-[20px] object-cover" />
                   <button type="button" aria-label="Ampliar imagem" onClick={() => setZoomOpen(true)} className="absolute right-5 top-5 grid size-8 place-items-center rounded-full bg-[#140d0a]/80"><img src={searchIcon} alt="" className="size-4" /></button>
                 </div>
-                <div className="order-3 min-w-0 space-y-3">
+                <div className="nft-detail-info order-3 min-w-0 space-y-3">
                   <h1 className="text-2xl font-bold leading-7">{nft.name}</h1>
                   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#49372b] pb-2">
                     <p className="text-xl font-bold text-[#e89b55]">{nft.priceEth} ETH</p>
@@ -138,7 +138,7 @@ export default function NFTDetailPage() {
             </div>
           </section>
 
-          <section aria-label="Informações do NFT">
+          <section className="nft-detail-description" aria-label="Informações do NFT">
             <div role="tablist" aria-label="Detalhes e avaliações" className="flex gap-8 border-b border-[#49372b] text-base">
               <button type="button" role="tab" aria-selected={activeTab === 'details'} onClick={() => setActiveTab('details')} className={`pb-2 ${activeTab === 'details' ? 'border-b-2 border-[#e89b55] font-bold text-[#e89b55]' : 'text-[#f5f1eb]'}`}>Detalhes do NFT</button>
               <button type="button" role="tab" aria-selected={activeTab === 'reviews'} onClick={() => setActiveTab('reviews')} className={`pb-2 ${activeTab === 'reviews' ? 'border-b-2 border-[#e89b55] font-bold text-[#e89b55]' : 'text-[#f5f1eb]'}`}>Avaliações de colecionadores (19)</button>
