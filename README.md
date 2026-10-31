@@ -245,6 +245,18 @@ location.reload()
 
 Checagens isoladas desta etapa: aplicação de `503`, acesso ao controle durante a falha, reset pelo painel e restauração do catálogo de 36 itens. Foram executadas em contexto de navegador isolado, preservando os dados de uso manual. A suíte E2E versionada e a revisão completa continuam pendentes.
 
+### Componentes shadcn/ui nos fluxos principais
+
+Os componentes locais em `src/components/ui` são usados nos formulários de login/cadastro, perfil, carteiras, cupom do carrinho e pagamento:
+
+- `Button`: ações de entrar/criar conta, salvar perfil/carteira, aplicar cupom e confirmar compra. A variante `kurio` usa as cores do layout; o tamanho `design` deixa as dimensões sob o CSS de cada tela.
+- `Input`: campos de texto, e-mail e senha; encaminha propriedades nativas, referências, rótulos, validação e estados de erro/desabilitado.
+- `Textarea`: observações do pagamento, incluindo limite de caracteres, persistência do rascunho e estados de foco.
+
+O diálogo de autenticação usa o elemento nativo `dialog`, com foco modal e fechamento por Escape. Seletores, rádio, checkbox e envio de avatar mantêm seus controles nativos. Os estilos das telas continuam definindo medidas, tipografia e cores dos componentes para acompanhar o Figma.
+
+Checagem isolada desta etapa: login funcional com os novos componentes, presença dos controles no perfil e preservação do seletor de avatar oculto. No login desktop, o campo continuou com 340 × 40 px e o botão com 340 × 46 px, mantendo cores, fonte e padding medidos antes da migração. A comparação visual completa das demais telas permanece para a revisão final. Build/lint passaram; permanecem avisos de Fast Refresh nos provedores e de tamanho do bundle.
+
 ### Comandos
 
 | Comando | Descrição |
@@ -258,10 +270,10 @@ Checagens isoladas desta etapa: aplicação de `503`, acesso ao controle durante
 
 Catálogo, detalhe, favoritos, perfil, carteiras, carrinho, cotação e pedidos usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos e recibos são separados por conta e a confirmação depende da resposta do servidor simulado. Socket.IO atualiza catálogo/carrinho e pedidos, com reconciliação por REST. A suíte Playwright versionada, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
 
-1. Aplicar componentes shadcn/ui também aos fluxos principais do produto.
-2. Revisar mobile, carregamento, acessibilidade e fidelidade visual.
-3. Revisar isolamento e recuperação em cenários de falha antes da revisão final.
-4. Revisar mobile e acessibilidade; adicionar testes Playwright, documentação de arquitetura e auditorias Lighthouse.
+1. Revisar mobile e fidelidade visual nos tamanhos 390, 768 e 1440 px.
+2. Completar shimmer de carregamento e acessibilidade.
+3. Versionar testes Playwright E2E/visuais, cobrindo isolamento, falhas e Socket.IO.
+4. Auditar Lighthouse, otimizar desempenho e documentar a arquitetura.
 5. Publicar a aplicação e registrar a URL.
 
 ## Escopo da simulação

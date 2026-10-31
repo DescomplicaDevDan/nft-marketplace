@@ -1,3 +1,5 @@
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { AuthButton, useAuth } from '@/features/auth/AuthProvider'
@@ -19,18 +21,18 @@ function WalletForm({ value, onSave, id }: { value: Wallet; onSave: (wallet: Wal
   }
   return <form id={id} className="wallet-form" onSubmit={submit}>
     <div className="profile-fields">
-      <label>Nome de exibição<span>*</span><input ref={firstInput} name="displayName" defaultValue={value.displayName} autoComplete="name" required /></label>
-      <label>Apelido da carteira<span>*</span><input name="alias" defaultValue={value.alias} required /></label>
+      <label>Nome de exibição<span>*</span><Input ref={firstInput} name="displayName" defaultValue={value.displayName} autoComplete="name" required /></label>
+      <label>Apelido da carteira<span>*</span><Input name="alias" defaultValue={value.alias} required /></label>
       <label>Rede<span>*</span><select name="network" defaultValue={value.network} required><option value="" disabled>Selecione uma rede</option><option>Ethereum</option><option>Polygon</option><option>Solana</option></select></label>
-      <label>Nome do perfil<span>*</span><input name="profileName" defaultValue={value.profileName} required /></label>
-      <label>Endereço da carteira<span>*</span><input name="address" defaultValue={value.address} placeholder="Endereço 0x da carteira" required /></label>
-      <label className="wallet-secondary-address"><span className="sr-only">ENS ou carteira secundária</span><input name="secondaryAddress" defaultValue={value.secondaryAddress} placeholder="ENS ou carteira secundária (opcional)" /></label>
+      <label>Nome do perfil<span>*</span><Input name="profileName" defaultValue={value.profileName} required /></label>
+      <label>Endereço da carteira<span>*</span><Input name="address" defaultValue={value.address} placeholder="Endereço 0x da carteira" required /></label>
+      <label className="wallet-secondary-address"><span className="sr-only">ENS ou carteira secundária</span><Input name="secondaryAddress" defaultValue={value.secondaryAddress} placeholder="ENS ou carteira secundária (opcional)" /></label>
       <label>Tipo de carteira<span>*</span><select name="type" defaultValue={value.type} required><option value="" disabled>Selecione uma carteira</option><option>MetaMask</option><option>WalletConnect</option><option>Coinbase Wallet</option></select></label>
-      <label>Código de indicação<span>*</span><input name="referral" defaultValue={value.referral} required /></label>
-      <label>E-mail<span>*</span><input name="email" type="email" defaultValue={value.email} autoComplete="email" required /></label>
-      <label>Nome ENS<span>*</span><div className="profile-ens"><select aria-label="Sufixo ENS"><option>.eth</option></select><input name="ens" defaultValue={value.ens} aria-label="Nome ENS" required /></div></label>
+      <label>Código de indicação<span>*</span><Input name="referral" defaultValue={value.referral} required /></label>
+      <label>E-mail<span>*</span><Input name="email" type="email" defaultValue={value.email} autoComplete="email" required /></label>
+      <label>Nome ENS<span>*</span><div className="profile-ens"><select aria-label="Sufixo ENS"><option>.eth</option></select><Input name="ens" defaultValue={value.ens} aria-label="Nome ENS" required /></div></label>
     </div>
-    <button className="profile-save wallet-save" type="submit">Salvar carteira</button>
+    <Button variant="kurio" size="design" className="profile-save wallet-save" type="submit">Salvar carteira</Button>
   </form>
 }
 

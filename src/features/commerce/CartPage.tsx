@@ -1,3 +1,5 @@
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { AuthButton } from '@/features/auth/AuthProvider'
 import { useState } from 'react'
 import { Link, useSearch } from '@tanstack/react-router'
@@ -73,7 +75,7 @@ export default function CartPage() {
             <h2 id="cart-summary-title">Resumo da carteira</h2>
             <form className="cart-promo" onSubmit={(event) => { event.preventDefault(); applyCoupon(promoCode) }}>
               <label htmlFor="cart-promo-code">Código promocional</label>
-              <div><input id="cart-promo-code" value={promoCode} onChange={(event) => setPromoCode(event.target.value)} aria-describedby={couponMessage ? 'cart-promo-message' : undefined} placeholder="Digite o código promocional..." disabled={cartBusy} /><button type="submit" disabled={cartBusy || quoteBusy}>Aplicar</button></div>
+              <div><Input id="cart-promo-code" value={promoCode} onChange={(event) => setPromoCode(event.target.value)} aria-describedby={couponMessage ? 'cart-promo-message' : undefined} placeholder="Digite o código promocional..." disabled={cartBusy} /><Button variant="kurio" size="design" type="submit" disabled={cartBusy || quoteBusy}>Aplicar</Button></div>
               {couponMessage && <p id="cart-promo-message" role="status">{couponMessage}</p>}
             </form>
             {quote?.coupon && <p className="cart-applied-coupon">{quote.coupon} <button type="button" disabled={cartBusy || quoteBusy} onClick={() => applyCoupon(null)}>Remover cupom</button></p>}

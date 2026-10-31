@@ -1,3 +1,5 @@
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Fragment, createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode, type FormEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
@@ -159,12 +161,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         <p className="auth-intro">{mode === 'register' ? 'Crie seu perfil de colecionador e conecte uma carteira quando quiser.' : 'Entre para gerenciar sua carteira, coleção e perfil de criador.'}</p>
         {sessionNotice && <p className="auth-message" role="status">{sessionNotice}</p>}
         <form ref={form} key={mode} onSubmit={submit} className="auth-form" onInput={() => { const confirmation = form.current?.elements.namedItem('confirmPassword') as HTMLInputElement | null; confirmation?.setCustomValidity(''); setMessage('') }}>
-          {mode === 'register' && <><label className="sr-only" htmlFor="register-username">Nome de usuário</label><input id="register-username" name="username" autoComplete="username" minLength={2} placeholder="Nome de usuário" required /></>}
+          {mode === 'register' && <><label className="sr-only" htmlFor="register-username">Nome de usuário</label><Input id="register-username" name="username" autoComplete="username" minLength={2} placeholder="Nome de usuário" required /></>}
           <label className="sr-only" htmlFor="login-email">E-mail</label>
-          <input id="login-email" name="email" type="email" autoComplete="email" placeholder={mode === 'register' ? 'Digite seu e-mail' : 'contato@email.com'} required />
-          <div className="auth-password"><label className="sr-only" htmlFor="login-password">Senha</label><input id="login-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'register' ? 'new-password' : 'current-password'} minLength={mode === 'register' ? 8 : undefined} placeholder="Senha" required /><button type="button" aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={showPassword} onClick={() => setShowPassword((current) => !current)}><img src={hideIcon} alt="" /></button></div>
-          {mode === 'register' ? <><label className="sr-only" htmlFor="register-confirm-password">Confirmar senha</label><input id="register-confirm-password" name="confirmPassword" type="password" autoComplete="new-password" placeholder="Confirmar senha" required /></> : <button type="button" className="auth-forgot" onClick={() => setMessage('A recuperação de senha não faz parte da autenticação simulada.')}>Esqueceu a senha?</button>}
-          <button type="submit" className="auth-submit" disabled={busy}>{busy ? 'Aguarde…' : mode === 'register' ? 'Criar conta' : 'Entrar'}</button>
+          <Input id="login-email" name="email" type="email" autoComplete="email" placeholder={mode === 'register' ? 'Digite seu e-mail' : 'contato@email.com'} required />
+          <div className="auth-password"><label className="sr-only" htmlFor="login-password">Senha</label><Input id="login-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'register' ? 'new-password' : 'current-password'} minLength={mode === 'register' ? 8 : undefined} placeholder="Senha" required /><button type="button" aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={showPassword} onClick={() => setShowPassword((current) => !current)}><img src={hideIcon} alt="" /></button></div>
+          {mode === 'register' ? <><label className="sr-only" htmlFor="register-confirm-password">Confirmar senha</label><Input id="register-confirm-password" name="confirmPassword" type="password" autoComplete="new-password" placeholder="Confirmar senha" required /></> : <button type="button" className="auth-forgot" onClick={() => setMessage('A recuperação de senha não faz parte da autenticação simulada.')}>Esqueceu a senha?</button>}
+          <Button variant="kurio" size="design" type="submit" className="auth-submit" disabled={busy}>{busy ? 'Aguarde…' : mode === 'register' ? 'Criar conta' : 'Entrar'}</Button>
         </form>
         <div className="auth-divider"><span>Ou continue com</span></div>
         <div className="auth-social">

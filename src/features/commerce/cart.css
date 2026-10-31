@@ -43,6 +43,7 @@
 .cart-promo label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 700; }
 .cart-promo > div { display: flex; }
 .cart-promo input { width: 0; flex: 1; min-width: 0; border: 1px solid #b39463; background: transparent; color: #f5f1eb; padding: 10px 6px; font: 10px 'Roboto Mono Variable', monospace; }
+.cart-promo input[data-slot="input"] { height: auto; border-radius: 0; }
 .cart-promo input::placeholder { color: #b39463; }
 .cart-promo button { border: 0; padding: 8px 18px; background: #d28a4c; color: #140d0a; font: 700 14px 'Roboto Mono Variable', monospace; cursor: pointer; }
 .cart-promo > p { margin-top: 8px; font-size: 12px; color: #e89b55; }
