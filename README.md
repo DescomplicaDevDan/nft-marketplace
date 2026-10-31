@@ -60,14 +60,14 @@ npm run preview
 
 ## Estado atual
 
-Já estão configurados o roteamento, os provedores do TanStack Query, o cliente Axios, o MSW com dados de exemplo, o Tailwind CSS e o shadcn/ui. A página inicial tem cabeçalho e hero baseados no frame desktop do Figma, além de um catálogo simulado com busca, paginação e filtros funcionais de categoria, preço e rede. As abas “Todos os NFTs”, “Novos lançamentos” e “Em alta” atualizam a ordenação. Esses parâmetros são mantidos na URL e aplicados pelo MSW. Os cards abrem uma página de detalhe por NFT, com dados carregados pelo ID; o retorno preserva os filtros do catálogo. Favoritos e carrinho funcionam localmente e persistem no navegador. Ainda falta validar responsividade e refinar a correspondência visual. Não há autenticação, checkout, pedidos, Socket.IO em uso, testes E2E, auditoria Lighthouse nem deploy.
+Já estão configurados o roteamento, os provedores do TanStack Query, o cliente Axios, o MSW com dados de exemplo, o Tailwind CSS e o shadcn/ui. A página inicial tem cabeçalho e hero baseados no frame desktop do Figma, além de um catálogo simulado com busca, paginação e filtros funcionais de categoria, preço e rede. As abas “Todos os NFTs”, “Novos lançamentos” e “Em alta” atualizam a ordenação. Esses parâmetros são mantidos na URL e aplicados pelo MSW. Os cards abrem uma página de detalhe por NFT; favoritos e carrinho funcionam localmente e persistem no navegador. O checkout gera pedidos simulados, limpa o carrinho e registra o histórico local, sem realizar pagamentos. Ainda falta validar responsividade e refinar a correspondência visual. Não há autenticação, Socket.IO em uso, testes E2E, auditoria Lighthouse nem deploy.
 
 A compilação (`npm run build`) passou após a configuração atual. O lint executa, com um aviso no componente de botão gerado pelo shadcn/ui.
 
 ## Próximas etapas
 
 1. Refinar a correspondência visual da página inicial desktop com o Figma e validar responsividade.
-2. Implementar sessão simulada e checkout com pedidos.
+2. Implementar sessão simulada.
 3. Integrar eventos Socket.IO simulados e cenários de falha.
 4. Adicionar testes Playwright, documentação de arquitetura e auditorias.
 5. Publicar a aplicação e registrar a URL.

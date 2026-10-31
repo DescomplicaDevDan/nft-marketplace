@@ -13,6 +13,7 @@ import {
 import App from './App'
 import NFTDetailPage from './features/catalog/NFTDetailPage'
 import { CartPage, FavoritesPage } from './features/commerce/SavedItemsPage'
+import { CheckoutPage, OrderConfirmationPage, OrdersPage } from './features/commerce/CheckoutPages'
 
 function validateCatalogSearch(search: Record<string, unknown>): CatalogSearch {
   const sort: NFTSort | undefined =
@@ -65,7 +66,36 @@ const favoritesRoute = createRoute({
   component: FavoritesPage,
 })
 
-const routeTree = rootRoute.addChildren([homeRoute, nftDetailRoute, cartRoute, favoritesRoute])
+const checkoutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/checkout',
+  validateSearch: validateCatalogSearch,
+  component: CheckoutPage,
+})
+
+const ordersRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/orders',
+  validateSearch: validateCatalogSearch,
+  component: OrdersPage,
+})
+
+const orderConfirmationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/orders/$orderId',
+  validateSearch: validateCatalogSearch,
+  component: OrderConfirmationPage,
+})
+
+const routeTree = rootRoute.addChildren([
+  homeRoute,
+  nftDetailRoute,
+  cartRoute,
+  favoritesRoute,
+  checkoutRoute,
+  ordersRoute,
+  orderConfirmationRoute,
+])
 
 export const router = createRouter({ routeTree })
 

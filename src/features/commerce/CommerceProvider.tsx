@@ -1,18 +1,28 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import type { NFT } from '@/features/catalog/types'
+
+export interface Order {
+  id: string
+  items: Array<Pick<NFT, 'id' | 'name' | 'collection' | 'priceEth' | 'imageUrl'>>
+  totalEth: string
+  createdAt: string
+}
 
 interface CommerceState {
   favorites: string[]
   cart: string[]
+  orders: Order[]
 }
 
 interface CommerceContextValue extends CommerceState {
   toggleFavorite: (id: string) => void
   addToCart: (id: string) => void
   removeFromCart: (id: string) => void
+  placeOrder: (order: Order) => void
 }
 
 const STORAGE_KEY = 'kurio-commerce'
-const emptyState: CommerceState = { favorites: [], cart: [] }
+const emptyState: CommerceState = { favorites: [], cart: [], orders: [] }
 const CommerceContext = createContext<CommerceContextValue | null>(null)
 
 function loadState(): CommerceState {
@@ -25,6 +35,7 @@ function loadState(): CommerceState {
     return {
       favorites: Array.isArray(value.favorites) ? value.favorites.filter((id): id is string => typeof id === 'string') : [],
       cart: Array.isArray(value.cart) ? value.cart.filter((id): id is string => typeof id === 'string') : [],
+      orders: Array.isArray(value.orders) ? value.orders as Order[] : [],
     }
   } catch {
     return emptyState
@@ -52,6 +63,11 @@ export function CommerceProvider({ children }: { children: ReactNode }) {
     removeFromCart: (id) => setState((current) => ({
       ...current,
       cart: current.cart.filter((item) => item !== id),
+    })),
+    placeOrder: (order) => setState((current) => ({
+      ...current,
+      cart: [],
+      orders: [order, ...current.orders],
     })),
   }
 

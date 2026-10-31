@@ -20,10 +20,16 @@ function StoredItemsPage({ mode, search }: { mode: Mode; search: CatalogSearch }
         <nav className="flex gap-5 font-mono text-sm">
           <Link to="/favorites" search={search} className={!isCart ? 'text-[#e69a55]' : 'text-[#b8aa9b]'}>Favoritos ({favorites.length})</Link>
           <Link to="/cart" search={search} className={isCart ? 'text-[#e69a55]' : 'text-[#b8aa9b]'}>Carrinho ({cart.length})</Link>
+          <Link to="/orders" search={search} className="text-[#b8aa9b] hover:text-[#e69a55]">Pedidos</Link>
         </nav>
       </header>
 
-      <h1 className="mb-8 font-mono text-3xl font-bold">{title}</h1>
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="font-mono text-3xl font-bold">{title}</h1>
+        {isCart && items.length > 0 && (
+          <Link to="/checkout" search={search} className="bg-[#e69a55] px-5 py-3 font-bold text-[#1b1310]">Finalizar pedido</Link>
+        )}
+      </div>
       {isPending && <p role="status" className="text-[#b8aa9b]">Carregando itens…</p>}
       {isError && <p role="alert" className="text-[#e69a55]">Não foi possível carregar seus itens.</p>}
       {!isPending && !isError && items.length === 0 && (
