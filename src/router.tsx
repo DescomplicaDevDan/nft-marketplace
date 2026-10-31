@@ -17,6 +17,7 @@ import NFTDetailPage from './features/catalog/NFTDetailPage'
 import { CartPage, FavoritesPage } from './features/commerce/SavedItemsPage'
 import { CheckoutPage, OrderConfirmationPage, OrdersPage } from './features/commerce/CheckoutPages'
 import { RequireAuthentication } from './features/auth/AuthProvider'
+import { SimulatedExplorer } from './features/commerce/OrderConfirmation'
 
 function validateCatalogSearch(search: Record<string, unknown>): CatalogSearch {
   const sort: NFTSort | undefined =
@@ -102,6 +103,7 @@ const profileRoute = createRoute({
 })
 
 const routeTree = rootRoute.addChildren([
+  createRoute({ getParentRoute: () => rootRoute, path: '/explorer/$orderId', validateSearch: validateCatalogSearch, component: () => <RequireAuthentication><SimulatedExplorer /></RequireAuthentication> }),
   createRoute({ getParentRoute: () => rootRoute, path: '/wallets', validateSearch: validateCatalogSearch, component: () => <RequireAuthentication><WalletsPage /></RequireAuthentication> }),
   profileRoute,
   homeRoute,

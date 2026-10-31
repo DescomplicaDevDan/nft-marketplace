@@ -2,7 +2,7 @@
 
 Frontend de um marketplace de NFTs desenvolvido para um desafio técnico. O objetivo é implementar descoberta de NFTs, compra simulada e área do colecionador com React e TypeScript.
 
-> Em desenvolvimento: as telas desktop estão montadas; catálogo, autenticação, favoritos, perfil, carteiras, carrinho, cotação e cupons já usam a API simulada. Pedidos ainda precisam ser integrados antes da revisão funcional e mobile.
+> Em desenvolvimento: as telas desktop estão montadas; catálogo, autenticação, favoritos, perfil, carteiras, carrinho, cotação, cupons e pedidos já usam a API simulada. Eventos Socket.IO, cenários adicionais, revisão mobile, testes e publicação ainda estão pendentes.
 
 ## Links
 
@@ -92,7 +92,7 @@ O carrinho usa `GET /api/cart`, `PUT /api/cart/items/:id` (adicionar ou definir 
 
 Ao carregar o carrinho autenticado, a API une os itens do visitante aos da conta, soma quantidades e ajusta ao estoque com aviso. A gravação e o esvaziamento do carrinho visitante ocorrem juntos, permitindo repetir a operação sem duplicar itens. A leitura autenticada repete essa operação idempotente para recuperar falhas de rede. Logout não transforma os itens privados em itens de visitante.
 
-A quantidade selecionada no detalhe é enviada ao carrinho. A API recusa quantidades inválidas ou acima do estoque. Alterações aguardam confirmação, bloqueiam cliques concorrentes e mostram falhas; a lista retorna todos os itens, sem o limite da primeira página do catálogo. O carrinho compartilhado antigo não é importado. O checkout lê itens e totais da API; a criação/confirmação de pedidos ainda é demonstrativa. Nesta etapa, a confirmação antiga não esvazia o carrinho da API; a remoção das quantidades compradas será responsabilidade da futura API de pedidos. Compilação verificada; testes completos seguem para a revisão final.
+A quantidade selecionada no detalhe é enviada ao carrinho. A API recusa quantidades inválidas ou acima do estoque. Alterações aguardam confirmação, bloqueiam cliques concorrentes e mostram falhas; a lista retorna todos os itens, sem o limite da primeira página do catálogo. O carrinho compartilhado antigo não é importado. O checkout lê itens e totais da API; pedidos confirmados removem apenas as quantidades compradas, preservando os itens restantes. Compilação verificada; testes completos seguem para a revisão final.
 
 ### Cotação e cupons
 
@@ -106,7 +106,7 @@ A quantidade selecionada no detalhe é enviada ao carrinho. A API recusa quantid
 | `EXPIRADO` | Erro de cupom expirado (`422`, `coupon_expired`) |
 | Qualquer outro | Erro de cupom inválido (`422`, `coupon_invalid`) |
 
-Exemplo: subtotal `1.19`, desconto `0.119`, taxa `0.016`, total `1.087 ETH`. Aplicações recusadas preservam o cupom e os totais anteriores. Estoque insuficiente bloqueia a cotação com `409`. A revalidação final com reconfirmação de mudanças e o processamento idempotente serão implementados junto à API de pedidos. Build verificado; testes completos ficam para a revisão final.
+Exemplo: subtotal `1.19`, desconto `0.119`, taxa `0.016`, total `1.087 ETH`. Aplicações recusadas preservam o cupom e os totais anteriores. Estoque insuficiente bloqueia a cotação com `409`. A API de pedidos revalida a cotação antes de aceitar a compra. Se mudar ou expirar, retorna os valores atualizados e exige uma nova confirmação. Build verificado; testes completos ficam para a revisão final.
 
 ### Conexão de carteira no pagamento
 
@@ -114,11 +114,34 @@ Em `/checkout`, “Carteira salva” permite escolher principal/secundária ou p
 
 `GET /api/wallet-connection` recupera a conexão da sessão, `POST /api/wallet-connection` valida e conecta, e `DELETE /api/wallet-connection` desconecta. O MSW valida formato de endereço, rede e provedor. Para uma carteira salva, confere também se os dados continuam iguais aos cadastrados. A conexão é simulada, sem extensões ou chamadas à blockchain. A API persiste a conexão por sessão; um novo login precisa conectar novamente. O cache usa `['walletConnection', userId]` e é limpo no logout.
 
-Para reproduzir a recusa, selecione “Resposta da carteira (demonstração) → Recusar conexão” e clique em Conectar carteira. A API retorna `403 / wallet_rejected`, encerra a conexão anterior da sessão e preserva carrinho, cupom e formulário. Para continuar, escolha Autorizar conexão e conecte. Desconectar bloqueia a confirmação; alterar endereço, rede ou provedor também exige uma conexão correspondente aos novos dados. Falhas de consulta permitem tentar novamente. A criação/confirmação de pedidos ainda será migrada para a API na próxima etapa.
+Para reproduzir a recusa, selecione “Resposta da carteira (demonstração) → Recusar conexão” e clique em Conectar carteira. A API retorna `403 / wallet_rejected`, encerra a conexão anterior da sessão e preserva carrinho, cupom e formulário. Para continuar, escolha Autorizar conexão e conecte. Desconectar bloqueia a confirmação; alterar endereço, rede ou provedor também exige uma conexão correspondente aos novos dados. Falhas de consulta permitem tentar novamente. A API de pedidos verifica novamente a conexão selecionada antes de criar a compra.
 
 Compilação e lint passaram nesta etapa; a revisão funcional completa permanece para o final. O build passou a emitir um aviso de tamanho do bundle, que será tratado na etapa de desempenho.
 
-### Scripts
+### Pedidos, recuperação e recibos
+
+| Recurso | Operação |
+| --- | --- |
+| `POST /api/orders` | Revalida cotação/conexão/dados e cria pedido pendente com cabeçalho `Idempotency-Key` |
+| `GET /api/orders` | Lista somente pedidos da conta autenticada |
+| `GET /api/orders/:id` | Recupera estado e recibo do pedido da conta |
+| `GET /api/orders/by-key/:key` | Recupera a mesma solicitação após timeout ou atualização da página |
+
+Mesma chave e mesmo payload retornam o mesmo pedido; payload diferente retorna `409 / idempotency_conflict`. Uma compra pendente impede outra criação simultânea pela mesma conta. O cliente guarda a chave e o payload da tentativa por usuário, bloqueia cliques concorrentes e não repete a criação automaticamente. O painel de recuperação permite verificar ou reenviar exatamente a mesma solicitação. Tentativas antigas do armazenamento compartilhado `kurio-commerce` não são importadas.
+
+O MSW reserva estoque ao aceitar um pedido pendente. Após aproximadamente 2,5 segundos, confirma ou recusa conforme o cenário selecionado. Estado do pedido, reserva e remoção das quantidades compradas são persistidos em uma única gravação do banco simulado. Consultas REST recuperam a transição caso a página tenha sido fechada antes do temporizador. Um estado terminal não volta para pendente. Na recusa, libera a reserva e mantém o carrinho. O catálogo e os detalhes consultam o estoque resultante das reservas e compras.
+
+O recibo guarda um snapshot de nomes, imagens, quantidades, preços, desconto, taxa, total e carteira; alterações posteriores no catálogo não recalculam pedidos existentes. A interface só exibe confirmação após receber `confirmed` da API. O explorador em `/explorer/:orderId` é local e identificado como simulado; a referência não aponta para uma transação real no Etherscan. Essa adaptação evita apresentar um pagamento fictício como transação real.
+
+Em “Resultado do pagamento (demonstração)”, escolha:
+
+- **Confirmar pagamento:** pendente → confirmado; remove apenas quantidades compradas.
+- **Recusar pagamento:** pendente → recusado; preserva carrinho e valores anteriores.
+- **Demorar resposta e recuperar pedido:** o MSW demora 10 segundos para responder à criação, ultrapassando o timeout de 8 segundos do Axios. A chave é preservada e o resultado é consultado pela mesma solicitação.
+
+Pedidos pendentes são consultados a cada dois segundos, com recuperação após refresh e nova tentativa após falha. A integração Socket.IO substituirá essa dependência principal de consultas periódicas; as consultas REST continuarão disponíveis para reconciliação. Build/lint verificados; os testes completos e cenários de rede serão executados na revisão final solicitada.
+
+### Comandos
 
 | Comando | Descrição |
 | --- | --- |
@@ -129,11 +152,11 @@ Compilação e lint passaram nesta etapa; a revisão funcional completa permanec
 
 ## Estado e próximos passos
 
-Catálogo, detalhe, favoritos, perfil, carteiras e carrinho usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos ainda usam armazenamento local e não estão isolados por conta. O checkout ainda não depende de uma confirmação de pedido do servidor simulado. Socket.IO está instalado, mas não integrado. Playwright, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
+Catálogo, detalhe, favoritos, perfil, carteiras, carrinho, cotação e pedidos usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos e recibos são separados por conta e a confirmação depende da resposta do servidor simulado. Socket.IO está instalado, mas não integrado. Playwright, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
 
-1. Implementar revalidação da cotação, pedidos idempotentes e estados de pagamento simulados.
-2. Completar cenários de expiração de sessão e recuperação dos fluxos privados.
-3. Integrar eventos Socket.IO simulados e cenários de reconciliação/falha.
+1. Completar cenários de expiração de sessão e recuperação dos fluxos privados.
+2. Integrar eventos Socket.IO simulados e cenários de reconciliação/falha.
+3. Padronizar cenários de falha, reset e uso efetivo dos componentes shadcn/ui.
 4. Revisar mobile e acessibilidade; adicionar testes Playwright, documentação de arquitetura e auditorias Lighthouse.
 5. Publicar a aplicação e registrar a URL.
 

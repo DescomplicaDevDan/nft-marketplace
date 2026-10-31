@@ -1,5 +1,5 @@
 import { AuthButton } from '@/features/auth/AuthProvider'
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import SiteFooter from '@/components/SiteFooter'
 import searchIcon from '@/assets/icons/Search Icon.svg'
@@ -8,13 +8,15 @@ import { useCommerce } from './CommerceProvider'
 import { blankWallet, useWallets, type Wallet } from '@/features/profile/walletApi'
 import { useProfile } from '@/features/profile/api'
 import { useWalletConnection } from './walletConnection'
+import { useCheckoutOrder } from './orderApi'
+import type { CreateOrder } from './orderTypes'
 import './cart.css'
 import './checkout.css'
 
 export default function CheckoutScreen() {
   const search = useSearch({ from: '/checkout' })
   const navigate = useNavigate({ from: '/checkout' })
-  const { cart, quantities, placeOrder, cartItems: items, cartLoading: isPending, cartError: isError, cartBusy, quote, quoteLoading, quoteBusy, quoteError, retryQuote } = useCommerce()
+  const { cart, quantities, cartItems: items, cartLoading: isPending, cartError: isError, cartBusy, quote, quoteLoading, quoteBusy, quoteError, retryQuote } = useCommerce()
   const [otherWallet, setOtherWallet] = useState(false)
   const [collector, setCollector] = useState({ ...blankWallet, type: 'Coinbase Wallet', username: '', ensSuffix: '.eth' })
   const [source, setSource] = useState<'manual' | 'primary' | 'secondary'>('manual')
@@ -23,7 +25,8 @@ export default function CheckoutScreen() {
   const savedWallets = useWallets()
   const profile = useProfile()
   const connection = useWalletConnection()
-  const [submitted, setSubmitted] = useState(false)
+  const orderRequest = useCheckoutOrder()
+  const [paymentScenario, setPaymentScenario] = useState<CreateOrder['scenario']>('confirmed')
   const address = (otherWallet ? alternativeAddress : collector.address).trim()
   const sameAddress = collector.network === 'Solana' ? connection.connection?.address === address : connection.connection?.address.toLowerCase() === address.toLowerCase()
   const connected = !!connection.connection && sameAddress && connection.connection.network === collector.network && connection.connection.provider === collector.type && !connection.error
@@ -43,13 +46,21 @@ export default function CheckoutScreen() {
     }
   }
 
-  function confirm(event: FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    if (orderRequest.recoveredOrder) void navigate({ to: '/orders/$orderId', params: { orderId: orderRequest.recoveredOrder.id }, search })
+  }, [orderRequest.recoveredOrder, navigate, search])
+
+  async function confirm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (submitted || !connected || connection.busy || cartBusy || isError || !quote || quoteBusy || quoteError || items.length === 0 || items.length !== cart.length) return
-    setSubmitted(true)
-    const id = `KURIO-${Date.now().toString(36).toUpperCase()}`
-    placeOrder({ id, createdAt: new Date().toISOString(), wallet: connection.connection!.provider, networkFeeEth: quote.networkFeeEth, discountEth: quote.discountEth, totalEth: quote.totalEth, items: quote.items.map((item) => ({ ...item, priceEth: item.lineTotalEth })) })
-    void navigate({ to: '/orders/$orderId', params: { orderId: id }, search })
+    if (orderRequest.busy || !connected || connection.busy || cartBusy || isError || !quote || quoteBusy || quoteError || items.length === 0 || items.length !== cart.length) return
+    const fields = new FormData(event.currentTarget)
+    const order = await orderRequest.create({
+      quoteId: quote.id, connectionId: connection.connection!.id,
+      wallet: { address: connection.connection!.address, network: collector.network, provider: collector.type },
+      collector: { displayName: collector.displayName, username: collector.username, email: collector.email, profileName: collector.profileName, referral: collector.referral, ens: `${collector.ens}${collector.ensSuffix}`, notes: String(fields.get('notes') ?? '') },
+      scenario: paymentScenario,
+    })
+    if (order) void navigate({ to: '/orders/$orderId', params: { orderId: order.id }, search })
   }
 
   return (
@@ -61,6 +72,8 @@ export default function CheckoutScreen() {
       </header>
       <nav aria-label="Breadcrumb" className="cart-breadcrumb"><Link to="/" search={search}>Início</Link><span>/</span><Link to="/" search={search} hash="catalogo">Mercado</Link><span>/</span><span aria-current="page">Pagamento</span></nav>
       <h1 className="sr-only">Pagamento</h1>
+      {orderRequest.message && <p role="status">{orderRequest.message}</p>}
+      {orderRequest.attempt && <section aria-label="Recuperar pedido" className="checkout-recovery"><p>Existe uma solicitação registrada. Verifique o resultado antes de iniciar outra compra.</p><button type="button" disabled={orderRequest.busy} onClick={orderRequest.recover}>Verificar pedido</button><button type="button" disabled={orderRequest.busy} onClick={() => { void orderRequest.retry().then((order) => { if (order) void navigate({ to: '/orders/$orderId', params: { orderId: order.id }, search }) }) }}>Reenviar a mesma solicitação</button></section>}
       {isPending && <p role="status">Carregando seus NFTs…</p>}
       {isError && <p role="alert">Não foi possível carregar o pedido. Volte ao carrinho e tente novamente.</p>}
       {!isPending && !isError && items.length === 0 && <div className="cart-empty">Seu carrinho está vazio. <Link to="/" search={search} hash="catalogo">Explorar NFTs</Link></div>}
@@ -108,7 +121,8 @@ export default function CheckoutScreen() {
             {connection.message && <p role="status">{connection.message}</p>}
             {connection.error && <p role="alert">Não foi possível verificar a conexão. <button type="button" onClick={connection.retry}>Tentar novamente</button></p>}
           </div>
-          <button className="checkout-confirm" type="submit" disabled={submitted || !connected || connection.busy || cartBusy || quoteBusy || !!quoteError || !quote || items.length !== cart.length}>Confirmar compra</button>
+          <label className="checkout-payment-scenario">Resultado do pagamento (demonstração)<select value={paymentScenario} onChange={(event) => setPaymentScenario(event.target.value as typeof paymentScenario)} disabled={orderRequest.busy}><option value="confirmed">Confirmar pagamento</option><option value="rejected">Recusar pagamento</option><option value="timeout">Demorar resposta e recuperar pedido</option></select></label>
+          <button className="checkout-confirm" type="submit" disabled={orderRequest.busy || !!orderRequest.attempt || !connected || connection.busy || cartBusy || quoteBusy || !!quoteError || !quote || items.length !== cart.length}>{orderRequest.busy ? 'Processando…' : 'Confirmar compra'}</button>
           <p className="checkout-demo">Compra demonstrativa, sem transferência de fundos.</p>
         </aside>
       </form>}
