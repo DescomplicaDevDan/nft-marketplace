@@ -328,7 +328,7 @@ function App() {
             </div>
 
             {isPending && (
-              <div aria-label="Carregando NFTs" className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              <div aria-label="Carregando NFTs" className="grid grid-cols-1 gap-10 sm:grid-cols-[repeat(auto-fill,250px)]">
                 {Array.from({ length: PAGE_SIZE }, (_, index) => (
                   <div key={index} className="animate-pulse overflow-hidden rounded-xl border border-[#49372b]">
                     <div className="aspect-square bg-[#211511]" />
@@ -351,7 +351,7 @@ function App() {
 
             {data && data.items.length > 0 && (
               <>
-                <ul className="grid list-none grid-cols-1 gap-5 p-0 sm:grid-cols-2 xl:grid-cols-3">
+                <ul className="grid list-none grid-cols-1 gap-10 p-0 sm:grid-cols-[repeat(auto-fill,250px)]">
                   {data.items.map((nft) => (
                     <li key={nft.id} className="overflow-hidden bg-[#1b1310] text-[#f5f1eb]">
                       <Link
