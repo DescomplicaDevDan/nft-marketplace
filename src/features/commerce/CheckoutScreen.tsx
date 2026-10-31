@@ -1,0 +1,88 @@
+import { useState, type FormEvent } from 'react'
+import { Link, useNavigate, useSearch } from '@tanstack/react-router'
+import { useNFTs } from '@/features/catalog/api'
+import SiteFooter from '@/components/SiteFooter'
+import searchIcon from '@/assets/icons/Search Icon.svg'
+import cartIcon from '@/assets/icons/Cart Icon.svg'
+import loginIcon from '@/assets/icons/Logout.svg'
+import { useCommerce } from './CommerceProvider'
+import './cart.css'
+import './checkout.css'
+
+function toWei(value: string) {
+  const [whole, fraction = ''] = value.split('.')
+  return BigInt(whole) * 10n ** 18n + BigInt(fraction.padEnd(18, '0'))
+}
+function eth(value: bigint) {
+  return `${value / 10n ** 18n}.${String(value % 10n ** 18n).padStart(18, '0').replace(/0+$/, '').padEnd(2, '0')}`
+}
+
+export default function CheckoutScreen() {
+  const search = useSearch({ from: '/checkout' })
+  const navigate = useNavigate({ from: '/checkout' })
+  const { cart, quantities, placeOrder } = useCommerce()
+  const { data, isPending, isError } = useNFTs({ page: 1, pageSize: 24 })
+  const [otherWallet, setOtherWallet] = useState(false)
+  const [wallet, setWallet] = useState('coinbase')
+  const [submitted, setSubmitted] = useState(false)
+  const items = data?.items.filter((item) => cart.includes(item.id)) ?? []
+  const subtotal = items.reduce((sum, item) => sum + toWei(item.priceEth) * BigInt(quantities[item.id] ?? 1), 0n)
+  const fee = toWei('0.016')
+
+  function confirm(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (submitted || items.length === 0 || items.length !== cart.length) return
+    setSubmitted(true)
+    const id = `KURIO-${Date.now().toString(36).toUpperCase()}`
+    placeOrder({ id, createdAt: new Date().toISOString(), totalEth: eth(subtotal + fee), items: items.map((item) => ({ ...item, priceEth: eth(toWei(item.priceEth) * BigInt(quantities[item.id] ?? 1)) })) })
+    void navigate({ to: '/orders/$orderId', params: { orderId: id }, search })
+  }
+
+  return (
+    <main id="topo" className="cart-page checkout-page">
+      <header className="cart-header">
+        <Link to="/" search={search} className="cart-wordmark">KURIO</Link>
+        <nav aria-label="Navegação principal"><Link to="/" search={search}>Início</Link><Link to="/" search={search} hash="catalogo" className="active">Mercado</Link><span>Criadores</span><span>Aprenda</span></nav>
+        <div className="cart-header-actions"><Link to="/" search={search} hash="catalogo" aria-label="Buscar"><img src={searchIcon} alt="" /></Link><Link to="/cart" search={search} aria-label="Carrinho"><img src={cartIcon} alt="" /></Link><button type="button"><img src={loginIcon} alt="" />Entrar</button></div>
+      </header>
+      <nav aria-label="Breadcrumb" className="cart-breadcrumb"><Link to="/" search={search}>Início</Link><span>/</span><Link to="/" search={search} hash="catalogo">Mercado</Link><span>/</span><span aria-current="page">Pagamento</span></nav>
+      <h1 className="sr-only">Pagamento</h1>
+      {isPending && <p role="status">Carregando seus NFTs…</p>}
+      {isError && <p role="alert">Não foi possível carregar o pedido. Volte ao carrinho e tente novamente.</p>}
+      {!isPending && !isError && items.length === 0 && <div className="cart-empty">Seu carrinho está vazio. <Link to="/" search={search} hash="catalogo">Explorar NFTs</Link></div>}
+      {items.length > 0 && <form className="checkout-layout" onSubmit={confirm}>
+        <section className="checkout-profile" aria-labelledby="collector-title">
+          <h2 id="collector-title">Perfil do colecionador</h2>
+          <div className="checkout-fields">
+            <label>Nome de exibição<span>*</span><input name="displayName" autoComplete="name" required /></label>
+            <label>Nome de usuário<span>*</span><input name="username" autoComplete="username" required /></label>
+            <label>Rede<span>*</span><select name="network" defaultValue="" required><option value="" disabled>Selecione uma rede</option><option>Ethereum</option><option>Polygon</option><option>Solana</option></select></label>
+            <label>Nome do perfil<span>*</span><input name="profileName" required /></label>
+            <label>Endereço da carteira<span>*</span><input name="walletAddress" placeholder="Endereço 0x da carteira" required /></label>
+            <label className="checkout-secondary-wallet"><span className="sr-only">ENS ou carteira secundária</span><input name="secondaryWallet" placeholder="ENS ou carteira secundária (opcional)" /></label>
+            <label>Tipo de carteira<span>*</span><select name="walletType" defaultValue="" required><option value="" disabled>Selecione uma carteira</option><option>MetaMask</option><option>WalletConnect</option><option>Coinbase Wallet</option></select></label>
+            <label>Código de indicação<input name="referral" /></label>
+            <label>E-mail<span>*</span><input name="email" type="email" autoComplete="email" required /></label>
+            <label>Nome ENS<select name="ensSuffix" className="checkout-ens"><option>.eth</option><option>.crypto</option></select></label>
+          </div>
+          <label className="checkout-other"><input type="checkbox" checked={otherWallet} onChange={(event) => setOtherWallet(event.target.checked)} />Usar outra carteira?</label>
+          {otherWallet && <label className="checkout-alternative">Outra carteira<input name="alternativeWallet" placeholder="Endereço da outra carteira" required /></label>}
+          <label className="checkout-notes">Observação do colecionador (opcional)<textarea name="notes" rows={6} /></label>
+        </section>
+        <aside className="checkout-order" aria-labelledby="checkout-order-title">
+          <h2 id="checkout-order-title">Seus NFTs</h2>
+          <div className="checkout-list-heading"><strong>NFTs</strong><span>Subtotal</span></div>
+          <ul className="checkout-items">{items.map((item) => <li key={item.id}><img src={item.imageUrl} alt="" /><div><strong>{item.name}</strong><small>ID do token: #{(item.name.match(/#(\d+)$/)?.[1] ?? '').padStart(4, '0')}</small></div><span className="checkout-item-quantity">(× {quantities[item.id] ?? 1})</span><b>{eth(toWei(item.priceEth) * BigInt(quantities[item.id] ?? 1))} ETH</b></li>)}</ul>
+          <Link to="/cart" search={search} className="checkout-promo-link">Tem um código promocional? Aplique aqui</Link>
+          <dl className="cart-summary-values"><div><dt>Subtotal</dt><dd>{eth(subtotal)} ETH</dd></div><div><dt>Desconto do lançamento</dt><dd>(−) 00.00</dd></div><div><dt>Taxa de rede</dt><dd>{eth(fee)} ETH</dd></div></dl>
+          <p className="cart-fee-note">Taxa estimada</p>
+          <div className="checkout-total"><strong>Total</strong><strong>{eth(subtotal + fee)} ETH</strong></div>
+          <fieldset className="checkout-wallets"><legend>Carteira e rede</legend>{[['walletconnect', 'METAMASK · WALLETCONNECT · COINBASE'], ['metamask', 'MetaMask'], ['coinbase', 'Coinbase Wallet']].map(([value, label]) => <label key={value} className={wallet === value ? 'selected' : ''}><input type="radio" name="paymentWallet" value={value} checked={wallet === value} onChange={() => setWallet(value)} />{label}</label>)}</fieldset>
+          <button className="checkout-confirm" type="submit" disabled={submitted || items.length !== cart.length}>Confirmar compra</button>
+          <p className="checkout-demo">Compra demonstrativa, sem transferência de fundos.</p>
+        </aside>
+      </form>}
+      <div className="cart-footer"><SiteFooter /></div>
+    </main>
+  )
+}

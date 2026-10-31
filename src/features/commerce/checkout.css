@@ -1,0 +1,41 @@
+.checkout-layout { display: grid; grid-template-columns: minmax(0, 760px) minmax(0, 1fr); gap: 32px; margin-top: 28px; }
+.checkout-layout h2 { margin: 0 0 12px; font-size: 16px; font-weight: 700; }
+.checkout-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; }
+.checkout-profile label { display: block; font-size: 14px; line-height: 20px; }
+.checkout-profile input:not([type="checkbox"]), .checkout-profile select { height: 40px; box-sizing: border-box; }
+.checkout-profile label > span:not(.sr-only) { color: #e48356; }
+.checkout-profile input:not([type="checkbox"]), .checkout-profile select, .checkout-profile textarea { display: block; width: 100%; min-width: 0; margin-top: 4px; padding: 9px 10px; border: 1px solid #3f2319; border-radius: 3px; background: #140d0a; color: #f5f1eb; font: 12px 'Roboto Mono Variable', monospace; }
+.checkout-profile input::placeholder, .checkout-profile select:invalid { color: #b39463; }
+.checkout-profile :is(input, select, textarea):focus-visible { outline: 1px solid #d28a4c; outline-offset: 2px; }
+.checkout-secondary-wallet { align-self: end; }
+.checkout-profile .checkout-ens { width: 78px; }
+.checkout-other { display: flex !important; align-items: center; gap: 8px; margin: 24px 0; }
+.checkout-other input, .checkout-wallets input { appearance: none; width: 16px; height: 16px; flex: 0 0 16px; margin: 0; border: 1px solid #d28a4c; border-radius: 50%; background: transparent; }
+.checkout-other input:checked, .checkout-wallets input:checked { background: #d28a4c; box-shadow: inset 0 0 0 3px #140d0a; }
+.checkout-other input:focus-visible, .checkout-wallets input:focus-visible { outline: 2px solid #e89b55; outline-offset: 3px; }
+.checkout-alternative { margin-bottom: 20px; }
+.checkout-notes { max-width: 350px; }
+.checkout-profile textarea { resize: vertical; min-height: 152px; margin-top: 8px; }
+.checkout-list-heading { display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid #49372b; }
+.checkout-items { list-style: none; margin: 12px 0; padding: 0; }
+.checkout-items li { display: flex; align-items: center; gap: 8px; background: #241612; margin-bottom: 12px; padding-right: 8px; }
+.checkout-items li > img { width: 70px; height: 70px; flex: 0 0 70px; object-fit: cover; border-radius: 5px; }
+.checkout-items li > div { min-width: 0; flex: 1; }
+.checkout-items strong { display: block; font-size: 13px; }
+.checkout-items small { display: block; font-size: 11px; color: #b39463; }
+.checkout-items b { color: #e89b55; font-size: 14px; white-space: nowrap; }
+.checkout-item-quantity { color: #cfb28c; font-size: 11px; white-space: nowrap; }
+.checkout-promo-link { display: block; text-align: center; font-size: 12px; margin: 12px 0; }
+.checkout-total { display: flex; justify-content: space-between; border-top: 1px solid #49372b; padding: 10px 40px; margin-top: 12px; }
+.checkout-total strong:last-child { color: #e89b55; }
+.checkout-wallets { border: 0; padding: 0; margin: 0; min-width: 0; }
+.checkout-wallets legend { text-align: center; font-weight: 700; margin-bottom: 14px; width: 100%; }
+.checkout-wallets label { display: flex; align-items: center; min-height: 44px; box-sizing: border-box; gap: 10px; border: 1px solid #3f2319; padding: 10px; margin-bottom: 16px; font-size: 12px; border-radius: 3px; cursor: pointer; }
+.checkout-wallets label:first-of-type { font-size: 8px; color: #e89b55; }
+.checkout-wallets .selected { border-color: #d28a4c; }
+.checkout-confirm { width: 100%; min-height: 44px; padding: 12px; border: 0; border-radius: 7px; background: #d28a4c; color: #140d0a; font: 700 13px 'Roboto Mono Variable', monospace; cursor: pointer; }
+.checkout-confirm:disabled { opacity: .5; }
+.checkout-demo { margin-top: 10px; font-size: 10px; color: #b39463; text-align: center; }
+@media (max-width: 1100px) { .checkout-layout { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 24px; } .checkout-items li { flex-wrap: wrap; padding-bottom: 6px; } }
+@media (max-width: 760px) { .checkout-layout { grid-template-columns: 1fr; gap: 40px; } }
+@media (max-width: 480px) { .checkout-fields { grid-template-columns: 1fr; } }

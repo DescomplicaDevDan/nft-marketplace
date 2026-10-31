@@ -21,9 +21,8 @@ function formatEth(value: bigint) {
 
 export default function CartPage() {
   const search = useSearch({ from: '/cart' })
-  const { cart, removeFromCart } = useCommerce()
+  const { cart, removeFromCart, quantities, setCartQuantity } = useCommerce()
   const { data, isPending, isError } = useNFTs({ page: 1, pageSize: 24 })
-  const [quantities, setQuantities] = useState<Record<string, number>>({})
   const [promoCode, setPromoCode] = useState('')
   const [promoMessage, setPromoMessage] = useState('')
   const [recommendationPage, setRecommendationPage] = useState(1)
@@ -33,7 +32,7 @@ export default function CartPage() {
   const networkFee = ethToWei('0.016')
 
   function changeQuantity(id: string, amount: number) {
-    setQuantities((current) => ({ ...current, [id]: Math.max(1, (current[id] ?? 1) + amount) }))
+    setCartQuantity(id, Math.max(1, (quantities[id] ?? 1) + amount))
   }
 
   return (

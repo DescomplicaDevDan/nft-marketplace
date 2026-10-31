@@ -9,12 +9,14 @@ export interface Order {
 }
 
 interface CommerceState {
+  quantities: Record<string, number>
   favorites: string[]
   cart: string[]
   orders: Order[]
 }
 
 interface CommerceContextValue extends CommerceState {
+  setCartQuantity: (id: string, quantity: number) => void
   toggleFavorite: (id: string) => void
   addToCart: (id: string) => void
   removeFromCart: (id: string) => void
@@ -22,7 +24,7 @@ interface CommerceContextValue extends CommerceState {
 }
 
 const STORAGE_KEY = 'kurio-commerce'
-const emptyState: CommerceState = { favorites: [], cart: [], orders: [] }
+const emptyState: CommerceState = { favorites: [], cart: [], orders: [], quantities: {} }
 const CommerceContext = createContext<CommerceContextValue | null>(null)
 
 function loadState(): CommerceState {
@@ -33,6 +35,7 @@ function loadState(): CommerceState {
     if (typeof parsed !== 'object' || parsed === null) return emptyState
     const value = parsed as Record<string, unknown>
     return {
+      quantities: typeof value.quantities === 'object' && value.quantities !== null ? Object.fromEntries(Object.entries(value.quantities).filter(([, quantity]) => typeof quantity === 'number' && Number.isSafeInteger(quantity) && quantity > 0)) : {},
       favorites: Array.isArray(value.favorites) ? value.favorites.filter((id): id is string => typeof id === 'string') : [],
       cart: Array.isArray(value.cart) ? value.cart.filter((id): id is string => typeof id === 'string') : [],
       orders: Array.isArray(value.orders) ? value.orders as Order[] : [],
@@ -51,6 +54,7 @@ export function CommerceProvider({ children }: { children: ReactNode }) {
 
   const value: CommerceContextValue = {
     ...state,
+    setCartQuantity: (id, quantity) => setState((current) => ({ ...current, quantities: { ...current.quantities, [id]: Math.max(1, Math.floor(quantity)) } })),
     toggleFavorite: (id) => setState((current) => ({
       ...current,
       favorites: current.favorites.includes(id)
