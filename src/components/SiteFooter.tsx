@@ -40,7 +40,7 @@ export default function SiteFooter() {
             <nav key={group.title} aria-label={group.title}>
               <h2 className="mb-3 text-sm font-bold">{group.title}</h2>
               <ul className="list-none space-y-2 p-0 text-xs text-[#d2c4b7]">
-                {group.links.map((label) => <li key={label}><a href="/#catalogo" className="hover:text-[#e89b55]">{label}</a></li>)}
+                {group.links.map((label) => <li key={label}><a href={label === 'Meu perfil' ? '/profile' : '/#catalogo'} className="hover:text-[#e89b55]">{label}</a></li>)}
               </ul>
             </nav>
           ))}

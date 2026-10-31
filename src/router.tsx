@@ -11,6 +11,7 @@ import {
   type NFTSort,
 } from './features/catalog/types'
 import App from './App'
+import ProfilePage from './features/profile/ProfilePage'
 import NFTDetailPage from './features/catalog/NFTDetailPage'
 import { CartPage, FavoritesPage } from './features/commerce/SavedItemsPage'
 import { CheckoutPage, OrderConfirmationPage, OrdersPage } from './features/commerce/CheckoutPages'
@@ -91,7 +92,15 @@ const orderConfirmationRoute = createRoute({
   component: OrderConfirmationPage,
 })
 
+const profileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/profile',
+  validateSearch: validateCatalogSearch,
+  component: ProfilePage,
+})
+
 const routeTree = rootRoute.addChildren([
+  profileRoute,
   homeRoute,
   nftDetailRoute,
   cartRoute,
