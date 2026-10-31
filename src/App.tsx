@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import searchIcon from './assets/icons/Search Icon.svg'
+import heroArtwork from './assets/img/Frame 136.png'
 import kurioWordmark from './assets/img/Logo.svg'
 import { useNFTs } from '@/features/catalog/api'
 import type { NFTNetwork } from '@/features/catalog/types'
@@ -170,7 +171,7 @@ function App() {
           <img src={kurioWordmark} alt="KURIO" className="h-[22px] w-[100px] sm:h-[35px] sm:w-[160px]" />
         </a>
 
-        <nav aria-label="Navegação principal" className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] sm:gap-x-8 sm:text-sm md:col-start-2 md:justify-center">
+        <nav aria-label="Navegação principal" className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] sm:gap-x-10 sm:text-base md:col-start-2 md:translate-x-20 md:justify-center">
           <a
             href="/"
             aria-current="page"
@@ -178,31 +179,31 @@ function App() {
           >
             Início
           </a>
-          <a href="#catalogo" className="py-1 text-[#b8aa9b] transition-colors hover:text-[#f5f1eb] sm:py-2">
+          <a href="#catalogo" className="py-1 text-[#ead8c5] transition-colors hover:text-[#f5f1eb] sm:py-2">
             Mercado
           </a>
-          <span aria-disabled="true" title="Área ainda não disponível" className="py-1 text-[#75685e] sm:py-2">
+          <span aria-disabled="true" title="Área ainda não disponível" className="py-1 text-[#ead8c5] sm:py-2">
             Criadores
           </span>
-          <span aria-disabled="true" title="Área ainda não disponível" className="py-1 text-[#75685e] sm:py-2">
+          <span aria-disabled="true" title="Área ainda não disponível" className="py-1 text-[#ead8c5] sm:py-2">
             Aprenda
           </span>
         </nav>
       </header>
 
-      <section className="grid min-h-[450px] items-center py-0 md:mb-[120px] md:grid-cols-[600px_120px]">
-        <div className="max-w-[560px] font-mono md:pl-10">
+      <section className="relative mt-8 grid min-h-[450px] items-start py-0 md:mb-[108px] md:grid-cols-[600px_450px] md:gap-[166px]">
+        <div className="w-full max-w-[600px] font-mono md:w-[600px] md:max-w-none md:translate-x-10 md:pt-10">
           <p className="mb-5 text-sm tracking-[0.16em] text-[#f5f1eb]">
             Bem-vindo à Kurio
           </p>
 
-          <h1 className="mb-4 text-[48px] font-bold uppercase leading-[1.5] tracking-normal text-[#f5f1eb]">
+          <h1 className="mb-2 text-[48px] font-bold uppercase leading-[1.5] tracking-normal text-[#f5f1eb]">
             Seja dono do futuro
             <br />
             da arte digital
           </h1>
 
-          <p className="mb-8 max-w-xl text-sm leading-6 text-[#b8aa9b] sm:text-base">
+          <p className="mb-12 max-w-[600px] text-sm leading-6 text-[#b8aa9b]">
             Descubra NFTs selecionados de criadores emergentes e consagrados.
             Colecione arte digital rara, apoie artistas e tenha uma parte da
             cultura da internet.
@@ -210,18 +211,21 @@ function App() {
 
           <a
             href="#catalogo"
-            className="inline-flex h-10 items-center rounded-md bg-[#e69a55] px-7 font-sans text-sm font-bold text-[#1b1310] hover:brightness-110"
+            className="mt-5 inline-flex h-10 items-center rounded-md bg-[#e69a55] px-7 font-sans text-sm font-bold text-[#1b1310] hover:brightness-110"
           >
             EXPLORAR
           </a>
         </div>
 
-        <div className="hidden self-stretch flex-col items-center justify-end gap-8 pb-2 md:-ml-10 md:flex">
-          <div aria-hidden="true" className="flex items-center justify-center gap-2">
-            <span className="size-2 rounded-full bg-[#e69a55]" />
-            <span className="size-2 rounded-full bg-[#e69a55]" />
-            <span className="size-2 rounded-full bg-[#e69a55]" />
-          </div>
+        <img
+          src={heroArtwork}
+          alt="NFT Emerald Ape com óculos e jaqueta verde"
+          className="hidden size-[450px] rounded-2xl object-cover md:block"
+        />
+        <div aria-hidden="true" className="absolute bottom-7 left-[615px] hidden items-center gap-2 md:flex">
+          <span className="size-2 rounded-full bg-[#e69a55]" />
+          <span className="size-2 rounded-full bg-[#e69a55]" />
+          <span className="size-2 rounded-full bg-[#e69a55]" />
         </div>
       </section>
 
