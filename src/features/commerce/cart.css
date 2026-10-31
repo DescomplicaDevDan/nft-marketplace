@@ -45,6 +45,8 @@
 .cart-page .cart-finalize { display: block; padding: 10px; text-align: center; background: #d28a4c; color: #140d0a; font-size: 13px; font-weight: 700; border-radius: 3px; }
 .cart-page .cart-continue { display: block; margin-top: 12px; text-align: center; color: #e89b55; font-size: 13px; }
 .cart-recommendations { margin-top: 96px; }
+.cart-footer { margin-top: 96px; }
+@media (max-width: 639px) { .cart-footer { margin-top: 48px; } }
 .cart-recommendations h2 { margin: 0 0 30px; padding-bottom: 8px; border-bottom: 1px solid #49372b; color: #e89b55; font-size: 16px; font-weight: 700; }
 .cart-recommendation-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px; }
 .cart-recommendation-card { display: block; min-width: 0; }

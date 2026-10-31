@@ -5,6 +5,7 @@ import searchIcon from '@/assets/icons/Search Icon.svg'
 import cartIcon from '@/assets/icons/Cart Icon.svg'
 import loginIcon from '@/assets/icons/Logout.svg'
 import { useCommerce } from './CommerceProvider'
+import SiteFooter from '@/components/SiteFooter'
 import './cart.css'
 
 function ethToWei(value: string) {
@@ -36,7 +37,7 @@ export default function CartPage() {
   }
 
   return (
-    <main className="cart-page">
+    <main id="topo" className="cart-page">
       <header className="cart-header">
         <Link to="/" search={search} className="cart-wordmark">KURIO</Link>
         <nav aria-label="Navegação principal">
@@ -121,6 +122,7 @@ export default function CartPage() {
           </nav>
         </section>
       )}
+      <div className="cart-footer"><SiteFooter /></div>
     </main>
   )
 }
