@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const form = useRef<HTMLFormElement>(null)
 
   const clearPrivate = useCallback(() => {
-    const predicate = (query: { queryKey: readonly unknown[] }) => !['session', 'nfts', 'nft'].includes(String(query.queryKey[0]))
+    const predicate = (query: { queryKey: readonly unknown[] }) => !['session', 'nfts', 'nft', 'demo'].includes(String(query.queryKey[0]))
     void queryClient.cancelQueries({ predicate })
     queryClient.removeQueries({ predicate })
   }, [queryClient])

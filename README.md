@@ -197,7 +197,53 @@ await fetch('/api/demo/realtime/disconnect', {
 await fetch('/api/demo/orders/ID_DO_PEDIDO/events', { method: 'POST', headers })
 ```
 
-As alterações de preço/estoque persistem no banco demonstrativo. O reset central de cenários será adicionado na próxima etapa. Nesta etapa foram feitas checagens isoladas no navegador de atualização de preço, recuperação de pedido após refresh, eventos antigos e reconexão com estoque esgotado. Elas não substituem a futura suíte Playwright versionada nem a revisão completa solicitada para o final.
+As alterações de preço/estoque persistem no banco demonstrativo e podem ser restauradas pelo painel `/demo`. Nesta etapa foram feitas checagens isoladas no navegador de atualização de preço, recuperação de pedido após refresh, eventos antigos e reconexão com estoque esgotado. Elas não substituem a futura suíte Playwright versionada nem a revisão completa solicitada para o final.
+
+### Painel de cenários e reset
+
+Acesse `/demo` no mesmo endereço da aplicação, por exemplo `http://localhost:5177/demo` (use a porta mostrada pelo Vite). O painel está habilitado em desenvolvimento e no build com `VITE_ENABLE_MOCKS=true`. Usa Axios/TanStack Query e o botão shadcn/ui já configurado. As falhas são implementadas pelos handlers MSW, sem respostas falsas em componentes, hooks ou interceptadores Axios.
+
+| Cenário | Comportamento |
+| --- | --- |
+| Normal | Executa os handlers habituais sem falhas adicionais |
+| Catálogo vazio | Retorna lista vazia, total zero e contagens zeradas |
+| Latência variável | Varia o atraso de forma reproduzível pela seed e pela ordem das requisições |
+| Respostas fora de ordem | Alterna respostas lentas e rápidas; faça duas buscas seguidas no catálogo |
+| Falha de rede | Retorna erro de rede antes de executar a operação |
+| Timeout | Aguarda 10 segundos e falha, ultrapassando os 8 segundos do Axios, sem executar a operação |
+| Erro temporário | Retorna `503 / transient_error` |
+| Validação | Retorna `400 / validation_error`, com mensagem e erros de formulário |
+| Sessão expirada | Revoga a sessão enviada e retorna `401`; por padrão é aplicado uma única vez |
+| Conflito de cadastro | Retorna `409 / signup_conflict` no cadastro |
+
+Defina o prefixo do caminho (por exemplo `/api/favorites`), método, atraso, probabilidade de aplicação de 0 a 1, seed e execução única. Reaplicar a configuração zera o contador e reproduz a mesma sequência para a mesma ordem de requisições. A probabilidade padrão é 1 e a seed padrão é 42. Consultas automáticas também contam quando correspondem ao caminho/método; restrinja o alvo para isolar uma operação. Para observar um erro persistente apesar de tentativas automáticas do TanStack Query, deixe execução única desmarcada.
+
+Os endpoints de controle `/api/demo/*` e login/logout continuam disponíveis durante os cenários de falha. “Restaurar dados iniciais” volta ao cenário normal, seed 42, catálogo de 36 NFTs e duas contas de demonstração; remove apenas as chaves do armazenamento pertencentes à simulação, inclusive novos cadastros, sessões, carteiras, favoritos, carrinhos, pedidos, estoque/preços alterados, tentativas e rascunhos. O painel recarrega a página para eliminar caches e versões de eventos anteriores. Recarregue outras abas após um reset. Nenhum arquivo do projeto é alterado por esse botão. A operação não é executada automaticamente ao iniciar a aplicação.
+
+Endpoints de automação:
+
+```javascript
+// Configurar um erro ao favoritar, para observar rollback (use DELETE para remoção).
+await fetch('/api/demo/scenario', {
+  method: 'PUT',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    scenario: 'server-error', pathPrefix: '/api/favorites', method: 'PUT',
+    seed: 42, delayMs: 600, failureRate: 1, once: false,
+  }),
+})
+
+// Consultar configuração, contador e se a execução única já foi consumida.
+await fetch('/api/demo/scenario').then((response) => response.json())
+
+// Restaurar fixtures; depois recarregue a página.
+await fetch('/api/demo/reset', { method: 'POST' })
+location.reload()
+```
+
+`POST /api/demo/reset` também aceita uma configuração parcial no corpo JSON para iniciar as fixtures já no cenário desejado. Para preço/estoque, eventos duplicados/antigos e desconexão, use os endpoints da seção de tempo real. Cupons inválidos/expirados e pagamento confirmado/recusado/timeout têm seus próprios controles, descritos acima. O timeout genérico interrompe antes da operação; o cenário de timeout do pagamento registra a compra e atrasa a resposta para exercitar a recuperação idempotente.
+
+Checagens isoladas desta etapa: aplicação de `503`, acesso ao controle durante a falha, reset pelo painel e restauração do catálogo de 36 itens. Foram executadas em contexto de navegador isolado, preservando os dados de uso manual. A suíte E2E versionada e a revisão completa continuam pendentes.
 
 ### Comandos
 
@@ -212,8 +258,8 @@ As alterações de preço/estoque persistem no banco demonstrativo. O reset cent
 
 Catálogo, detalhe, favoritos, perfil, carteiras, carrinho, cotação e pedidos usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos e recibos são separados por conta e a confirmação depende da resposta do servidor simulado. Socket.IO atualiza catálogo/carrinho e pedidos, com reconciliação por REST. A suíte Playwright versionada, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
 
-1. Padronizar cenários de falha e reset dos dados de demonstração.
-2. Completar uso efetivo dos componentes shadcn/ui.
+1. Aplicar componentes shadcn/ui também aos fluxos principais do produto.
+2. Revisar mobile, carregamento, acessibilidade e fidelidade visual.
 3. Revisar isolamento e recuperação em cenários de falha antes da revisão final.
 4. Revisar mobile e acessibilidade; adicionar testes Playwright, documentação de arquitetura e auditorias Lighthouse.
 5. Publicar a aplicação e registrar a URL.

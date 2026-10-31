@@ -20,6 +20,7 @@ import { RequireAuthentication } from './features/auth/AuthProvider'
 import { SimulatedExplorer } from './features/commerce/OrderConfirmation'
 import { queryClient } from './lib/queryClient'
 import { getSession } from './features/auth/api'
+import DemoPage from './features/demo/DemoPage'
 
 function validateCatalogSearch(search: Record<string, unknown>): CatalogSearch {
   const sort: NFTSort | undefined =
@@ -45,7 +46,8 @@ function validateCatalogSearch(search: Record<string, unknown>): CatalogSearch {
 }
 
 const rootRoute = createRootRoute({
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
+    if (location.pathname === '/demo') return
     // Validate navigation against the mock API; a network failure does not log the user out.
     try { await queryClient.fetchQuery({ queryKey: ['session'], queryFn: getSession, staleTime: 0, retry: false }) } catch { /* Private requests remain guarded by the server during an outage. */ }
   },
@@ -109,6 +111,7 @@ const profileRoute = createRoute({
 })
 
 const routeTree = rootRoute.addChildren([
+  createRoute({ getParentRoute: () => rootRoute, path: '/demo', validateSearch: validateCatalogSearch, component: DemoPage }),
   createRoute({ getParentRoute: () => rootRoute, path: '/explorer/$orderId', validateSearch: validateCatalogSearch, component: () => <RequireAuthentication><SimulatedExplorer /></RequireAuthentication> }),
   createRoute({ getParentRoute: () => rootRoute, path: '/wallets', validateSearch: validateCatalogSearch, component: () => <RequireAuthentication><WalletsPage /></RequireAuthentication> }),
   profileRoute,
