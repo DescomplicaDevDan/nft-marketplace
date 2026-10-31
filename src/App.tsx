@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
+import heroArtwork from './assets/img/Frame 136.png'
 import kurioWordmark from './assets/img/Logo.svg'
 import { useNFTs } from '@/features/catalog/api'
 import type { NFTNetwork } from '@/features/catalog/types'
@@ -202,10 +203,17 @@ function App() {
           </a>
         </div>
 
-        <div aria-hidden="true" className="hidden items-end justify-center gap-2 pb-2 md:flex">
-          <span className="size-2 rounded-full bg-[#e69a55]" />
-          <span className="size-2 rounded-full bg-[#e69a55]" />
-          <span className="size-2 rounded-full bg-[#e69a55]" />
+        <div className="hidden flex-col items-center gap-8 md:flex">
+          <img
+            src={heroArtwork}
+            alt="NFT Emerald Ape com óculos e jaqueta verde"
+            className="aspect-square w-full max-w-[450px] rounded-2xl object-cover"
+          />
+          <div aria-hidden="true" className="flex items-center justify-center gap-2">
+            <span className="size-2 rounded-full bg-[#e69a55]" />
+            <span className="size-2 rounded-full bg-[#e69a55]" />
+            <span className="size-2 rounded-full bg-[#e69a55]" />
+          </div>
         </div>
       </section>
 
