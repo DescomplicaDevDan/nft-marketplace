@@ -42,6 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const registerMutation = useMutation({ mutationFn: ({ username, email, password }: { username: string; email: string; password: string }) => register(username, email, password), onSuccess: completeSession })
   const [open, setOpen] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [message, setMessage] = useState('')
   const [sessionNotice, setSessionNotice] = useState('')
@@ -95,6 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setOpen(false)
     setMode('login')
     setShowPassword(false)
+    setShowConfirmPassword(false)
     setMessage('')
     form.current?.reset()
   }
@@ -129,6 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setMode(nextMode)
     setMessage('')
     setShowPassword(false)
+    setShowConfirmPassword(false)
   }
 
   async function signOut() {
@@ -156,8 +159,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider value={value}>
       {children}
       <dialog ref={dialog} className={`auth-dialog ${mode === 'register' ? 'auth-register' : ''}`} aria-labelledby="auth-title" onCancel={(event) => { event.preventDefault(); close() }} onClick={(event) => { if (event.target === event.currentTarget) { const bounds = event.currentTarget.getBoundingClientRect(); if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) close() } }}>
+        <div className="auth-mobile-brand" aria-hidden="true">KURIO</div>
         <button type="button" className="auth-close" aria-label="Fechar login" onClick={close}>×</button>
         <h2 id="auth-title" className="auth-tabs"><button type="button" aria-pressed={mode === 'login'} onClick={() => changeMode('login')}>Entrar</button><span aria-hidden="true">|</span><button type="button" aria-pressed={mode === 'register'} onClick={() => changeMode('register')}>Criar conta</button></h2>
+        <h2 className="auth-mobile-title" aria-hidden="true">{mode === 'register' ? 'Criar perfil de colecionador' : 'Entrar'}</h2>
         <p className="auth-intro">{mode === 'register' ? 'Crie seu perfil de colecionador e conecte uma carteira quando quiser.' : 'Entre para gerenciar sua carteira, coleção e perfil de criador.'}</p>
         {sessionNotice && <p className="auth-message" role="status">{sessionNotice}</p>}
         <form ref={form} key={mode} onSubmit={submit} className="auth-form" onInput={() => { const confirmation = form.current?.elements.namedItem('confirmPassword') as HTMLInputElement | null; confirmation?.setCustomValidity(''); setMessage('') }}>
@@ -165,8 +170,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           <label className="sr-only" htmlFor="login-email">E-mail</label>
           <Input id="login-email" name="email" type="email" autoComplete="email" placeholder={mode === 'register' ? 'Digite seu e-mail' : 'contato@email.com'} required />
           <div className="auth-password"><label className="sr-only" htmlFor="login-password">Senha</label><Input id="login-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'register' ? 'new-password' : 'current-password'} minLength={mode === 'register' ? 8 : undefined} placeholder="Senha" required /><button type="button" aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={showPassword} onClick={() => setShowPassword((current) => !current)}><img src={hideIcon} alt="" /></button></div>
-          {mode === 'register' ? <><label className="sr-only" htmlFor="register-confirm-password">Confirmar senha</label><Input id="register-confirm-password" name="confirmPassword" type="password" autoComplete="new-password" placeholder="Confirmar senha" required /></> : <button type="button" className="auth-forgot" onClick={() => setMessage('A recuperação de senha não faz parte da autenticação simulada.')}>Esqueceu a senha?</button>}
-          <Button variant="kurio" size="design" type="submit" className="auth-submit" disabled={busy}>{busy ? 'Aguarde…' : mode === 'register' ? 'Criar conta' : 'Entrar'}</Button>
+          {mode === 'register' ? <div className="auth-password"><label className="sr-only" htmlFor="register-confirm-password">Confirmar senha</label><Input id="register-confirm-password" name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} autoComplete="new-password" placeholder="Confirmar senha" required /><button type="button" aria-label={showConfirmPassword ? 'Ocultar confirmação de senha' : 'Mostrar confirmação de senha'} aria-pressed={showConfirmPassword} onClick={() => setShowConfirmPassword((current) => !current)}><img src={hideIcon} alt="" /></button></div> : <button type="button" className="auth-forgot" onClick={() => setMessage('A recuperação de senha não faz parte da autenticação simulada.')}>Esqueceu a senha?</button>}
+          <Button variant="kurio" size="design" type="submit" className="auth-submit" disabled={busy}>{busy ? 'Aguarde…' : mode === 'register' ? <><span className="auth-submit-desktop">Criar conta</span><span className="auth-submit-mobile">Criar perfil</span></> : 'Entrar'}</Button>
         </form>
         <div className="auth-divider"><span>Ou continue com</span></div>
         <div className="auth-social">
@@ -174,6 +179,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           <button type="button" onClick={() => setMessage('O login com Facebook não faz parte da autenticação simulada.')}><span className="auth-facebook" aria-hidden="true">f</span>Continuar com Facebook</button>
         </div>
         {message && <p className="auth-message" role="status">{message}</p>}
+        <p className="auth-mobile-switch">{mode === 'register' ? 'Já tem conta?' : 'Novo na Kurio?'} <button type="button" onClick={() => changeMode(mode === 'register' ? 'login' : 'register')}>{mode === 'register' ? 'Entrar' : 'Crie uma conta'}</button></p>
       </dialog>
     </AuthContext.Provider>
   )
