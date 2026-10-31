@@ -71,7 +71,7 @@ export default function ProfilePage() {
           <h2>Meu perfil</h2>
           <nav aria-label="Menu do perfil">
             <Link to="/profile" search={search} className="selected" aria-current="page"><span aria-hidden="true">♙</span>Dados do perfil</Link>
-            <button type="button" onClick={() => setMessage('A página de carteiras será adicionada na próxima etapa.')}><span aria-hidden="true">◎</span>Carteiras</button>
+            <Link to="/wallets" search={search}><span aria-hidden="true">◎</span>Carteiras</Link>
             <Link to="/orders" search={search}><span aria-hidden="true">♧</span>Atividade</Link>
             <Link to="/favorites" search={search}><span aria-hidden="true">♡</span>Lista de interesse</Link>
             {['Ofertas', 'Arquivos baixados', 'Suporte'].map((label) => <button key={label} type="button" onClick={() => setMessage(`${label}: área ainda não disponível.`)}><span aria-hidden="true">◇</span>{label}</button>)}

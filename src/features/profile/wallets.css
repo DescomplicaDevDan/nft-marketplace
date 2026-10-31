@@ -1,0 +1,16 @@
+.wallet-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.wallet-section-heading h1, .wallet-section-heading h2 { margin: 0; font-size: 16px; font-weight: 700; }
+.wallet-section-heading button { border: 0; padding: 0; background: none; color: #e89b55; font: 14px 'Roboto Mono Variable', monospace; cursor: pointer; }
+.wallet-description { color: #cfb28c; font-size: 12px; line-height: 20px; margin-top: 4px; }
+.wallet-form { margin-top: 32px; }
+.wallet-form .profile-fields { gap: 28px; }
+.wallet-form input:not([type="checkbox"]), .wallet-form select { margin-top: 4px; }
+.wallet-form input::placeholder, .wallet-form select:invalid { color: #b39463; font-size: 12px; }
+.wallet-secondary-address { align-self: end; }
+.wallet-save { margin-top: 32px; padding-inline: 8px; }
+.wallet-secondary-heading { margin-top: 28px; }
+.wallet-secondary-heading > div { display: flex; align-items: center; gap: 12px; }
+.wallet-secondary-heading label { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.wallet-secondary-heading input { appearance: none; width: 16px !important; height: 16px !important; margin: 0 !important; padding: 0 !important; border: 1px solid #d28a4c !important; border-radius: 50% !important; }
+.wallet-secondary-heading input:checked { background: #d28a4c !important; box-shadow: inset 0 0 0 3px #140d0a; }
+@media (max-width: 700px) { .wallet-secondary-heading { flex-wrap: wrap; } .wallet-secondary-heading > div { flex-wrap: wrap; } }

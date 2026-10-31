@@ -12,6 +12,7 @@ import {
 } from './features/catalog/types'
 import App from './App'
 import ProfilePage from './features/profile/ProfilePage'
+import WalletsPage from './features/profile/WalletsPage'
 import NFTDetailPage from './features/catalog/NFTDetailPage'
 import { CartPage, FavoritesPage } from './features/commerce/SavedItemsPage'
 import { CheckoutPage, OrderConfirmationPage, OrdersPage } from './features/commerce/CheckoutPages'
@@ -100,6 +101,7 @@ const profileRoute = createRoute({
 })
 
 const routeTree = rootRoute.addChildren([
+  createRoute({ getParentRoute: () => rootRoute, path: '/wallets', validateSearch: validateCatalogSearch, component: WalletsPage }),
   profileRoute,
   homeRoute,
   nftDetailRoute,
