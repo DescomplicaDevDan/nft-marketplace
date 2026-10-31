@@ -18,6 +18,8 @@ import { CartPage, FavoritesPage } from './features/commerce/SavedItemsPage'
 import { CheckoutPage, OrderConfirmationPage, OrdersPage } from './features/commerce/CheckoutPages'
 import { RequireAuthentication } from './features/auth/AuthProvider'
 import { SimulatedExplorer } from './features/commerce/OrderConfirmation'
+import { queryClient } from './lib/queryClient'
+import { getSession } from './features/auth/api'
 
 function validateCatalogSearch(search: Record<string, unknown>): CatalogSearch {
   const sort: NFTSort | undefined =
@@ -43,6 +45,10 @@ function validateCatalogSearch(search: Record<string, unknown>): CatalogSearch {
 }
 
 const rootRoute = createRootRoute({
+  beforeLoad: async () => {
+    // Validate navigation against the mock API; a network failure does not log the user out.
+    try { await queryClient.fetchQuery({ queryKey: ['session'], queryFn: getSession, staleTime: 0, retry: false }) } catch { /* Private requests remain guarded by the server during an outage. */ }
+  },
   component: Outlet,
 })
 

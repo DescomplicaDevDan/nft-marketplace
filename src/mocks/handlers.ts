@@ -8,7 +8,9 @@ import { orderHandlers } from './orders'
 import { inventoryNFTs } from './inventory'
 
 type MockUser = { id: string; username: string; email: string; passwordHash: string; profile?: CollectorProfile }
-type MockAuthState = { users: MockUser[]; sessions: Record<string, string> }
+type MockSession = { userId: string; expiresAt: number }
+type MockAuthState = { users: MockUser[]; sessions: Record<string, MockSession | string> }
+const SESSION_TTL = 30 * 60 * 1000
 const AUTH_DB_KEY = 'kurio-auth-mock-db'
 const demoAuthState: MockAuthState = {
   users: [
@@ -45,7 +47,8 @@ function publicUser(user: MockUser) {
 
 function sessionUser(request: Request, state: MockAuthState) {
   const token = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-  const id = token ? state.sessions[token] : undefined
+  const session = token ? state.sessions[token] : undefined
+  const id = session && typeof session === 'object' && session.expiresAt > Date.now() ? session.userId : undefined
   return state.users.find((user) => user.id === id)
 }
 
@@ -67,6 +70,15 @@ function ethToWei(value: string): bigint {
 }
 
 export const handlers = [
+  http.post('/api/auth/expire', ({ request }) => {
+    const state = readAuthState()
+    const user = sessionUser(request, state)
+    if (!user) return HttpResponse.json({ message: 'Sua sessão já expirou.' }, { status: 401 })
+    const token = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? ''
+    state.sessions[token] = { userId: user.id, expiresAt: Date.now() - 1 }
+    writeAuthState(state)
+    return new HttpResponse(null, { status: 204 })
+  }),
   ...orderHandlers((request) => sessionUser(request, readAuthState())?.id),
   ...cartHandlers((request) => sessionUser(request, readAuthState())?.id),
   ...walletHandlers((request) => sessionUser(request, readAuthState())?.id),
@@ -147,7 +159,7 @@ export const handlers = [
     const user: MockUser = { id: `user-${crypto.randomUUID()}`, username, email, passwordHash: await passwordHash(password) }
     const token = crypto.randomUUID()
     state.users.push(user)
-    state.sessions[token] = user.id
+    state.sessions[token] = { userId: user.id, expiresAt: Date.now() + SESSION_TTL }
     writeAuthState(state)
     return HttpResponse.json({ user: publicUser(user), token }, { status: 201 })
   }),
@@ -160,7 +172,7 @@ export const handlers = [
     const user = state.users.find((item) => item.email === email && item.passwordHash === hash)
     if (!user) return HttpResponse.json({ message: 'E-mail ou senha incorretos.' }, { status: 401 })
     const token = crypto.randomUUID()
-    state.sessions[token] = user.id
+    state.sessions[token] = { userId: user.id, expiresAt: Date.now() + SESSION_TTL }
     writeAuthState(state)
     return HttpResponse.json({ user: publicUser(user), token })
   }),

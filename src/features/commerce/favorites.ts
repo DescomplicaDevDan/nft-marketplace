@@ -23,9 +23,10 @@ export function useFavoriteActions() {
   const locked = useRef(false)
   const [message, setMessage] = useState('')
   const mutation = useMutation({
-    mutationFn: async ({ id, add }: { id: string; add: boolean; userId: string }) => {
-      if (add) await api.put(`/favorites/${encodeURIComponent(id)}`)
-      else await api.delete(`/favorites/${encodeURIComponent(id)}`)
+    mutationFn: async ({ id, add, token }: { id: string; add: boolean; userId: string; token: string }) => {
+      const config = { headers: { Authorization: `Bearer ${token}` } }
+      if (add) await api.put(`/favorites/${encodeURIComponent(id)}`, {}, config)
+      else await api.delete(`/favorites/${encodeURIComponent(id)}`, config)
     },
     retry: false,
     onMutate: async ({ id, add, userId }) => {
@@ -57,7 +58,7 @@ export function useFavoriteActions() {
       if (!user) { openLogin(); return }
       if (locked.current || !collection.isSuccess) return
       locked.current = true
-      mutation.mutate({ id, add: !collection.data.ids.includes(id), userId: user.id })
+      mutation.mutate({ id, add: !collection.data.ids.includes(id), userId: user.id, token: localStorage.getItem('kurio-session-token') ?? '' })
     },
   }
 }

@@ -60,6 +60,23 @@ O cadastro também cria uma conta simulada. Sessão, cadastro e login usam `POST
 
 Favoritos, checkout, pedidos, perfil e carteiras pedem login. Se a pessoa tentar abrir uma dessas rotas sem sessão, o modal de login aparece e, após autenticar, ela continua na rota solicitada.
 
+### Expiração e retorno ao fluxo
+
+A sessão simulada dura 30 minutos. O MSW verifica sua validade em todas as operações privadas; o cliente valida a sessão antes das navegações, a cada 30 segundos e ao recuperar o foco da janela. Uma resposta `401` da sessão atual remove o token, cancela consultas privadas, limpa seus caches e solicita novo login nas áreas protegidas. Erros de rede não são tratados como logout. Uma resposta atrasada de um token antigo não encerra uma sessão nova. Login, logout e troca de conta em outra aba sincronizam o estado pela mudança do token no navegador.
+
+A rota e seus parâmetros permanecem no endereço durante a expiração. No pagamento, os campos, a carteira selecionada, o endereço alternativo e as observações são mantidos em `sessionStorage`, separados por usuário e por aba. Ao entrar novamente na mesma conta, o formulário é restaurado e uma nova conexão de carteira é exigida. Outra conta recebe apenas seu próprio rascunho. Sair voluntariamente apaga o rascunho daquela conta na aba; uma solicitação de pedido pendente continua recuperável pela chave de idempotência. Senhas não fazem parte do rascunho. O armazenamento da aba precisa estar disponível para essa recuperação.
+
+Para reproduzir a expiração sem aguardar 30 minutos, estando conectado, execute no console do navegador:
+
+```javascript
+await fetch('/api/auth/expire', {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${localStorage.getItem('kurio-session-token')}` },
+})
+```
+
+Depois navegue para uma área privada, tente conectar a carteira no pagamento ou aguarde a validação periódica. O login será solicitado. Ao entrar na mesma conta, a rota e o rascunho serão recuperados. A cotação será consultada novamente; não há envio automático de compra após autenticar. Sessões emitidas pela versão antiga, sem data de expiração, exigem um novo login após esta atualização. A checagem funcional completa será feita na revisão final.
+
 ## Comandos
 
 ### Favoritos por usuário
@@ -154,9 +171,9 @@ Pedidos pendentes são consultados a cada dois segundos, com recuperação após
 
 Catálogo, detalhe, favoritos, perfil, carteiras, carrinho, cotação e pedidos usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos e recibos são separados por conta e a confirmação depende da resposta do servidor simulado. Socket.IO está instalado, mas não integrado. Playwright, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
 
-1. Completar cenários de expiração de sessão e recuperação dos fluxos privados.
-2. Integrar eventos Socket.IO simulados e cenários de reconciliação/falha.
-3. Padronizar cenários de falha, reset e uso efetivo dos componentes shadcn/ui.
+1. Integrar eventos Socket.IO simulados e cenários de reconciliação/falha.
+2. Padronizar cenários de falha e reset dos dados de demonstração.
+3. Completar uso efetivo dos componentes shadcn/ui.
 4. Revisar mobile e acessibilidade; adicionar testes Playwright, documentação de arquitetura e auditorias Lighthouse.
 5. Publicar a aplicação e registrar a URL.
 

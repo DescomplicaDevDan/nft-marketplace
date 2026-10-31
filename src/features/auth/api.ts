@@ -1,4 +1,5 @@
 import { api } from '@/lib/api'
+import { isAxiosError } from 'axios'
 
 export type SessionUser = {
   id: string
@@ -23,13 +24,17 @@ export async function register(username: string, email: string, password: string
 }
 
 export async function getSession(): Promise<SessionUser | null> {
-  if (!localStorage.getItem(TOKEN_KEY)) return null
+  const token = localStorage.getItem(TOKEN_KEY)
+  if (!token) return null
   try {
-    const { data } = await api.get<{ user: SessionUser }>('/auth/me')
+    const { data } = await api.get<{ user: SessionUser }>('/auth/me', { headers: { Authorization: `Bearer ${token}` } })
+    if (localStorage.getItem(TOKEN_KEY) !== token) return getSession()
     return data.user
   } catch (error) {
-    if (typeof error === 'object' && error !== null && 'response' in error && error.response && typeof error.response === 'object' && 'status' in error.response && error.response.status === 401) {
-      localStorage.removeItem(TOKEN_KEY)
+    if (isAxiosError(error) && error.response?.status === 401) {
+      const current = localStorage.getItem(TOKEN_KEY)
+      if (current && current !== token) return getSession()
+      if (current === token) localStorage.removeItem(TOKEN_KEY)
       return null
     }
     throw error
@@ -37,9 +42,10 @@ export async function getSession(): Promise<SessionUser | null> {
 }
 
 export async function logout() {
+  const token = localStorage.getItem(TOKEN_KEY)
   try {
-    await api.post('/auth/logout')
+    await api.post('/auth/logout', {}, { headers: { Authorization: token ? `Bearer ${token}` : '' } })
   } finally {
-    localStorage.removeItem(TOKEN_KEY)
+    if (localStorage.getItem(TOKEN_KEY) === token) localStorage.removeItem(TOKEN_KEY)
   }
 }

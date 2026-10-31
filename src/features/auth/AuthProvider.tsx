@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode, type FormEvent } from 'react'
+import { Fragment, createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode, type FormEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { isAxiosError } from 'axios'
@@ -35,16 +35,49 @@ function messageFromError(error: unknown) {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
-  const session = useQuery({ queryKey: SESSION_KEY, queryFn: getSession, retry: false, staleTime: Infinity })
-  const loginMutation = useMutation({ mutationFn: ({ email, password }: { email: string; password: string }) => login(email, password), onSuccess: (user) => queryClient.setQueryData(SESSION_KEY, user) })
-  const registerMutation = useMutation({ mutationFn: ({ username, email, password }: { username: string; email: string; password: string }) => register(username, email, password), onSuccess: (user) => queryClient.setQueryData(SESSION_KEY, user) })
+  const session = useQuery({ queryKey: SESSION_KEY, queryFn: getSession, retry: false, staleTime: 30000, refetchInterval: 30000 })
+  const loginMutation = useMutation({ mutationFn: ({ email, password }: { email: string; password: string }) => login(email, password), onSuccess: completeSession })
+  const registerMutation = useMutation({ mutationFn: ({ username, email, password }: { username: string; email: string; password: string }) => register(username, email, password), onSuccess: completeSession })
   const [open, setOpen] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [message, setMessage] = useState('')
+  const [sessionNotice, setSessionNotice] = useState('')
   const [busy, setBusy] = useState(false)
   const dialog = useRef<HTMLDialogElement>(null)
   const form = useRef<HTMLFormElement>(null)
+
+  const clearPrivate = useCallback(() => {
+    const predicate = (query: { queryKey: readonly unknown[] }) => !['session', 'nfts', 'nft'].includes(String(query.queryKey[0]))
+    void queryClient.cancelQueries({ predicate })
+    queryClient.removeQueries({ predicate })
+  }, [queryClient])
+
+  function completeSession(user: SessionUser) {
+    clearPrivate()
+    queryClient.setQueryData(SESSION_KEY, user)
+    setSessionNotice('')
+  }
+
+  useEffect(() => {
+    function expired() {
+      queryClient.setQueryData(SESSION_KEY, null)
+      clearPrivate()
+      setSessionNotice('Sua sessão expirou. Entre novamente para continuar de onde parou.')
+    }
+    function changed(event: StorageEvent) {
+      if (event.key !== 'kurio-session-token') return
+      queryClient.setQueryData(SESSION_KEY, null)
+      clearPrivate()
+      setSessionNotice(event.newValue ? 'A conta mudou em outra aba. Atualizando sessão…' : 'A sessão foi encerrada em outra aba.')
+      if (event.newValue) void queryClient.invalidateQueries({ queryKey: SESSION_KEY }).then(() => {
+        if (queryClient.getQueryData(SESSION_KEY)) { setOpen(false); setSessionNotice('') }
+      })
+    }
+    window.addEventListener('kurio:session-expired', expired)
+    window.addEventListener('storage', changed)
+    return () => { window.removeEventListener('kurio:session-expired', expired); window.removeEventListener('storage', changed) }
+  }, [clearPrivate, queryClient])
 
   useEffect(() => {
     if (open) {
@@ -97,14 +130,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signOut() {
+    const userId = session.data?.id
     await queryClient.cancelQueries()
     try { await logout() } finally {
+      if (userId) sessionStorage.removeItem(`kurio-checkout-draft:${userId}`)
       queryClient.setQueryData(SESSION_KEY, null)
-      queryClient.removeQueries({ predicate: (query) => !['session', 'nfts', 'nft'].includes(String(query.queryKey[0])) })
+      clearPrivate()
+      setSessionNotice('')
+      if (localStorage.getItem('kurio-session-token')) void queryClient.invalidateQueries({ queryKey: SESSION_KEY })
     }
   }
 
-  const openLogin = useCallback(() => { setMessage(''); setOpen(true) }, [])
+  const openLogin = useCallback(() => { setMessage(''); setOpen(true) }, [setMessage, setOpen])
 
   const value: AuthContextValue = {
     openLogin,
@@ -120,6 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         <button type="button" className="auth-close" aria-label="Fechar login" onClick={close}>×</button>
         <h2 id="auth-title" className="auth-tabs"><button type="button" aria-pressed={mode === 'login'} onClick={() => changeMode('login')}>Entrar</button><span aria-hidden="true">|</span><button type="button" aria-pressed={mode === 'register'} onClick={() => changeMode('register')}>Criar conta</button></h2>
         <p className="auth-intro">{mode === 'register' ? 'Crie seu perfil de colecionador e conecte uma carteira quando quiser.' : 'Entre para gerenciar sua carteira, coleção e perfil de criador.'}</p>
+        {sessionNotice && <p className="auth-message" role="status">{sessionNotice}</p>}
         <form ref={form} key={mode} onSubmit={submit} className="auth-form" onInput={() => { const confirmation = form.current?.elements.namedItem('confirmPassword') as HTMLInputElement | null; confirmation?.setCustomValidity(''); setMessage('') }}>
           {mode === 'register' && <><label className="sr-only" htmlFor="register-username">Nome de usuário</label><input id="register-username" name="username" autoComplete="username" minLength={2} placeholder="Nome de usuário" required /></>}
           <label className="sr-only" htmlFor="login-email">E-mail</label>
@@ -150,7 +188,7 @@ export function RequireAuthentication({ children }: { children: ReactNode }) {
   useEffect(() => { if (!loading && !user) openLogin() }, [loading, openLogin, user])
   if (loading) return <main className="auth-route-message" role="status">Carregando sessão…</main>
   if (!user) return <main className="auth-route-message"><p>Entre na sua conta para acessar esta área.</p><button type="button" onClick={openLogin}>Entrar</button></main>
-  return children
+  return <Fragment key={user.id}>{children}</Fragment>
 }
 
 export function AuthButton() {

@@ -1,35 +1,43 @@
-import { AuthButton } from '@/features/auth/AuthProvider'
+import { AuthButton, useAuth } from '@/features/auth/AuthProvider'
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import SiteFooter from '@/components/SiteFooter'
 import searchIcon from '@/assets/icons/Search Icon.svg'
 import cartIcon from '@/assets/icons/Cart Icon.svg'
 import { useCommerce } from './CommerceProvider'
-import { blankWallet, useWallets, type Wallet } from '@/features/profile/walletApi'
+import { useWallets, type Wallet } from '@/features/profile/walletApi'
 import { useProfile } from '@/features/profile/api'
 import { useWalletConnection } from './walletConnection'
 import { useCheckoutOrder } from './orderApi'
 import type { CreateOrder } from './orderTypes'
+import { readCheckoutDraft, saveCheckoutDraft, clearCheckoutDraft } from './checkoutDraft'
 import './cart.css'
 import './checkout.css'
 
 export default function CheckoutScreen() {
   const search = useSearch({ from: '/checkout' })
   const navigate = useNavigate({ from: '/checkout' })
+  const { user } = useAuth()
+  const [initialDraft] = useState(() => readCheckoutDraft(user!.id))
   const { cart, quantities, cartItems: items, cartLoading: isPending, cartError: isError, cartBusy, quote, quoteLoading, quoteBusy, quoteError, retryQuote } = useCommerce()
-  const [otherWallet, setOtherWallet] = useState(false)
-  const [collector, setCollector] = useState({ ...blankWallet, type: 'Coinbase Wallet', username: '', ensSuffix: '.eth' })
-  const [source, setSource] = useState<'manual' | 'primary' | 'secondary'>('manual')
-  const [alternativeAddress, setAlternativeAddress] = useState('')
-  const [outcome, setOutcome] = useState<'accept' | 'reject'>('accept')
+  const [otherWallet, setOtherWallet] = useState(initialDraft.otherWallet)
+  const [collector, setCollector] = useState(initialDraft.collector)
+  const [source, setSource] = useState(initialDraft.source)
+  const [alternativeAddress, setAlternativeAddress] = useState(initialDraft.alternativeAddress)
+  const [outcome, setOutcome] = useState(initialDraft.outcome)
+  const [notes, setNotes] = useState(initialDraft.notes)
   const savedWallets = useWallets()
   const profile = useProfile()
   const connection = useWalletConnection()
   const orderRequest = useCheckoutOrder()
-  const [paymentScenario, setPaymentScenario] = useState<CreateOrder['scenario']>('confirmed')
+  const [paymentScenario, setPaymentScenario] = useState<CreateOrder['scenario']>(initialDraft.paymentScenario)
   const address = (otherWallet ? alternativeAddress : collector.address).trim()
   const sameAddress = collector.network === 'Solana' ? connection.connection?.address === address : connection.connection?.address.toLowerCase() === address.toLowerCase()
   const connected = !!connection.connection && sameAddress && connection.connection.network === collector.network && connection.connection.provider === collector.type && !connection.error
+
+  useEffect(() => {
+    if (user) saveCheckoutDraft(user.id, { collector, otherWallet, source, alternativeAddress, outcome, paymentScenario, notes })
+  }, [user, collector, otherWallet, source, alternativeAddress, outcome, paymentScenario, notes])
 
   function updateCollector(key: keyof typeof collector, value: string) {
     setCollector((current) => ({ ...current, [key]: value }))
@@ -47,20 +55,25 @@ export default function CheckoutScreen() {
   }
 
   useEffect(() => {
-    if (orderRequest.recoveredOrder) void navigate({ to: '/orders/$orderId', params: { orderId: orderRequest.recoveredOrder.id }, search })
-  }, [orderRequest.recoveredOrder, navigate, search])
+    if (orderRequest.recoveredOrder) {
+      if (user) clearCheckoutDraft(user.id)
+      void navigate({ to: '/orders/$orderId', params: { orderId: orderRequest.recoveredOrder.id }, search })
+    }
+  }, [orderRequest.recoveredOrder, navigate, search, user])
 
   async function confirm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (orderRequest.busy || !connected || connection.busy || cartBusy || isError || !quote || quoteBusy || quoteError || items.length === 0 || items.length !== cart.length) return
-    const fields = new FormData(event.currentTarget)
     const order = await orderRequest.create({
       quoteId: quote.id, connectionId: connection.connection!.id,
       wallet: { address: connection.connection!.address, network: collector.network, provider: collector.type },
-      collector: { displayName: collector.displayName, username: collector.username, email: collector.email, profileName: collector.profileName, referral: collector.referral, ens: `${collector.ens}${collector.ensSuffix}`, notes: String(fields.get('notes') ?? '') },
+      collector: { displayName: collector.displayName, username: collector.username, email: collector.email, profileName: collector.profileName, referral: collector.referral, ens: `${collector.ens}${collector.ensSuffix}`, notes },
       scenario: paymentScenario,
     })
-    if (order) void navigate({ to: '/orders/$orderId', params: { orderId: order.id }, search })
+    if (order) {
+      if (user) clearCheckoutDraft(user.id)
+      void navigate({ to: '/orders/$orderId', params: { orderId: order.id }, search })
+    }
   }
 
   return (
@@ -100,7 +113,7 @@ export default function CheckoutScreen() {
           </div>
           <label className="checkout-other"><input type="checkbox" checked={otherWallet} onChange={(event) => setOtherWallet(event.target.checked)} />Usar outra carteira?</label>
           {otherWallet && <label className="checkout-alternative">Outra carteira<input name="alternativeWallet" value={alternativeAddress} onChange={(event) => setAlternativeAddress(event.target.value)} placeholder="Endereço da outra carteira" required /></label>}
-          <label className="checkout-notes">Observação do colecionador (opcional)<textarea name="notes" rows={6} /></label>
+          <label className="checkout-notes">Observação do colecionador (opcional)<textarea name="notes" rows={6} maxLength={2000} value={notes} onChange={(event) => setNotes(event.target.value)} /></label>
         </section>
         <aside className="checkout-order" aria-labelledby="checkout-order-title">
           <h2 id="checkout-order-title">Seus NFTs</h2>
