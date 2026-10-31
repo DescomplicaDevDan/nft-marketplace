@@ -6,6 +6,7 @@ import { Link, useSearch } from '@tanstack/react-router'
 import { useNFTs } from '@/features/catalog/api'
 import searchIcon from '@/assets/icons/Search Icon.svg'
 import cartIcon from '@/assets/icons/Cart Icon.svg'
+import backIcon from '@/assets/icons/Arrow - Left 2.svg'
 import { useCommerce } from './CommerceProvider'
 import SiteFooter from '@/components/SiteFooter'
 import './cart.css'
@@ -25,6 +26,11 @@ export default function CartPage() {
 
   return (
     <main id="topo" className="cart-page">
+      <header className="mobile-cart-header">
+        <Link to="/" search={search} hash="mobile-catalog" aria-label="Voltar ao mercado"><img src={backIcon} alt="" /></Link>
+        <h1>Carrinho de NFTs</h1>
+        <span aria-hidden="true" />
+      </header>
       <header className="cart-header">
         <Link to="/" search={search} className="cart-wordmark">KURIO</Link>
         <nav aria-label="Navegação principal">
@@ -50,6 +56,25 @@ export default function CartPage() {
       {!isPending && !isError && items.length === 0 && <div className="cart-empty"><p>Seu carrinho está vazio.</p><Link to="/" search={search} hash="catalogo">Explorar NFTs</Link></div>}
       {items.length > 0 && (
         <div className="cart-content">
+          <ul className="mobile-cart-items" aria-label="NFTs no carrinho">
+            {items.map((item) => {
+              const quantity = quantities[item.id] ?? 1
+              const total = quote?.items.find((line) => line.id === item.id)?.lineTotalEth ?? '—'
+              return <li key={item.id} className="mobile-cart-item">
+                <Link className="mobile-cart-art" to="/nft/$nftId" params={{ nftId: item.id }} search={search}><img src={item.imageUrl} alt="" /></Link>
+                <div className="mobile-cart-info">
+                  <Link to="/nft/$nftId" params={{ nftId: item.id }} search={search} className="mobile-cart-name">{item.name}</Link>
+                  <div className="mobile-cart-edition-row"><span>Edição: {item.editionLabel ?? '—'}</span><div className="mobile-cart-quantity">
+                    <button type="button" aria-label={`Diminuir edições de ${item.name}`} disabled={cartBusy || quantity === 1} onClick={() => changeQuantity(item.id, -1)}>−</button>
+                    <span aria-label={`Quantidade: ${quantity}`}>{quantity}</span>
+                    <button type="button" aria-label={`Aumentar edições de ${item.name}`} disabled={cartBusy || quantity >= item.available} onClick={() => changeQuantity(item.id, 1)}>+</button>
+                    <button type="button" className="mobile-cart-remove" aria-label={`Remover ${item.name}`} disabled={cartBusy} onClick={() => removeFromCart(item.id)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 6V3h6v3M6 9l1 12h10l1-12" /></svg></button>
+                  </div></div>
+                  <strong className="mobile-cart-price">{total} ETH</strong>
+                </div>
+              </li>
+            })}
+          </ul>
           <div className="cart-table-scroll">
             <table className="cart-table">
               <thead><tr><th scope="col">NFTs</th><th scope="col">Preço</th><th scope="col">Edições</th><th scope="col">Total</th><th scope="col"><span className="sr-only">Remover</span></th></tr></thead>

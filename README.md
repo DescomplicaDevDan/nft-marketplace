@@ -277,6 +277,14 @@ O seletor de quantidade considera o estoque atual e o que já está no carrinho.
 
 Checagens isoladas: quantidade escolhida persistida no carrinho pela API, navegação após a confirmação, adição sem sair da tela, ausência de overflow em 320/390 px e exibição do detalhe desktop em 1440 px. O quadro em 390 px foi conferido visualmente com a referência; a aprovação dos ajustes finos e a suíte E2E completa permanecem pendentes.
 
+### Carrinho mobile
+
+A rota `/cart` abaixo de 768 px usa o layout mobile da referência: cabeçalho com voltar, itens compactos com imagem, edição, quantidade e subtotal da linha; o resumo com cupom, subtotal, desconto, taxa de rede e total fica fixo na parte inferior, junto do botão para continuar ao pagamento. Em telas estreitas, a lista rola por trás do resumo e mantém espaço para que todos os itens possam ser alcançados. A composição desktop continua separada.
+
+Quantidade, remoção, cupom, cotação e navegação ao pagamento usam as mesmas operações REST e os mesmos estados do carrinho desktop. Os rótulos de edição no catálogo simulado refletem os dados apresentados na referência; escolha e estoque por edição ainda não são controlados individualmente e seguem pendentes.
+
+Checagens isoladas: quatro itens renderizados na largura-base de 344 px, sem overflow horizontal em 320 px, cabeçalho mobile oculto no desktop de 1440 px, build concluído e lint sem erros. Permanecem dois avisos conhecidos de Fast Refresh nos provedores e o aviso de bundle acima de 500 kB; a suíte E2E completa fica para a revisão final.
+
 ### Executar e compilar
 
 | Comando | Descrição |

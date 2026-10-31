@@ -37,6 +37,7 @@ export interface NFT {
   previousPriceEth?: string
   summary?: string
   displayCollection?: string
+  editionLabel?: string
   attributes?: string[]
   rating?: number
   reviewsCount?: number
