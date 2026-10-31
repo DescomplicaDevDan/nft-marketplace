@@ -1,0 +1,34 @@
+.confirmation-page { box-sizing: border-box; min-height: 100vh; padding: 100px 24px 64px; background: #140d0a; color: #f5f1eb; font: 14px/1.5 'Roboto Mono Variable', monospace; }
+.confirmation-card { position: relative; width: 100%; max-width: 580px; margin: 0 auto; background: #241612; border-bottom: 10px solid #d28a4c; }
+.confirmation-close { position: absolute; top: 8px; right: 16px; color: #d28a4c; text-decoration: none; font-size: 24px; font-weight: 300; }
+.confirmation-heading { text-align: center; padding: 20px 24px 18px; }
+.confirmation-icon { display: block; width: 72px; height: 82px; color: #d28a4c; margin: 0 auto 12px; }
+.confirmation-heading h1 { margin: 0; font-size: 16px; font-weight: 700; color: #cfb28c; }
+.confirmation-meta { display: grid; grid-template-columns: 1.1fr 1fr .9fr .8fr; padding: 16px 24px; border-block: 1px solid #9b6031; margin: 0; color: #cfb28c; font-size: 12px; line-height: 18px; }
+.confirmation-meta > div { padding: 0 16px; min-width: 0; border-right: 1px solid #d28a4c; }
+.confirmation-meta > div:first-child { padding-left: 12px; }
+.confirmation-meta > div:last-child { border: 0; }
+.confirmation-meta dd { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.confirmation-body { padding: 20px 44px 48px; }
+.confirmation-body h2 { margin: 0 0 6px; font-size: 14px; font-weight: 700; }
+.confirmation-columns, .confirmation-items li { display: grid; grid-template-columns: minmax(0, 1fr) 80px 110px; gap: 8px; align-items: center; }
+.confirmation-columns { padding-bottom: 8px; border-bottom: 1px solid #49372b; }
+.confirmation-columns strong:last-child { text-align: right; }
+.confirmation-items { list-style: none; padding: 0; margin: 12px 0; }
+.confirmation-items li { margin-bottom: 12px; }
+.confirmation-nft { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.confirmation-nft img { width: 70px; height: 70px; flex: 0 0 70px; border-radius: 5px; object-fit: cover; }
+.confirmation-nft strong { display: block; font-size: 14px; }
+.confirmation-nft small { display: block; color: #b39463; font-size: 12px; }
+.confirmation-items li > span { color: #cfb28c; font-size: 12px; text-align: center; }
+.confirmation-items b { color: #e89b55; font-size: 16px; text-align: right; }
+.confirmation-totals { margin: 16px 0 0; padding-bottom: 8px; border-bottom: 1px solid #49372b; }
+.confirmation-totals > div { display: flex; justify-content: space-between; gap: 12px; padding-left: 170px; margin-top: 6px; }
+.confirmation-totals dd { margin: 0; white-space: nowrap; }
+.confirmation-totals > div:last-child { font-weight: 700; }
+.confirmation-totals > div:last-child dd { color: #e89b55; font-size: 16px; }
+.confirmation-message { text-align: center; color: #cfb28c; font-size: 12px; line-height: 22px; margin: 12px 0 20px; }
+.confirmation-explorer { display: block; width: fit-content; margin: auto; border: 0; border-radius: 4px; padding: 14px 16px; background: #d28a4c; color: #140d0a; font: 700 14px 'Roboto Mono Variable', monospace; text-decoration: none; }
+.confirmation-explorer:disabled { cursor: not-allowed; }
+.confirmation-missing { padding: 32px; text-align: center; }
+@media (max-width: 600px) { .confirmation-page { padding: 32px 12px; } .confirmation-body { padding: 20px 16px 32px; } .confirmation-meta { grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; } .confirmation-meta > div { padding: 0 8px; } .confirmation-columns, .confirmation-items li { grid-template-columns: minmax(0, 1fr) 48px 90px; gap: 4px; } .confirmation-nft { gap: 8px; } .confirmation-nft img { width: 48px; height: 56px; flex-basis: 48px; } .confirmation-nft strong { font-size: 11px; } .confirmation-nft small { font-size: 9px; } .confirmation-items b { font-size: 12px; } .confirmation-totals > div { padding-left: 80px; } }

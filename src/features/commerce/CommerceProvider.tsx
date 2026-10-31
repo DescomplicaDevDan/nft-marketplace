@@ -3,7 +3,10 @@ import type { NFT } from '@/features/catalog/types'
 
 export interface Order {
   id: string
-  items: Array<Pick<NFT, 'id' | 'name' | 'collection' | 'priceEth' | 'imageUrl'>>
+  items: Array<Pick<NFT, 'id' | 'name' | 'collection' | 'priceEth' | 'imageUrl'> & { quantity?: number }>
+  wallet?: string
+  networkFeeEth?: string
+  transactionHash?: string
   totalEth: string
   createdAt: string
 }

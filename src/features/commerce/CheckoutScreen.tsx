@@ -34,7 +34,7 @@ export default function CheckoutScreen() {
     if (submitted || items.length === 0 || items.length !== cart.length) return
     setSubmitted(true)
     const id = `KURIO-${Date.now().toString(36).toUpperCase()}`
-    placeOrder({ id, createdAt: new Date().toISOString(), totalEth: eth(subtotal + fee), items: items.map((item) => ({ ...item, priceEth: eth(toWei(item.priceEth) * BigInt(quantities[item.id] ?? 1)) })) })
+    placeOrder({ id, createdAt: new Date().toISOString(), wallet: wallet === 'coinbase' ? 'Coinbase Wallet' : wallet === 'metamask' ? 'MetaMask' : 'WalletConnect', networkFeeEth: eth(fee), totalEth: eth(subtotal + fee), items: items.map((item) => ({ ...item, quantity: quantities[item.id] ?? 1, priceEth: eth(toWei(item.priceEth) * BigInt(quantities[item.id] ?? 1)) })) })
     void navigate({ to: '/orders/$orderId', params: { orderId: id }, search })
   }
 
