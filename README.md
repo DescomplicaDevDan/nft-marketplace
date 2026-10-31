@@ -257,7 +257,17 @@ O diálogo de autenticação usa o elemento nativo `dialog`, com foco modal e fe
 
 Checagem isolada desta etapa: login funcional com os novos componentes, presença dos controles no perfil e preservação do seletor de avatar oculto. No login desktop, o campo continuou com 340 × 40 px e o botão com 340 × 46 px, mantendo cores, fonte e padding medidos antes da migração. A comparação visual completa das demais telas permanece para a revisão final. Build/lint passaram; permanecem avisos de Fast Refresh nos provedores e de tamanho do bundle.
 
-### Comandos
+### Início mobile
+
+A primeira tela mobile foi adaptada ao print de referência enviado, usando 390 px como largura-base. Em larguras abaixo de 768 px, a página inicial apresenta busca no topo, botão de filtros, hero compacto com os dois artworks locais, abas do catálogo, duas colunas de cards alternadas e navegação fixa inferior. O botão central leva ao catálogo; os demais acessam início, favoritos, carrinho e perfil. As áreas privadas mantêm a autenticação existente.
+
+Busca, categorias, rede, faixa de preço, ordenação e paginação continuam usando os parâmetros da URL e a API do MSW. O botão de filtros abre um diálogo nativo com foco modal, fechamento por Escape e restauração da rolagem. Favoritos usam a API por usuário. A abertura sem filtros/sort destaca Golden Beat na quarta posição, conforme a composição do print; buscas e ordenações explícitas mantêm a ordem retornada pela API.
+
+Os ícones e imagens são os assets locais fornecidos. O selo RARO identifica Neon Vessel no recorte visual. A navegação respeita a área segura inferior; o conteúdo tem espaço final para continuar acessível abaixo da barra fixa. A moldura preta do aparelho no print não faz parte da página. O layout desktop usa a composição anterior; as outras telas mobile ainda serão ajustadas conforme suas próprias referências.
+
+Checagens isoladas: renderização em 390 px, busca pela URL, abertura/fechamento dos filtros, restauração de rolagem, ausência de overflow horizontal em 320/390 px, exibição da composição desktop em 1440 px e solicitação de login pelo atalho de perfil. A validação visual final com os frames do Figma e os testes versionados permanecem pendentes.
+
+### Scripts de execução
 
 | Comando | Descrição |
 | --- | --- |
@@ -270,7 +280,7 @@ Checagem isolada desta etapa: login funcional com os novos componentes, presenç
 
 Catálogo, detalhe, favoritos, perfil, carteiras, carrinho, cotação e pedidos usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos e recibos são separados por conta e a confirmação depende da resposta do servidor simulado. Socket.IO atualiza catálogo/carrinho e pedidos, com reconciliação por REST. A suíte Playwright versionada, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
 
-1. Revisar mobile e fidelidade visual nos tamanhos 390, 768 e 1440 px.
+1. Ajustar as demais telas mobile conforme as referências e revisar 390, 768 e 1440 px.
 2. Completar shimmer de carregamento e acessibilidade.
 3. Versionar testes Playwright E2E/visuais, cobrindo isolamento, falhas e Socket.IO.
 4. Auditar Lighthouse, otimizar desempenho e documentar a arquitetura.

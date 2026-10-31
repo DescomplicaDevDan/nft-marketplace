@@ -9,6 +9,7 @@ import { useNFTs } from '@/features/catalog/api'
 import type { NFTNetwork, NFTSort } from '@/features/catalog/types'
 import { useCommerce } from '@/features/commerce/CommerceProvider'
 import { featuredCollections, footerGroups, footerHighlights, journalArticles, socialLinks } from '@/mocks/data/homeContent'
+import { MobileHome } from '@/features/home/MobileHome'
 
 const PAGE_SIZE = 9
 
@@ -175,7 +176,9 @@ function App() {
   const totalPages = Math.ceil((data?.total ?? 0) / PAGE_SIZE)
 
   return (
-    <main id="topo" className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-12 bg-[#140D0A] px-5 pt-6 pb-6 text-left text-[#f5f1eb] sm:px-8 md:gap-24 lg:px-8 min-[1440px]:px-[120px]">
+    <>
+    <MobileHome key={search.search} data={data} loading={isPending} error={isError} retry={() => { void refetch() }} />
+    <main id="topo" className="desktop-home mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-12 bg-[#140D0A] px-5 pt-6 pb-6 text-left text-[#f5f1eb] sm:px-8 md:gap-24 lg:px-8 min-[1440px]:px-[120px]">
       <header className="mb-0 flex items-center justify-between border-b border-[#49372b] pb-2 font-mono text-sm text-[#ead8c5] md:grid md:grid-cols-[1fr_auto_1fr]">
         <a href="/" aria-label="Kurio — início" className="inline-flex items-center md:col-start-1 md:justify-self-start">
           <img src={kurioWordmark} alt="KURIO" className="h-[22px] w-[100px] sm:h-[35px] sm:w-[160px]" />
@@ -549,6 +552,7 @@ function App() {
       </footer>
       <p className="py-4 text-center font-mono text-xs text-[#b8aa9b]">© 2026 Kurio. Propriedade digital para todos.</p>
     </main>
+    </>
   )
 }
 

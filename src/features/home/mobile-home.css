@@ -1,0 +1,97 @@
+.mobile-home { display: none; }
+
+@media (max-width: 767px) {
+  .desktop-home { display: none !important; }
+  .mobile-home { display: block; min-height: 100svh; background: #140d0a; color: #f5f1eb; font: 13px/1.4 'Roboto Mono Variable', monospace; letter-spacing: 0; }
+  .mobile-home-content { padding: calc(36px + env(safe-area-inset-top, 0px)) 22px 130px; }
+  .mobile-search-row { display: flex; gap: 8px; height: 44px; margin-bottom: 14px; }
+  .mobile-search { display: flex; align-items: center; flex: 1; min-width: 0; border-radius: 13px; background: #241612; }
+  .mobile-search button { display: grid; place-items: center; width: 40px; height: 44px; flex: 0 0 40px; border: 0; background: none; padding: 0 0 0 4px; }
+  .mobile-search button span { width: 18px; height: 18px; background: #b39463; mask: center / contain no-repeat; -webkit-mask: center / contain no-repeat; }
+  .mobile-search input { min-width: 0; width: 100%; height: 44px; padding: 0 10px 0 0; border: 0; border-radius: 0 13px 13px 0; background: transparent; color: #cfb28c; font: 700 13px 'Roboto Mono Variable', monospace; letter-spacing: .1px; }
+  .mobile-search input::placeholder { color: #b39463; opacity: 1; }
+  .mobile-filter-trigger { position: relative; flex: 0 0 44px; padding: 0; border: 0; background: none; cursor: pointer; }
+  .mobile-filter-trigger > img { display: block; width: 44px; height: 44px; }
+  .mobile-filter-trigger > span { position: absolute; top: 3px; right: 3px; width: 8px; height: 8px; border: 2px solid #140d0a; border-radius: 50%; background: #f5f1eb; }
+
+  .mobile-hero { position: relative; isolation: isolate; height: 180px; overflow: hidden; border-radius: 30px; margin-bottom: 17px; background: radial-gradient(ellipse at 20% 52%, #d28a4c18 0 28%, transparent 28.5%), radial-gradient(ellipse at 59% 21%, #a9773f38 0 34%, transparent 34.5%), linear-gradient(123deg, #76512f, #27190f 90%); }
+  .mobile-hero::before { content: ''; position: absolute; z-index: -1; width: 125px; height: 240px; left: 56px; top: -53px; border-radius: 50%; background: #d28a4c0c; transform: rotate(28deg); }
+  .mobile-hero-copy { position: relative; z-index: 1; width: 190px; padding: 6px 0 0 14px; }
+  .mobile-welcome { font-size: 10px; line-height: 16px; }
+  .mobile-hero h1 { margin: 7px 0 7px; font-size: 16px; font-weight: 700; line-height: 26px; text-transform: uppercase; }
+  .mobile-hero-description { max-width: 184px; color: #cfb28c; font-size: 11px; line-height: 16px; }
+  .mobile-hero-copy > a { display: inline-flex; align-items: center; gap: 12px; color: #e89b55; font-size: 11px; font-weight: 700; line-height: 18px; text-decoration: none; }
+  .mobile-hero-copy > a span { font-size: 18px; font-weight: 400; }
+  .mobile-hero-art { position: absolute; top: 10px; right: 16px; width: 130px; height: 130px; }
+  .mobile-hero-art > img:first-child { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 15px; }
+  .mobile-hero-mini { position: absolute; top: 83px; left: 14px; width: 56px; height: 56px; border-radius: 12px; object-fit: cover; }
+  .mobile-hero-dots { position: absolute; bottom: 5px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; }
+  .mobile-hero-dots i { width: 6px; height: 6px; background: #d28a4c; border-radius: 50%; }
+
+  #mobile-catalog { scroll-margin-top: 16px; }
+  .mobile-catalog-tabs { display: flex; gap: 8px; align-items: start; min-width: 0; height: 20px; margin-bottom: 12px; white-space: nowrap; }
+  .mobile-catalog-tabs button { border: 0; border-bottom: 1px solid transparent; padding: 0 0 2px; background: none; color: #f5f1eb; font: 400 13.5px/18px 'Roboto Mono Variable', monospace; letter-spacing: 0; cursor: pointer; }
+  .mobile-catalog-tabs button[aria-pressed='true'] { color: #e89b55; border-bottom-color: #e89b55; font-weight: 700; }
+  .mobile-nft-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; row-gap: 22px; list-style: none; margin: 0; padding: 0 0 30px; }
+  .mobile-nft-card { min-width: 0; }
+  .mobile-nft-card:nth-child(even), .mobile-nft-skeleton:nth-child(even) { transform: translateY(30px); }
+  .mobile-nft-art { position: relative; height: 190px; padding: 12px 4px 18px; border-radius: 20px; background: #291a12; }
+  .mobile-nft-card:nth-child(even) .mobile-nft-art { padding-top: 18px; padding-bottom: 10px; }
+  .mobile-nft-art > a { display: block; width: 100%; aspect-ratio: 1; border-radius: 16px; overflow: hidden; }
+  .mobile-nft-art > a > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .mobile-nft-caption { display: block; margin: 8px 7px 0; color: #f5f1eb; text-decoration: none; }
+  .mobile-nft-caption h3 { overflow-wrap: anywhere; margin: 0; font-size: 13px; font-weight: 400; line-height: 17px; }
+  .mobile-nft-caption p { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px; line-height: 17px; }
+  .mobile-nft-caption strong { color: #e89b55; font-size: 14px; font-weight: 700; white-space: nowrap; }
+  .mobile-nft-caption p > span { color: #b39463; font-size: 10px; text-decoration: line-through; }
+  .mobile-rarity { position: absolute; top: 14px; left: 0; padding: 6px 9px; width: 65px; background: #d28a4c; color: #140d0a; font-size: 12px; line-height: 18px; }
+  .mobile-card-favorite { position: absolute; top: 10px; right: 8px; display: grid; place-items: center; width: 28px; height: 28px; padding: 5px; border: 1px solid #d28a4c; border-radius: 50%; background: #332013; opacity: 0; cursor: pointer; }
+  .mobile-card-favorite img { width: 17px; height: 17px; }
+  .mobile-first-favorite, .mobile-card-favorite[aria-pressed='true'], .mobile-card-favorite:focus-visible, .mobile-nft-art:hover .mobile-card-favorite { opacity: 1; }
+  .mobile-nft-skeleton > div { height: 190px; border-radius: 20px; background: #291a12; animation: mobile-skeleton-pulse 1.4s ease-in-out infinite; }
+  .mobile-nft-skeleton i { display: block; height: 12px; width: 75%; margin-top: 9px; border-radius: 3px; background: #291a12; }
+  .mobile-nft-skeleton i:last-child { width: 50%; }
+  .mobile-catalog-message { padding: 30px 8px; color: #cfb28c; text-align: center; }
+  .mobile-catalog-message button { margin-top: 16px; border: 1px solid #d28a4c; border-radius: 6px; background: none; padding: 10px; color: #d28a4c; font: inherit; }
+  .mobile-pagination { display: flex; justify-content: center; gap: 9px; margin-top: 24px; }
+  .mobile-pagination button { width: 32px; height: 32px; border: 1px solid #49372b; border-radius: 5px; background: none; color: #f5f1eb; font: inherit; }
+  .mobile-pagination button[aria-current='page'] { background: #d28a4c; color: #140d0a; }
+
+  .mobile-bottom-nav { position: fixed; z-index: 40; bottom: 0; left: 0; right: 0; display: grid; grid-template-columns: repeat(5, 1fr); height: calc(88px + env(safe-area-inset-bottom, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .mobile-bottom-surface { position: absolute; inset: 0; z-index: -1; border-radius: 30px 30px 0 0; background: #241612; mask-image: radial-gradient(circle 45px at 50% -6px, transparent 98%, black 100%); -webkit-mask-image: radial-gradient(circle 45px at 50% -6px, transparent 98%, black 100%); }
+  .mobile-bottom-nav > a { display: flex; align-items: center; justify-content: center; height: 88px; padding-top: 6px; color: #cfb28c; }
+  .mobile-bottom-nav > a > img { width: 20px; height: 20px; object-fit: contain; }
+  .mobile-bottom-nav .mobile-explore-action { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); display: grid; width: 64px; height: 64px; padding: 0; border-radius: 50%; background: linear-gradient(135deg, #d28a4c80, #d28a4c); }
+  .mobile-bottom-nav .mobile-explore-action img { width: 27px; height: 24px; }
+  .mobile-bottom-nav > a:nth-of-type(4) { grid-column: 4; }
+  .mobile-bottom-nav > a:nth-of-type(5) { grid-column: 5; }
+  .mobile-home :is(a, button):focus-visible { outline: 2px solid #e89b55; outline-offset: 3px; }
+
+  .mobile-filter-dialog { position: fixed; inset: auto 0 0; box-sizing: border-box; width: 100%; max-width: none; max-height: 85dvh; margin: 0; padding: 22px 22px calc(24px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; border: 1px solid #49372b; border-radius: 24px 24px 0 0; background: #241612; color: #f5f1eb; font: 13px 'Roboto Mono Variable', monospace; }
+  .mobile-filter-dialog::backdrop { background: #0009; }
+  .mobile-filter-dialog header { display: flex; align-items: center; justify-content: space-between; }
+  .mobile-filter-dialog h2 { font-size: 18px; font-weight: 700; }
+  .mobile-filter-dialog header button { padding: 4px 10px; border: 0; background: none; color: #d28a4c; font: 26px monospace; }
+  .mobile-filter-dialog h3 { margin: 24px 0 12px; color: #f5f1eb; font-weight: 700; }
+  .mobile-filter-options { display: grid; gap: 5px; }
+  .mobile-filter-options button { display: flex; justify-content: space-between; padding: 10px; border: 1px solid transparent; border-radius: 6px; background: transparent; color: #cfb28c; text-align: left; font: inherit; }
+  .mobile-filter-options button[aria-pressed='true'] { border-color: #d28a4c; color: #e89b55; }
+  .mobile-price-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mobile-price-fields input, .mobile-filter-sort select { height: 40px; margin-top: 8px; border: 1px solid #49372b; border-radius: 5px; background: #140d0a; color: #f5f1eb; font: inherit; }
+  .mobile-filter-sort { display: block; margin: 20px 0; }
+  .mobile-filter-sort select { display: block; width: 100%; padding: 8px; }
+  .mobile-apply-filters, .mobile-clear-filters { width: 100%; padding: 12px; border: 0; border-radius: 6px; background: #d28a4c; color: #140d0a; font: 700 13px 'Roboto Mono Variable', monospace; }
+  .mobile-clear-filters { margin-top: 12px; border: 1px solid #d28a4c; background: none; color: #d28a4c; }
+}
+@media (max-width: 359px) {
+  .mobile-home-content { padding-inline: 16px; }
+  .mobile-hero-copy { padding-left: 12px; width: 160px; }
+  .mobile-hero h1 { font-size: 14px; }
+  .mobile-hero-description { font-size: 10px; max-width: 158px; }
+  .mobile-hero-art { width: 108px; height: 130px; right: 10px; }
+  .mobile-catalog-tabs button { font-size: 11.5px; }
+  .mobile-nft-art { height: 175px; }
+  .mobile-nft-caption h3 { font-size: 11px; }
+}
+@keyframes mobile-skeleton-pulse { 50% { opacity: .4; } }
+@media (prefers-reduced-motion: reduce) { .mobile-nft-skeleton > div { animation: none; } }
