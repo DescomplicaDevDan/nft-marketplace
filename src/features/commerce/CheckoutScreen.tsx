@@ -7,6 +7,7 @@ import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import SiteFooter from '@/components/SiteFooter'
 import searchIcon from '@/assets/icons/Search Icon.svg'
 import cartIcon from '@/assets/icons/Cart Icon.svg'
+import backIcon from '@/assets/icons/Arrow - Left 2.svg'
 import { useCommerce } from './CommerceProvider'
 import { useWallets, type Wallet } from '@/features/profile/walletApi'
 import { useProfile } from '@/features/profile/api'
@@ -81,6 +82,11 @@ export default function CheckoutScreen() {
 
   return (
     <main id="topo" className="cart-page checkout-page">
+      <header className="mobile-cart-header checkout-mobile-header">
+        <Link to="/cart" search={search} aria-label="Voltar ao carrinho"><img src={backIcon} alt="" /></Link>
+        <h1>Pagamento</h1>
+        <span aria-hidden="true" />
+      </header>
       <header className="cart-header">
         <Link to="/" search={search} className="cart-wordmark">KURIO</Link>
         <nav aria-label="Navegação principal"><Link to="/" search={search}>Início</Link><Link to="/" search={search} hash="catalogo" className="active">Mercado</Link><span>Criadores</span><span>Aprenda</span></nav>

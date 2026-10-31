@@ -285,6 +285,10 @@ Quantidade, remoção, cupom, cotação e navegação ao pagamento usam as mesma
 
 Checagens isoladas: quatro itens renderizados na largura-base de 344 px, sem overflow horizontal em 320 px, cabeçalho mobile oculto no desktop de 1440 px, build concluído e lint sem erros. Permanecem dois avisos conhecidos de Fast Refresh nos provedores e o aviso de bundle acima de 500 kB; a suíte E2E completa fica para a revisão final.
 
+### Pagamento mobile
+
+A rota `/checkout` abaixo de 768 px usa cabeçalho de retorno ao carrinho, formulário em uma coluna e resumo do pedido em painel próprio, seguido das opções de carteira e confirmação. Os mesmos dados e operações do checkout desktop permanecem ativos: rascunho por usuário, carteiras salvas, conexão simulada, cotação da API, idempotência e recuperação de pedido. O rodapé continua após o formulário, acessível pela rolagem. A revisão visual usa a referência desktop de pagamento enviada; ainda não foi fornecido um frame mobile específico.
+
 ### Executar e compilar
 
 | Comando | Descrição |
