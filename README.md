@@ -2,7 +2,7 @@
 
 Frontend de um marketplace de NFTs desenvolvido para um desafio técnico. O objetivo é implementar descoberta de NFTs, compra simulada e área do colecionador com React e TypeScript.
 
-> Em desenvolvimento: as telas desktop estão montadas; os fluxos usam a API simulada e recebem eventos Socket.IO. Cenários adicionais, revisão mobile, testes completos e publicação ainda estão pendentes.
+> Em desenvolvimento: fluxos desktop/mobile conectados à API simulada. A cobertura E2E, auditoria Lighthouse, revisão visual final e publicação ainda estão em andamento.
 
 ## Links
 
@@ -17,7 +17,7 @@ Frontend de um marketplace de NFTs desenvolvido para um desafio técnico. O obje
 - Axios e Socket.IO Client
 - Tailwind CSS v4 e shadcn/ui
 - MSW para simular a API
-- Playwright instalado; configuração e testes pendentes
+- Playwright para testes E2E
 
 ## Requisitos
 
@@ -75,7 +75,7 @@ await fetch('/api/auth/expire', {
 })
 ```
 
-Depois navegue para uma área privada, tente conectar a carteira no pagamento ou aguarde a validação periódica. O login será solicitado. Ao entrar na mesma conta, a rota e o rascunho serão recuperados. A cotação será consultada novamente; não há envio automático de compra após autenticar. Sessões emitidas pela versão antiga, sem data de expiração, exigem um novo login após esta atualização. A checagem funcional completa será feita na revisão final.
+Depois navegue para uma área privada, tente conectar a carteira no pagamento ou aguarde a validação periódica. O login será solicitado. Ao entrar na mesma conta, a rota e o rascunho serão recuperados. A cotação será consultada novamente; não há envio automático de compra após autenticar. Sessões emitidas pela versão antiga, sem data de expiração, exigem um novo login após esta atualização.
 
 ## Comandos
 
@@ -85,7 +85,7 @@ Favoritos usam `GET /api/favorites`, `PUT /api/favorites/:id` e `DELETE /api/fav
 
 O TanStack Query usa a chave `['favorites', userId]`. A interface atualiza imediatamente; se a requisição falhar, restaura o estado anterior e informa o erro. Alterações não são repetidas automaticamente e cliques concorrentes ficam bloqueados até a reconciliação com a API. O logout limpa o cache privado. Favoritos antigos do armazenamento compartilhado não são importados para uma conta.
 
-Para conferir: entre como colecionador, favorite um NFT no detalhe e atualize a página. Depois saia, entre como Sato e abra `/favorites`: o favorito da outra conta não deve aparecer. A verificação desta etapa cobriu persistência e isolamento no navegador; a suíte E2E versionada ainda está pendente.
+Para conferir: entre como colecionador, favorite um NFT no detalhe e atualize a página. Depois saia, entre como Sato e abra `/favorites`: o favorito da outra conta não deve aparecer. A suíte Playwright cobre os principais fluxos automatizados; veja `ARCHITECTURE.md` para os itens de cobertura ainda pendentes.
 
 ### Perfil, avatar e senha
 
@@ -101,7 +101,7 @@ A tela `/wallets` usa `GET /api/wallets`, `PUT /api/wallets` e `DELETE /api/wall
 
 É possível criar, editar e remover as carteiras principal e secundária. “Igual à carteira principal” exige uma principal salva e reutiliza seus dados; remover a principal desativa essa opção. Campos obrigatórios incluem indicação e ENS. A API verifica e-mail, rede, tipo e formato do endereço: Ethereum/Polygon com `0x` e 40 caracteres hexadecimais; Solana com 32 a 44 caracteres Base58. A validação é de formato, sem consulta à blockchain. Falhas preservam o formulário; mudanças só aparecem como salvas após a resposta da API. As carteiras salvas podem ser selecionadas no pagamento.
 
-ENS e indicação também são obrigatórios no formulário de pagamento. Os testes completos dos fluxos serão realizados na revisão final solicitada; esta etapa passou pela compilação TypeScript/Vite.
+ENS e indicação também são obrigatórios no formulário de pagamento.
 
 ### Carrinho de visitante e conta
 
@@ -109,7 +109,7 @@ O carrinho usa `GET /api/cart`, `PUT /api/cart/items/:id` (adicionar ou definir 
 
 Ao carregar o carrinho autenticado, a API une os itens do visitante aos da conta, soma quantidades e ajusta ao estoque com aviso. A gravação e o esvaziamento do carrinho visitante ocorrem juntos, permitindo repetir a operação sem duplicar itens. A leitura autenticada repete essa operação idempotente para recuperar falhas de rede. Logout não transforma os itens privados em itens de visitante.
 
-A quantidade selecionada no detalhe é enviada ao carrinho. A API recusa quantidades inválidas ou acima do estoque. Alterações aguardam confirmação, bloqueiam cliques concorrentes e mostram falhas; a lista retorna todos os itens, sem o limite da primeira página do catálogo. O carrinho compartilhado antigo não é importado. O checkout lê itens e totais da API; pedidos confirmados removem apenas as quantidades compradas, preservando os itens restantes. Compilação verificada; testes completos seguem para a revisão final.
+A quantidade selecionada no detalhe é enviada ao carrinho. A API recusa quantidades inválidas ou acima do estoque. Alterações aguardam confirmação, bloqueiam cliques concorrentes e mostram falhas; a lista retorna todos os itens, sem o limite da primeira página do catálogo. O carrinho compartilhado antigo não é importado. O checkout lê itens e totais da API; pedidos confirmados removem apenas as quantidades compradas, preservando os itens restantes.
 
 ### Cotação e cupons
 
@@ -123,7 +123,7 @@ A quantidade selecionada no detalhe é enviada ao carrinho. A API recusa quantid
 | `EXPIRADO` | Erro de cupom expirado (`422`, `coupon_expired`) |
 | Qualquer outro | Erro de cupom inválido (`422`, `coupon_invalid`) |
 
-Exemplo: subtotal `1.19`, desconto `0.119`, taxa `0.016`, total `1.087 ETH`. Aplicações recusadas preservam o cupom e os totais anteriores. Estoque insuficiente bloqueia a cotação com `409`. A API de pedidos revalida a cotação antes de aceitar a compra. Se mudar ou expirar, retorna os valores atualizados e exige uma nova confirmação. Build verificado; testes completos ficam para a revisão final.
+Exemplo: subtotal `1.19`, desconto `0.119`, taxa `0.016`, total `1.087 ETH`. Aplicações recusadas preservam o cupom e os totais anteriores. Estoque insuficiente bloqueia a cotação com `409`. A API de pedidos revalida a cotação antes de aceitar a compra. Se mudar ou expirar, retorna os valores atualizados e exige uma nova confirmação.
 
 ### Conexão de carteira no pagamento
 
@@ -156,7 +156,7 @@ Em “Resultado do pagamento (demonstração)”, escolha:
 - **Recusar pagamento:** pendente → recusado; preserva carrinho e valores anteriores.
 - **Demorar resposta e recuperar pedido:** o MSW demora 10 segundos para responder à criação, ultrapassando o timeout de 8 segundos do Axios. A chave é preservada e o resultado é consultado pela mesma solicitação.
 
-Pedidos recebem atualizações por Socket.IO. Quando a conexão em tempo real cai, os pendentes são consultados a cada dois segundos; ao reconectar, a API é consultada para recuperar o estado atual. Build/lint verificados; os testes completos e cenários de rede serão executados na revisão final solicitada.
+Pedidos recebem atualizações por Socket.IO. Quando a conexão em tempo real cai, os pendentes são consultados a cada dois segundos; ao reconectar, a API é consultada para recuperar o estado atual.
 
 ### Atualizações em tempo real
 
@@ -243,7 +243,7 @@ location.reload()
 
 `POST /api/demo/reset` também aceita uma configuração parcial no corpo JSON para iniciar as fixtures já no cenário desejado. Para preço/estoque, eventos duplicados/antigos e desconexão, use os endpoints da seção de tempo real. Cupons inválidos/expirados e pagamento confirmado/recusado/timeout têm seus próprios controles, descritos acima. O timeout genérico interrompe antes da operação; o cenário de timeout do pagamento registra a compra e atrasa a resposta para exercitar a recuperação idempotente.
 
-Checagens isoladas desta etapa: aplicação de `503`, acesso ao controle durante a falha, reset pelo painel e restauração do catálogo de 36 itens. Foram executadas em contexto de navegador isolado, preservando os dados de uso manual. A suíte E2E versionada e a revisão completa continuam pendentes.
+Checagens da demonstração também são cobertas pela suíte Playwright; falhas de rede, atraso e 503 podem ser reproduzidos no painel `/demo`.
 
 ### Componentes shadcn/ui nos fluxos principais
 
@@ -265,25 +265,25 @@ Busca, categorias, rede, faixa de preço, ordenação e paginação continuam us
 
 Os ícones e imagens são os assets locais fornecidos. O selo RARO identifica Neon Vessel no recorte visual. A navegação respeita a área segura inferior; o conteúdo tem espaço final para continuar acessível abaixo da barra fixa. A moldura preta do aparelho no print não faz parte da página. O layout desktop usa a composição anterior; as outras telas mobile ainda serão ajustadas conforme suas próprias referências.
 
-Checagens isoladas: renderização em 390 px, busca pela URL, abertura/fechamento dos filtros, restauração de rolagem, ausência de overflow horizontal em 320/390 px, exibição da composição desktop em 1440 px e solicitação de login pelo atalho de perfil. A validação visual final com os frames do Figma e os testes versionados permanecem pendentes.
+Checagens isoladas: renderização em 390 px, busca pela URL, abertura/fechamento dos filtros, restauração de rolagem, ausência de overflow horizontal em 320/390 px, exibição da composição desktop em 1440 px e solicitação de login pelo atalho de perfil. A validação visual final com todos os frames do Figma permanece pendente.
 
 ### Detalhe do NFT mobile
 
 A tela `/nft/:id` abaixo de 768 px segue o segundo print mobile: voltar/favoritar no topo, artwork grande, painel sobreposto com nome/avaliação/resumo/edição/metadados e área inferior de compra. O layout-base é 390 × 844 px, com rolagem quando necessária e respeito à área segura inferior. O detalhe desktop conserva a composição anterior; o mobile não mostra rodapé nem a navegação inferior da home nesse recorte.
 
-Resumo, avaliação, quantidade de avaliações, coleção de exibição e atributos do Emerald Ape estão na fixture tipada do MSW. Outros NFTs usam seus próprios campos de coleção/rede. Os selos de edição reproduzem os rótulos do print (incluindo os dois `1/10`) e são informativos nesta etapa; seleção e estoque discriminados por edição ainda precisam da revisão funcional antes da entrega.
+Resumo, avaliação, quantidade de avaliações, coleção de exibição e atributos do Emerald Ape estão na fixture tipada do MSW. Os botões `1/1`, `1/10`, `1/50` e `ABERTA` selecionam uma edição; preço, estoque e limite de quantidade mudam conforme a seleção. As opções sem estoque ficam desabilitadas. As fixtures distribuem o estoque base entre as edições e usam preços demonstrativos por faixa; esses valores não representam preços de blockchain.
 
 O seletor de quantidade considera o estoque atual e o que já está no carrinho. O botão Comprar NFT aguarda a resposta de adição pela API e então abre o carrinho para revisão. O ícone ao lado adiciona a quantidade sem navegar. Falhas mantêm a tela e exibem a mensagem da API; cliques concorrentes ficam bloqueados. Favoritar usa a sessão e a coleção privada já implementadas. Os ícones reutilizam os assets locais fornecidos.
 
-Checagens isoladas: quantidade escolhida persistida no carrinho pela API, navegação após a confirmação, adição sem sair da tela, ausência de overflow em 320/390 px e exibição do detalhe desktop em 1440 px. O quadro em 390 px foi conferido visualmente com a referência; a aprovação dos ajustes finos e a suíte E2E completa permanecem pendentes.
+Checagens: quantidade e edição persistem no carrinho; Playwright verifica acesso direto, NFT inexistente, alteração de edição/preço e linhas independentes. O quadro em 390 px foi conferido com a referência; o refinamento visual ainda está pendente.
 
 ### Carrinho mobile
 
 A rota `/cart` abaixo de 768 px usa o layout mobile da referência: cabeçalho com voltar, itens compactos com imagem, edição, quantidade e subtotal da linha; o resumo com cupom, subtotal, desconto, taxa de rede e total fica fixo na parte inferior, junto do botão para continuar ao pagamento. Em telas estreitas, a lista rola por trás do resumo e mantém espaço para que todos os itens possam ser alcançados. A composição desktop continua separada.
 
-Quantidade, remoção, cupom, cotação e navegação ao pagamento usam as mesmas operações REST e os mesmos estados do carrinho desktop. Os rótulos de edição no catálogo simulado refletem os dados apresentados na referência; escolha e estoque por edição ainda não são controlados individualmente e seguem pendentes.
+Quantidade, remoção, cupom, cotação e navegação ao pagamento usam as mesmas operações REST e os mesmos estados do carrinho desktop. Cada linha do carrinho é identificada pelo NFT e pela edição; preço, disponibilidade, subtotal e reserva do pedido são validados separadamente por edição. O checkout e o recibo preservam o rótulo selecionado.
 
-Checagens isoladas: quatro itens renderizados na largura-base de 344 px, sem overflow horizontal em 320 px, cabeçalho mobile oculto no desktop de 1440 px, build concluído e lint sem erros. Permanecem dois avisos conhecidos de Fast Refresh nos provedores e o aviso de bundle acima de 500 kB; a suíte E2E completa fica para a revisão final.
+Checagens isoladas: quatro itens renderizados na largura-base de 344 px, sem overflow horizontal em 320 px, cabeçalho mobile oculto no desktop de 1440 px. A suíte E2E ainda precisa cobrir a compra completa e os cenários de falha do carrinho.
 
 ### Pagamento mobile
 
@@ -291,13 +291,13 @@ A rota `/checkout` abaixo de 768 px segue a referência mobile enviada para paga
 
 Os dados obrigatórios do colecionador continuam no checkout e podem ser abertos por “Editar dados do colecionador”. Se faltarem dados ao confirmar, o formulário é aberto e a conclusão é bloqueada até o preenchimento. A etapa mantém a idempotência, recuperação de pedidos e rascunho por usuário. O layout desktop permanece preservado; o rodapé não aparece nesta tela mobile.
 
-Checagens isoladas: duas carteiras salvas renderizadas na ordem da referência, carteira conectada reconhecida, troca de provedor seguida de nova conexão permitida, sem overflow horizontal em 344 px e CTA habilitada somente com cotação/conexão válidas. Build passou; o lint mantém os dois avisos conhecidos dos provedores e o bundle continua acima de 500 kB. A suíte completa segue para a revisão final.
+Checagens isoladas: duas carteiras salvas renderizadas na ordem da referência, carteira conectada reconhecida, troca de provedor seguida de nova conexão permitida, sem overflow horizontal em 344 px e CTA habilitada somente com cotação/conexão válidas. A suíte E2E ainda precisa cobrir compra integral, falha e recuperação.
 
 ### Login mobile
 
 O diálogo de autenticação abaixo de 768 px ocupa a tela toda e centraliza verticalmente o conteúdo de login e cadastro conforme as referências mobile. O cadastro traz marca Kurio, título “Criar perfil de colecionador”, campos de usuário, e-mail, senha e confirmação com controles de visibilidade, botão “Criar perfil”, opções sociais e atalho para entrar. Login, cadastro, sessão e validação continuam usando a API simulada existente; Google/Facebook e recuperação de senha continuam informativos, sem integração. No desktop, a composição anterior com abas permanece.
 
-Checagens isoladas: modal em 344 px, alternância login/cadastro, login demonstrativo pela interface e retorno à rota protegida; a checagem visual desktop e a suíte E2E completa ficam para a revisão final.
+Checagens: a suíte Playwright confirma login, retomada de rota privada, conflito de cadastro e modal ocupando 390 × 844 px nos modos entrar/criar conta. A revisão visual final segue pendente.
 
 ### Executar e compilar
 
@@ -307,16 +307,23 @@ Checagens isoladas: modal em 344 px, alternância login/cadastro, login demonstr
 | `npm run build` | Verifica tipos e gera o build de produção |
 | `npm run preview` | Serve localmente o build de produção |
 | `npm run lint` | Executa o Oxlint |
+| `npm run test:e2e` | Executa os testes E2E Playwright com reset de mocks por cenário |
+| `npm run audit:lighthouse` | Gera build com mocks, executa 12 medições e grava relatórios/medianas em `reports/lighthouse` |
+| `npx playwright show-report` | Abre o relatório HTML da última execução |
+
+No Windows, a suíte usa o Microsoft Edge instalado. Em outros sistemas, instale o Chromium com `npx playwright install chromium`.
+
+Os sete testes atuais cobrem busca, filtros/ordenação, rota direta, NFT inexistente, seleção de edições/preços, cupom após refresh, login com retomada de rota privada, conflito de cadastro e autenticação mobile. O relatório e os traces de falha são gerados localmente e ignorados pelo Git. A cobertura completa listada no README do desafio ainda não foi atingida.
 
 ## Estado e próximos passos
 
-Catálogo, detalhe, favoritos, perfil, carteiras, carrinho, cotação e pedidos usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos e recibos são separados por conta e a confirmação depende da resposta do servidor simulado. Socket.IO atualiza catálogo/carrinho e pedidos, com reconciliação por REST. A suíte Playwright versionada, auditoria Lighthouse, documentação de arquitetura e deploy ainda faltam. A responsividade e a fidelidade visual serão revisadas após as funcionalidades obrigatórias.
+Catálogo, detalhe, favoritos, perfil, carteiras, carrinho, cotação e pedidos usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos e recibos são separados por conta e a confirmação depende da resposta do servidor simulado. Socket.IO atualiza catálogo/carrinho e pedidos, com reconciliação por REST. Há uma suíte Playwright executável e `ARCHITECTURE.md`; a cobertura E2E completa e o deploy obrigatório ainda faltam. A auditoria Lighthouse foi executada; as medianas e métricas estão em reports/lighthouse. A responsividade e a fidelidade visual precisam de revisão final.
 
-1. Ajustar as demais telas mobile conforme as referências e revisar 390, 768 e 1440 px.
-2. Completar shimmer de carregamento e acessibilidade.
-3. Completar seleção/estoque por edição e versionar testes Playwright E2E/visuais, cobrindo isolamento, falhas e Socket.IO.
-4. Auditar Lighthouse, otimizar desempenho e documentar a arquitetura.
-5. Publicar a aplicação e registrar a URL.
+1. Completar testes E2E dos fluxos de compra, conta, Socket.IO, acessibilidade, falhas e recuperação.
+2. Rever todas as telas e viewports (390, 768 e 1440 px) contra o Figma e executar regressão visual.
+3. Melhorar performance mobile: medianas Lighthouse de 88 no início e 89 no detalhe, abaixo da meta 90. As 12 medições e demais categorias estão em `reports/lighthouse`.
+4. Fazer revisão final de lint, build, README e limitações.
+5. Publicar a aplicação e registrar a URL pública.
 
 ## Escopo da simulação
 
