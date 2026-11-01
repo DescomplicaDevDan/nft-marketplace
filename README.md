@@ -327,7 +327,7 @@ Na área inferior do rodapé, todos os títulos usam 18 px/700, linha de 16 px e
 
 Links do rodapé compartilhado: padding 32 px no desktop, gap de 124 px entre colunas e 8 px entre título e lista. Redes sociais usam 20 px entre título e ícones, botões de 30 × 30 px com gap de 10 px, 32 px até Carteiras compatíveis e 12 px até o selo. A grade reduz para duas/uma coluna em telas menores, com gaps adaptados para preservar o conteúdo.
 
-A faixa de contato usa gap horizontal de 92 px no desktop, incluindo a distância entre a caixa da frase de apresentação e o e-mail. Em tablet/mobile, a grade adapta-se e retorna ao gap de 24 px.
+Faixa de contato e links usam a mesma grade no desktop, com padding horizontal de 32 px e gap de 124 px entre trilhas. KURIO/Meu perfil, frase/Central de ajuda, e-mail/Coleções e telefone/Redes sociais compartilham o mesmo início de coluna. Essa regra substitui o gap isolado de 92 px para priorizar o alinhamento vertical entre seções. Em tablet/mobile, ambas as grades se adaptam juntas, com gap de 24 px.
 
 A faixa de contato do rodapé usa #F5F1EB: KURIO em texto de 14 px/700, linha 100%, tracking 10% e caixa 48 × 18 px; frase, e-mail e telefone em 14 px/400, linha 22 px e tracking zero. A frase tem largura-base 219 px e duas linhas; e-mail e telefone têm caixas-base de 143 × 22 px e 135 × 22 px.
 
