@@ -313,7 +313,7 @@ Checagens: a suíte Playwright confirma login, retomada de rota privada, conflit
 
 No Windows, a suíte usa o Microsoft Edge instalado. Em outros sistemas, instale o Chromium com `npx playwright install chromium`.
 
-Os sete testes atuais cobrem busca, filtros/ordenação, rota direta, NFT inexistente, seleção de edições/preços, cupom após refresh, login com retomada de rota privada, conflito de cadastro e autenticação mobile. O relatório e os traces de falha são gerados localmente e ignorados pelo Git. A cobertura completa listada no README do desafio ainda não foi atingida.
+Os oito testes atuais cobrem busca, filtros/ordenação, rota direta, NFT inexistente, seleção de edições/preços, cupom após refresh, login com retomada de rota privada, conflito de cadastro e autenticação mobile. O relatório e os traces de falha são gerados localmente e ignorados pelo Git. A cobertura completa listada no README do desafio ainda não foi atingida.
 
 ## Estado e próximos passos
 
@@ -322,6 +322,8 @@ Tipografia do hero desktop: boas-vindas 14 px/500, linha 16 px e tracking 10%; t
 O contador dos ícones de carrinho soma as quantidades de todas as linhas/edições confirmadas pela API. Aparece a partir de uma unidade e fica oculto quando vazio; acompanha inclusão, alteração de quantidade, remoção e conclusão da compra pelo estado do TanStack Query.
 
 A navegação principal da home desktop segue o grupo de 401 × 45 px da referência: fonte monoespaçada de 16 px, line-height de 100%, caixas de texto de 21 px de altura, espaçamento entre letras zero, peso 700 em Início e 400 nos demais itens, distribuídos horizontalmente e indicador ativo de Início com 58 px de largura na base do grupo.
+
+As contagens de coleções e redes são calculadas em cada `GET /api/nfts` sobre todo o catálogo, antes dos filtros e da paginação. Contam NFTs distintos, não unidades de edição ou estoque. Categorias sem itens mostram zero. Ao adicionar NFTs às fixtures, as próximas consultas já recalculam os números; Axios transporta a resposta e TanStack Query atualiza a interface ao refazer a consulta, recuperar foco ou receber invalidação por Socket.IO. Não existe endpoint de criação de NFT nesta simulação. Um teste E2E compara todas as contagens com o catálogo completo e com os totais de cada filtro.
 
 Os filtros desktop usam grupos com gap de 40 px (Coleções, Faixa de preço e Rede), 12 px entre título e opções, opções de 40 px de altura e recuo de 12 px. Coleções tem recuo dos dois lados (246 px úteis na lateral-base); Rede tem apenas recuo esquerdo (258 px úteis). O formulário de preço usa gap de 12 px entre seus controles e cresce com o conteúdo.
 

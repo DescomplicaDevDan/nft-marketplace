@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw'
-import { categoryCounts, featuredNFT, networkCounts, nfts } from './data/nfts'
+import { featuredNFT, nfts } from './data/nfts'
+import { catalogCounts } from './catalogCounts'
 import type { NFTListResponse } from '@/features/catalog/types'
 import type { CollectorProfile, ProfileUpdate } from '@/features/profile/api'
 import { walletHandlers } from './wallets'
@@ -255,8 +256,7 @@ export const handlers = [
       total: sorted.length,
       page,
       pageSize,
-      categoryCounts,
-      networkCounts,
+      ...catalogCounts(nfts),
       priceRange: {
         minEth: byPrice[0]?.priceEth ?? '0',
         maxEth: byPrice.at(-1)?.priceEth ?? '0',

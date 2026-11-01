@@ -1,6 +1,7 @@
 import { delay, http, HttpResponse } from 'msw'
 import { DEFAULT_SCENARIO, SCENARIOS, type ScenarioConfig, type ScenarioState } from '@/features/demo/types'
-import { categoryCounts, featuredNFT, networkCounts } from './data/nfts'
+import { featuredNFT } from './data/nfts'
+import { catalogCounts } from './catalogCounts'
 
 const KEY = 'kurio-demo-scenario'
 let epoch = 0
@@ -87,7 +88,7 @@ export const scenarioHandlers = [
         if (url.pathname === '/api/auth/signup' && request.method === 'POST') return HttpResponse.json({ message: 'Este e-mail ou nome de usuário já está cadastrado.', code: 'signup_conflict' }, { status: 409 })
         return
       case 'empty':
-        if (url.pathname === '/api/nfts' && request.method === 'GET') return HttpResponse.json({ items: [], total: 0, featuredNFT, page: Math.max(1, Number(url.searchParams.get('page')) || 1), pageSize: Math.min(24, Math.max(1, Number(url.searchParams.get('pageSize')) || 12)), categoryCounts: categoryCounts.map((item) => ({ ...item, count: 0 })), networkCounts: networkCounts.map((item) => ({ ...item, count: 0 })), priceRange: { minEth: '0', maxEth: '0' } })
+        if (url.pathname === '/api/nfts' && request.method === 'GET') return HttpResponse.json({ items: [], total: 0, featuredNFT, page: Math.max(1, Number(url.searchParams.get('page')) || 1), pageSize: Math.min(24, Math.max(1, Number(url.searchParams.get('pageSize')) || 12)), ...catalogCounts([]), priceRange: { minEth: '0', maxEth: '0' } })
         return
       default: return
     }

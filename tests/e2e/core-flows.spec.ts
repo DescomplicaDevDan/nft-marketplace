@@ -1,4 +1,27 @@
 import { expect, test } from '@playwright/test'
+import type { NFTListResponse } from '../../src/features/catalog/types'
+
+test('contagens de todas as coleções e redes correspondem ao catálogo completo', async ({ page }) => {
+  await expect(page.locator('#catalog-sort')).toBeVisible()
+  const checks = await page.evaluate(async () => {
+    async function list(params: Record<string, string> = {}): Promise<NFTListResponse> {
+      const response = await fetch(`/api/nfts?${new URLSearchParams({ pageSize: '24', ...params })}`)
+      if (!response.ok) throw new Error(`Erro no catálogo: ${response.status}`)
+      return response.json()
+    }
+    const first = await list()
+    const all = [...first.items]
+    for (let page = 2; all.length < first.total; page++) all.push(...(await list({ page: String(page) })).items)
+    const checks = []
+    for (const item of first.categoryCounts) checks.push({ dimension: 'category', name: item.name, displayed: item.count, actual: all.filter((nft) => nft.category === item.name).length, filtered: (await list({ category: item.name })).total })
+    for (const item of first.networkCounts) checks.push({ dimension: 'network', name: item.name, displayed: item.count, actual: all.filter((nft) => nft.network === item.name).length, filtered: (await list({ network: item.name })).total })
+    return checks
+  })
+  for (const check of checks) {
+    expect(check.displayed, `${check.dimension}: ${check.name}`).toBe(check.actual)
+    expect(check.filtered, `${check.name}: resultado do filtro`).toBe(check.actual)
+  }
+})
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/demo')
