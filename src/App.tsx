@@ -487,19 +487,19 @@ function App() {
       </section>
 
       <section aria-labelledby="journal-title">
-        <header className="mb-8 flex w-full flex-col gap-[8px] text-center font-mono">
-          <h2 id="journal-title" className="m-0 text-3xl font-bold text-[#f5f1eb]">Diário da Cunhagem</h2>
-          <p className="text-sm text-[#b8aa9b]">Histórias, guias e insights para colecionadores sobre o universo da propriedade digital.</p>
+        <header className="mb-8 flex w-full flex-col gap-[8px] text-center font-mono tracking-[0]">
+          <h2 id="journal-title" className="m-0 flex min-h-[37px] items-center justify-center text-[28px] font-bold leading-none text-[#F5F1EB]">Diário da Cunhagem</h2>
+          <p className="flex min-h-[18px] items-center justify-center text-[14px] font-normal leading-none text-[#CFB28C]">Histórias, guias e insights para colecionadores sobre o universo da propriedade digital.</p>
         </header>
         <div className="grid grid-cols-[minmax(0,268px)] justify-center gap-[24px] sm:grid-cols-[repeat(2,268px)] xl:grid-cols-[repeat(4,268px)]">
           {journalArticles.map((article) => (
-            <article key={article.title} className="w-full overflow-hidden rounded-[8px] bg-[#241612] font-mono">
+            <article key={article.title} className="w-full overflow-hidden rounded-[8px] bg-[#241612] font-mono tracking-[0]">
               <img src={article.image} alt="" className="block h-[195px] w-full object-cover" loading="lazy" />
               <div className="flex flex-col gap-[8px] px-[16px] pt-[12px] pb-[16px]">
-                <p className="text-[11px] text-[#b8aa9b]">{article.date} <span className="px-2">|</span> Leitura de {article.readingTime}</p>
-                <h3 className="m-0 text-sm font-bold leading-snug text-[#f5f1eb]">{article.title}</h3>
-                <p className="text-xs leading-5 text-[#b8aa9b]">{article.summary}</p>
-                <a href="#journal-title" className="self-start text-xs font-bold text-[#e69a55] hover:underline">Ler mais →</a>
+                <p className="min-h-[32px] text-[12px] font-medium leading-[16px] text-[#CFB28C]">{article.date} <span className="px-2">|</span> Leitura de {article.readingTime}</p>
+                <h3 className="m-0 flex min-h-[42px] items-center text-[16px] font-bold leading-none text-[#F5F1EB]">{article.title}</h3>
+                <p className="min-h-[32px] text-[12px] font-medium leading-[16px] text-[#CFB28C]">{article.summary}</p>
+                <a href="#journal-title" className="inline-flex items-center gap-1 self-start text-[#E89B55] hover:underline"><span className="h-[14px] w-[58px] text-[12px] font-bold leading-[14px]">Ler mais</span><span aria-hidden="true" className="flex h-[16px] w-[12px] items-center text-[12px] font-normal leading-none">→</span></a>
               </div>
             </article>
           ))}
