@@ -49,3 +49,11 @@ Lighthouse atualizado: três medições por página/perfil, com build de demonst
 
 As 12 referências visuais registram a implementação; não certificam igualdade pixel a pixel com Figma. A inspeção humana, leitores de tela e combinações adicionais de zoom/dispositivos complementam a automação. O lint mantém avisos de Fast Refresh sobre organização de exports, sem erros de build.
 O deploy público e sua validação de acesso direto/refresh ainda dependem da publicação, adiada pelo usuário. Configurar `VITE_ENABLE_MOCKS=true` no build publicado e fallback SPA para index.html. A URL pública deve ser adicionada ao README após a publicação.
+
+## Refinamentos posteriores de interface
+
+Os tokens de fontes foram unificados em Roboto Mono local; cabeçalhos desktop repetem a tipografia fornecida (navegação 16 px/400, ativo 700 e Entrar 16 px/500). O hero mobile usa duas elipses de 248 px nas posições (-80,-31) e (73,-10); direção vertical do gradiente inferida porque o painel não informou ângulo. O indicador branco de filtros foi removido e o avatar padrão usa o asset Image 2.svg. As baselines foram atualizadas e a execução integral posterior passou nos 33 testes. A revisão identificou o botão de desconectar oculto no checkout mobile; ele foi exposto após conexão e recebeu teste de desconexão/reconexão, bloqueando a compra até reconectar.
+
+## Preparação de hospedagem
+
+vercel.json ativa Vite, npm ci, build com VITE_ENABLE_MOCKS=true e dist, com fallback SPA e revalidação do Service Worker. playwright.preview.config.ts valida compras em viewports desktop/mobile e evento de preço sobre o build de produção local. Nenhum deploy foi feito nesta preparação; refresh e MSW precisam ser validados novamente na URL pública. Relatórios e worker gerado foram identificados por linguist-generated em .gitattributes sem excluir os arquivos da entrega.
