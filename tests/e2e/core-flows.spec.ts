@@ -116,6 +116,13 @@ for (const outcome of ['confirmed', 'rejected', 'timeout', 'mobile', 'expired', 
     }
     await page.getByRole('button', { name: 'Conectar carteira', exact: true }).click()
     if (outcome !== 'mobile') await expect(page.locator('.checkout-connected-message')).toBeVisible()
+    else {
+      await expect(page.getByRole('button', { name: 'Confirmar compra', exact: true })).toBeEnabled()
+      await page.getByRole('button', { name: 'Desconectar', exact: true }).click()
+      await expect(page.getByRole('button', { name: 'Confirmar compra', exact: true })).toBeDisabled()
+      await page.getByRole('button', { name: 'Conectar carteira', exact: true }).click()
+      await expect(page.getByRole('button', { name: 'Confirmar compra', exact: true })).toBeEnabled()
+    }
     if (outcome !== 'mobile' && outcome !== 'expired' && outcome !== 'reconnect' && outcome !== 'repriced' && outcome !== 'exhausted' && outcome !== 'wallet-refused') await page.locator('.checkout-payment-scenario select').selectOption(outcome)
     await expect(page.locator('.checkout-total')).toContainText('1.206 ETH')
     if (outcome === 'expired') {

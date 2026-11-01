@@ -114,7 +114,7 @@
   .checkout-page .checkout-connection > label, .checkout-page .checkout-payment-scenario { display: none; }
   .checkout-page .checkout-connection button { min-height: 42px; border-radius: 10px; }
   .checkout-page .checkout-connection.is-connected > button:first-of-type, .checkout-page .checkout-connection.is-connected .checkout-connected-message { display: none; }
-  .checkout-page .checkout-connection.is-connected > button:not(:first-of-type) { display: none; }
+  .checkout-page .checkout-connection.is-connected > button:not(:first-of-type) { display: inline-flex; align-self: flex-start; align-items: center; padding: 4px 0; border: 0; background: transparent; color: #cfb28c; text-decoration: underline; }
   .checkout-page .checkout-mobile-edit-profile { display: inline-block; align-self: flex-start; margin: 2px 0 14px; padding: 4px 0; border: 0; background: transparent; color: #b39463; font: 10px 'Roboto Mono Variable', monospace; text-decoration: underline; }
   .checkout-page .checkout-mobile-bottom { display: contents; }
   .checkout-page .checkout-total { display: flex; justify-content: flex-end; gap: 12px; padding: 8px 0; margin: 4px 0 8px; border: 0; font-size: 11px; }
