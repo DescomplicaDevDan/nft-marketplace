@@ -1,3 +1,4 @@
+import CartCountBadge from '@/components/CartCountBadge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useRef, useState, type FormEvent, type ChangeEvent } from 'react'
@@ -80,7 +81,7 @@ function ProfileEditor({ initialProfile }: { initialProfile: CollectorProfile })
       <header className="cart-header">
         <Link to="/" search={search} className="cart-wordmark">KURIO</Link>
         <nav aria-label="Navegação principal"><Link to="/" search={search} className="active">Início</Link><Link to="/" search={search} hash="catalogo">Mercado</Link><span>Criadores</span><span>Aprenda</span></nav>
-        <div className="cart-header-actions"><Link to="/" search={search} hash="catalogo" aria-label="Buscar"><img src={searchIcon} alt="" /></Link><Link to="/cart" search={search} aria-label="Carrinho"><img src={cartIcon} alt="" /></Link><AuthButton /></div>
+        <div className="cart-header-actions"><Link to="/" search={search} hash="catalogo" aria-label="Buscar"><img src={searchIcon} alt="" /></Link><Link to="/cart" search={search} aria-label="Carrinho"><img src={cartIcon} alt="" /><CartCountBadge /></Link><AuthButton /></div>
       </header>
       <div className="profile-layout">
         <aside className="profile-sidebar">

@@ -1,3 +1,4 @@
+import CartCountBadge from '@/components/CartCountBadge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useRef, useState, type FormEvent } from 'react'
@@ -60,7 +61,7 @@ export default function WalletsPage() {
   if (query.isError) return <main className="auth-route-message" role="alert"><p>Não foi possível carregar suas carteiras.</p><button type="button" onClick={() => { void query.refetch() }}>Tentar novamente</button></main>
   const saved = query.data
   return <main className="cart-page profile-page wallets-page">
-    <header className="cart-header"><Link to="/" search={search} className="cart-wordmark">KURIO</Link><nav aria-label="Navegação principal"><Link to="/" search={search} className="active">Início</Link><Link to="/" search={search} hash="catalogo">Mercado</Link><span>Criadores</span><span>Aprenda</span></nav><div className="cart-header-actions"><Link to="/" search={search} hash="catalogo" aria-label="Buscar"><img src={searchIcon} alt="" /></Link><Link to="/cart" search={search} aria-label="Carrinho"><img src={cartIcon} alt="" /></Link><AuthButton /></div></header>
+    <header className="cart-header"><Link to="/" search={search} className="cart-wordmark">KURIO</Link><nav aria-label="Navegação principal"><Link to="/" search={search} className="active">Início</Link><Link to="/" search={search} hash="catalogo">Mercado</Link><span>Criadores</span><span>Aprenda</span></nav><div className="cart-header-actions"><Link to="/" search={search} hash="catalogo" aria-label="Buscar"><img src={searchIcon} alt="" /></Link><Link to="/cart" search={search} aria-label="Carrinho"><img src={cartIcon} alt="" /><CartCountBadge /></Link><AuthButton /></div></header>
     <div className="profile-layout">
       <aside className="profile-sidebar"><h2>Meu perfil</h2><nav aria-label="Menu do perfil"><Link to="/profile" search={search}><span aria-hidden="true">♙</span>Dados do perfil</Link><Link to="/wallets" search={search} className="selected" aria-current="page"><span aria-hidden="true">◎</span>Carteiras</Link><Link to="/orders" search={search}><span aria-hidden="true">♧</span>Atividade</Link><Link to="/favorites" search={search}><span aria-hidden="true">♡</span>Lista de interesse</Link>{['Ofertas', 'Arquivos baixados', 'Suporte'].map((label) => <button key={label} type="button" onClick={() => setMessage(`${label}: área ainda não disponível.`)}><span aria-hidden="true">◇</span>{label}</button>)}<button type="button" className="profile-exit" onClick={() => { void logout().finally(() => navigate({ to: '/', search })) }}><span aria-hidden="true">↪</span>Sair</button></nav></aside>
       <section className="profile-form wallets-content">

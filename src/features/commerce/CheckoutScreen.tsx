@@ -1,3 +1,4 @@
+import CartCountBadge from '@/components/CartCountBadge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -140,7 +141,7 @@ export default function CheckoutScreen() {
       <header className="cart-header">
         <Link to="/" search={search} className="cart-wordmark">KURIO</Link>
         <nav aria-label="Navegação principal"><Link to="/" search={search}>Início</Link><Link to="/" search={search} hash="catalogo" className="active">Mercado</Link><span>Criadores</span><span>Aprenda</span></nav>
-        <div className="cart-header-actions"><Link to="/" search={search} hash="catalogo" aria-label="Buscar"><img src={searchIcon} alt="" /></Link><Link to="/cart" search={search} aria-label="Carrinho"><img src={cartIcon} alt="" /></Link><AuthButton /></div>
+        <div className="cart-header-actions"><Link to="/" search={search} hash="catalogo" aria-label="Buscar"><img src={searchIcon} alt="" /></Link><Link to="/cart" search={search} aria-label="Carrinho"><img src={cartIcon} alt="" /><CartCountBadge /></Link><AuthButton /></div>
       </header>
       <nav aria-label="Breadcrumb" className="cart-breadcrumb"><Link to="/" search={search}>Início</Link><span>/</span><Link to="/" search={search} hash="catalogo">Mercado</Link><span>/</span><span aria-current="page">Pagamento</span></nav>
       <h1 className="sr-only">Pagamento</h1>

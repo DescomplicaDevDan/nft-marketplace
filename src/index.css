@@ -20,6 +20,23 @@
 
 @custom-variant dark (&:is(.dark *));
 
+a:has(> .cart-count-badge) { position: relative; }
+.cart-count-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  display: grid;
+  place-items: center;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: #d28a4c;
+  color: #140d0a;
+  font: 700 10px/1 'Roboto Mono Variable', monospace;
+  pointer-events: none;
+}
+
 .desktop-home .auth-trigger {
   box-sizing: border-box;
   flex-shrink: 0;

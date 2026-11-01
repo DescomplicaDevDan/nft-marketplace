@@ -1,3 +1,4 @@
+import CartCountBadge from '@/components/CartCountBadge'
 import { AuthButton } from '@/features/auth/AuthProvider'
 import { useState } from 'react'
 import { Link, useParams, useSearch } from '@tanstack/react-router'
@@ -23,7 +24,7 @@ export default function NFTDetailPage() {
   const search = useSearch({ from: '/nft/$nftId' })
   const { data: nft, isPending, isError, error, refetch } = useNFT(nftId)
   const { data: catalog } = useNFTs({ page: 1, pageSize: 24 })
-  const { favorites, cart, quantities, toggleFavorite, addToCart, cartBusy } = useCommerce()
+  const { favorites, quantities, toggleFavorite, addToCart, cartBusy } = useCommerce()
   const [selectedImage, setSelectedImage] = useState(1)
   const [quantityByNft, setQuantityByNft] = useState<Record<string, number>>({})
   const [editionByNft, setEditionByNft] = useState<Record<string, string>>({})
@@ -64,7 +65,7 @@ export default function NFTDetailPage() {
               </nav>
               <div className="flex items-center justify-self-end gap-1 sm:gap-3 lg:gap-4">
                 <button type="button" aria-label="Buscar" className="p-1"><img src={searchIcon} alt="" className="size-4" /></button>
-                <Link to="/cart" search={search} aria-label="Abrir carrinho" className="relative p-1"><img src={cartIcon} alt="" className="size-4" />{cart.length === 6 && <span className="absolute -right-1 -top-1 grid size-3.5 place-items-center rounded-full bg-[#d28a4c] text-[8px] font-bold text-[#140d0a]">6</span>}</Link>
+                <Link to="/cart" search={search} aria-label="Abrir carrinho" className="relative p-1"><img src={cartIcon} alt="" className="size-4" /><CartCountBadge /></Link>
                 <AuthButton />
               </div>
             </header>

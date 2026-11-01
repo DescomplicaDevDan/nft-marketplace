@@ -1,3 +1,4 @@
+import CartCountBadge from '@/components/CartCountBadge'
 import { AuthButton } from '@/features/auth/AuthProvider'
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
@@ -121,7 +122,7 @@ function PriceRangeFilter({
 function App() {
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const { cart } = useCommerce()
+  const { cartItems } = useCommerce()
   const search = useSearch({ from: '/' })
   const navigate = useNavigate({ from: '/' })
   const { data, isPending, isError, refetch } = useNFTs({
@@ -205,8 +206,8 @@ function App() {
         </nav>
         <div className="hidden h-[35px] items-center justify-self-end self-start gap-[28px] md:flex">
           <button type="button" aria-label="Abrir busca" aria-expanded={searchOpen} onClick={() => setSearchOpen((open) => !open)} className="flex h-[35px] w-5 items-center justify-center rounded p-0 hover:bg-[#211511]"><img src={searchIcon} alt="" className="size-5" /></button>
-          <Link to="/cart" search={search} aria-label={`Abrir carrinho${cart.length === 6 ? ' com 6 itens' : ''}`} className="relative flex size-6 items-center justify-center rounded p-0 hover:bg-[#211511]">
-            <img src={cartIcon} alt="" className="size-5" />{cart.length === 6 && <span aria-hidden="true" className="absolute -right-1 -top-1 grid size-3.5 place-items-center rounded-full bg-[#e69a55] text-[8px] font-bold leading-none text-[#1b1310]">6</span>}
+          <Link to="/cart" search={search} aria-label={`Abrir carrinho com ${cartItems.reduce((total, item) => total + item.quantity, 0)} NFTs`} className="relative flex size-6 items-center justify-center rounded p-0 hover:bg-[#211511]">
+            <img src={cartIcon} alt="" className="size-5" /><CartCountBadge />
 
           </Link>
           <AuthButton />

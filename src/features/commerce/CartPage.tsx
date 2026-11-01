@@ -1,3 +1,4 @@
+import CartCountBadge from '@/components/CartCountBadge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { AuthButton } from '@/features/auth/AuthProvider'
@@ -40,7 +41,7 @@ export default function CartPage() {
         </nav>
         <div className="cart-header-actions">
           <Link to="/" search={search} hash="catalogo" aria-label="Buscar NFTs"><img src={searchIcon} alt="" /></Link>
-          <Link to="/cart" search={search} aria-label="Carrinho"><img src={cartIcon} alt="" /></Link>
+          <Link to="/cart" search={search} aria-label="Carrinho"><img src={cartIcon} alt="" /><CartCountBadge /></Link>
           <AuthButton />
         </div>
       </header>

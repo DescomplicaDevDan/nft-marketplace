@@ -317,6 +317,8 @@ Os sete testes atuais cobrem busca, filtros/ordenação, rota direta, NFT inexis
 
 ## Estado e próximos passos
 
+O contador dos ícones de carrinho soma as quantidades de todas as linhas/edições confirmadas pela API. Aparece a partir de uma unidade e fica oculto quando vazio; acompanha inclusão, alteração de quantidade, remoção e conclusão da compra pelo estado do TanStack Query.
+
 Os filtros desktop usam grupos com gap de 40 px (Coleções, Faixa de preço e Rede), 12 px entre título e opções, opções de 40 px de altura e recuo de 12 px. Coleções tem recuo dos dois lados (246 px úteis na lateral-base); Rede tem apenas recuo esquerdo (258 px úteis). O formulário de preço usa gap de 12 px entre seus controles e cresce com o conteúdo.
 
 No catálogo desktop, o padrão medido do Figma é lateral → produtos 48 px, abas → cards 32 px, abas entre si 20 px, colunas 34 px, linhas 72 px, arte → nome 12 px e nome → preço 12 px. O frame-base dos cards é 258 × 300 px; todas as imagens são quadradas de 250 × 250 px, centralizadas, com 4 px nas laterais e 25 px acima/abaixo na largura-base. As proporções são preservadas ao redimensionar. A lateral usa padding de 20 px nos quatro lados e mantém 24 px antes do destaque. O destaque tem 24 px de padding superior e preserva 94 px abaixo da imagem, sem fundo marrom nesse espaço; o fundo decorativo termina junto à imagem.

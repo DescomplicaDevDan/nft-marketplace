@@ -1,3 +1,4 @@
+import CartCountBadge from '@/components/CartCountBadge'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { Input } from '@/components/ui/input'
@@ -101,7 +102,7 @@ export function MobileHome({ data, loading, error, retry }: Props) {
       </section>
     </main>
 
-    <nav className="mobile-bottom-nav" aria-label="Navegação mobile"><div className="mobile-bottom-surface" aria-hidden="true" /><Link to="/" search={search} aria-label="Início" aria-current="page"><img src={homeIcon} alt="" /></Link><Link to="/favorites" search={search} aria-label="Favoritos"><img src={heartIcon} alt="" /></Link><a href="#mobile-catalog" className="mobile-explore-action" aria-label="Explorar NFTs"><img src={scanIcon} alt="" /></a><Link to="/cart" search={search} aria-label="Carrinho"><img src={cartIcon} alt="" /></Link><Link to="/profile" search={search} aria-label="Meu perfil"><img src={userIcon} alt="" /></Link></nav>
+    <nav className="mobile-bottom-nav" aria-label="Navegação mobile"><div className="mobile-bottom-surface" aria-hidden="true" /><Link to="/" search={search} aria-label="Início" aria-current="page"><img src={homeIcon} alt="" /></Link><Link to="/favorites" search={search} aria-label="Favoritos"><img src={heartIcon} alt="" /></Link><a href="#mobile-catalog" className="mobile-explore-action" aria-label="Explorar NFTs"><img src={scanIcon} alt="" /></a><Link to="/cart" search={search} aria-label="Carrinho"><img src={cartIcon} alt="" /><CartCountBadge /></Link><Link to="/profile" search={search} aria-label="Meu perfil"><img src={userIcon} alt="" /></Link></nav>
 
     <dialog ref={drawer} className="mobile-filter-dialog" aria-labelledby="mobile-filter-title" onClose={() => { document.body.style.overflow = previousOverflow.current }} onClick={(event) => { if (event.target === event.currentTarget) drawer.current?.close() }}>
       <header><h2 id="mobile-filter-title">Filtrar coleções</h2><button type="button" aria-label="Fechar filtros" onClick={() => drawer.current?.close()}>×</button></header>

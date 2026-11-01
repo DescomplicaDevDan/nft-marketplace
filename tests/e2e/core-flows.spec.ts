@@ -57,6 +57,13 @@ test('estoque, preço e linha do carrinho são independentes por edição', asyn
   await expect(rows.nth(0)).toContainText('1.19 ETH')
   await expect(rows.nth(1)).toContainText('Edição: ABERTA')
   await expect(rows.nth(1)).toContainText('0.89 ETH')
+  await expect(page.locator('.cart-count-badge')).toHaveText('2')
+  await rows.nth(0).getByRole('button', { name: /^Aumentar edições/ }).click()
+  await expect(page.locator('.cart-count-badge')).toHaveText('3')
+  await rows.nth(0).getByRole('button', { name: /^Remover / }).click()
+  await expect(page.locator('.cart-count-badge')).toHaveText('1')
+  await rows.nth(0).getByRole('button', { name: /^Remover / }).click()
+  await expect(page.locator('.cart-count-badge')).toHaveCount(0)
 })
 
 test('cupom é validado pela cotação e permanece no estado após atualizar', async ({ page }) => {
