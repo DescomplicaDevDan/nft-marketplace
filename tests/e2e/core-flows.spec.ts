@@ -2,6 +2,22 @@ import { expect, test } from '@playwright/test'
 import type { NFTListResponse } from '../../src/features/catalog/types'
 import { ethToWei, weiToEth } from '../../src/lib/eth'
 
+test('sessão persiste e logout remove acesso ao perfil privado', async ({ page }) => {
+  await page.goto('/profile')
+  await page.locator('#login-email').fill('colecionador@kurio.demo')
+  await page.locator('#login-password').fill('Kurio123!')
+  await page.locator('.auth-submit').click()
+  await expect(page.getByLabel('Nome de usuário', { exact: false })).toHaveValue('colecionador')
+  await page.reload()
+  await expect(page.locator('.auth-trigger')).toContainText('Sair')
+  await expect(page.getByLabel('Nome de usuário', { exact: false })).toHaveValue('colecionador')
+  await page.locator('.auth-trigger').click()
+  await expect(page.locator('.auth-trigger')).toContainText('Entrar')
+  await page.goto('/profile')
+  await expect(page.locator('dialog[open]')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Perfil do colecionador' })).toHaveCount(0)
+})
+
 test('evento de preço atualiza edições, carrinho e cotação sem recarregar', async ({ page }) => {
   await page.goto('/nft/nft-001')
   await expect(page.locator('.nft-detail-price')).toHaveText('1.19 ETH')
