@@ -487,19 +487,19 @@ function App() {
       </section>
 
       <section aria-labelledby="journal-title">
-        <header className="mb-8 text-center font-mono">
-          <h2 id="journal-title" className="text-3xl font-bold text-[#f5f1eb]">Diário da Cunhagem</h2>
-          <p className="mt-3 text-sm text-[#b8aa9b]">Histórias, guias e insights para colecionadores sobre o universo da propriedade digital.</p>
+        <header className="mb-8 flex w-full flex-col gap-[8px] text-center font-mono">
+          <h2 id="journal-title" className="m-0 text-3xl font-bold text-[#f5f1eb]">Diário da Cunhagem</h2>
+          <p className="text-sm text-[#b8aa9b]">Histórias, guias e insights para colecionadores sobre o universo da propriedade digital.</p>
         </header>
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-[minmax(0,268px)] justify-center gap-[24px] sm:grid-cols-[repeat(2,268px)] xl:grid-cols-[repeat(4,268px)]">
           {journalArticles.map((article) => (
-            <article key={article.title} className="overflow-hidden bg-[#211511] font-mono">
-              <img src={article.image} alt="" className="aspect-[1.2] w-full object-cover" loading="lazy" />
-              <div className="p-4">
-                <p className="mb-3 text-[11px] text-[#b8aa9b]">{article.date} <span className="px-2">|</span> Leitura de {article.readingTime}</p>
-                <h3 className="mb-2 text-sm font-bold leading-snug text-[#f5f1eb]">{article.title}</h3>
-                <p className="mb-3 text-xs leading-5 text-[#b8aa9b]">{article.summary}</p>
-                <a href="#journal-title" className="text-xs font-bold text-[#e69a55] hover:underline">Ler mais →</a>
+            <article key={article.title} className="w-full overflow-hidden rounded-[8px] bg-[#241612] font-mono">
+              <img src={article.image} alt="" className="block h-[195px] w-full object-cover" loading="lazy" />
+              <div className="flex flex-col gap-[8px] px-[16px] pt-[12px] pb-[16px]">
+                <p className="text-[11px] text-[#b8aa9b]">{article.date} <span className="px-2">|</span> Leitura de {article.readingTime}</p>
+                <h3 className="m-0 text-sm font-bold leading-snug text-[#f5f1eb]">{article.title}</h3>
+                <p className="text-xs leading-5 text-[#b8aa9b]">{article.summary}</p>
+                <a href="#journal-title" className="self-start text-xs font-bold text-[#e69a55] hover:underline">Ler mais →</a>
               </div>
             </article>
           ))}
