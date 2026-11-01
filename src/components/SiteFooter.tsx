@@ -1,7 +1,6 @@
 import './SiteFooter.css'
 import { useState } from 'react'
 import youtubeIcon from '@/assets/icons/Frame 112.svg'
-import kurioWordmark from '@/assets/img/Logo.svg'
 import { footerGroups, footerHighlights, socialLinks } from '@/mocks/data/homeContent'
 
 export default function SiteFooter() {
@@ -14,25 +13,25 @@ export default function SiteFooter() {
           {footerHighlights.map((item) => (
             <article key={item.title}>
               <div className="site-footer-benefit-content">
-              <span className="site-footer-benefit-marker"><span className="site-footer-benefit-letter text-lg font-bold text-[#140d0a]">{item.icon}</span></span>
-              <h2 className="text-sm font-bold">{item.title}</h2>
-              <p className="text-xs leading-5 text-[#b8aa9b]">{item.description}</p>
+              <span className="site-footer-benefit-marker"><span className="site-footer-benefit-letter">{item.icon}</span></span>
+              <h2>{item.title}</h2>
+              <p>{item.description}</p>
               </div>
             </article>
           ))}
           <form className="site-footer-newsletter" onSubmit={(event) => { event.preventDefault(); setNewsletterSubmitted(true) }}>
             <label htmlFor="detail-newsletter-email" className="block text-sm font-bold leading-tight">Antecipe-se ao próximo lançamento</label>
             <div className="site-footer-newsletter-fields">
-              <input id="detail-newsletter-email" type="email" required placeholder="digite seu e-mail..." className="min-w-0 flex-1 rounded-l border border-[#49372b] bg-[#140d0a] px-3 py-2 text-xs outline-none placeholder:text-[#b8aa9b] focus-visible:ring-2 focus-visible:ring-[#e89b55]" />
-              <button type="submit" className="rounded-r bg-[#d28a4c] px-3 text-xs font-bold text-[#140d0a]"><span>Enviar</span></button>
+              <input id="detail-newsletter-email" type="email" required placeholder="digite seu e-mail..." className="min-w-0 flex-1 rounded-l border border-[#49372b] bg-[#140d0a] px-3 py-2 outline-none focus-visible:ring-2 focus-visible:ring-[#e89b55]" />
+              <button type="submit" className="rounded-r bg-[#d28a4c] px-3"><span>Enviar</span></button>
             </div>
-            <p className="site-footer-newsletter-description text-xs leading-5 text-[#b8aa9b]">Receba lançamentos selecionados, histórias de criadores e novidades do mercado.</p>
+            <p className="site-footer-newsletter-description">Receba lançamentos selecionados, histórias de criadores e novidades do mercado.</p>
             {newsletterSubmitted && <p role="status" className="mt-2 text-xs text-[#e89b55]">Inscrição de demonstração confirmada.</p>}
           </form>
         </section>
 
         <div className="site-footer-contact grid grid-cols-1 gap-4 bg-[#3b2412] px-6 py-5 text-xs sm:grid-cols-2 lg:grid-cols-4 lg:items-center lg:px-10">
-          <a href="#topo" aria-label="Kurio — início" className="inline-flex"><img src={kurioWordmark} alt="KURIO" className="h-7 w-[120px] object-contain object-left" /></a>
+          <a href="#topo" aria-label="Kurio — início" className="site-footer-wordmark">KURIO</a>
           <p className="site-footer-contact-message">Feito para colecionadores,<br />criadores e cultura</p>
           <a href="mailto:contato@email.com" className="site-footer-contact-email hover:text-[#e89b55]">contato@email.com</a>
           <a href="tel:+551140028922" className="site-footer-contact-phone hover:text-[#e89b55]">+55 11 4002 8922</a>
@@ -54,11 +53,11 @@ export default function SiteFooter() {
               <a href="#redes-sociais" aria-label="YouTube" className="grid place-items-center rounded-[5px] hover:bg-[#3b2412]"><img src={youtubeIcon} alt="" className="block h-full w-full" /></a>
             </div>
             <h3 className="text-sm font-bold">Carteiras compatíveis</h3>
-            <p className="site-footer-wallet-brands text-[8px] uppercase tracking-wide text-[#e69a55]"><span>METAMASK · WALLETCONNECT · COINBASE</span></p>
+            <p className="site-footer-wallet-brands"><span>METAMASK · WALLETCONNECT · COINBASE</span></p>
           </div>
         </section>
       </footer>
-      <p className="site-footer-copyright text-xs text-[#b8aa9b]">© 2026 Kurio. Propriedade digital para todos.</p>
+      <p className="site-footer-copyright">© 2026 Kurio. Propriedade digital para todos.</p>
     </section>
   )
 }

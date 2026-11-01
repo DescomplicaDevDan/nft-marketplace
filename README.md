@@ -317,7 +317,29 @@ Os nove testes atuais cobrem busca, filtros/ordenação, rota direta, NFT inexis
 
 ## Estado e próximos passos
 
-Home, detalhe do NFT, carrinho e pagamento usam o mesmo SiteFooter. A home deixou de duplicar o rodapé. Layout compartilhado: marcadores de 74 px, gaps de 12 px nos benefícios, divisórias de 1 × 202 px, recuos e espaçamentos da newsletter, faixa de contato com gap de 92 px, links com gap de 124 px no desktop, ícones sociais de 30 px com uma moldura e asset YouTube Frame 112.svg. O selo das carteiras ajusta a largura ao conteúdo.
+Os ícones sociais preservam uma única moldura: Facebook, Instagram, Twitter e LinkedIn exibem o SVG completo em 30 × 30 px, pois o asset já inclui a borda. A borda adicional do link foi removida. YouTube usa o asset local Frame 112.svg, que também já contém sua moldura, sem borda adicional no link.
+
+O copyright compartilhado ocupa toda a largura do rodapé (1200 px no frame-base), com caixa mínima de 30 px de altura, fonte 14 px/400, linha 30 px, tracking zero, cor #F5F1EB e alinhamento central. Pode crescer em telas estreitas para preservar o texto.
+
+O selo de carteiras do rodapé ajusta a largura ao texto, evitando espaço vazio após COINBASE. Mantém altura de 26 px, raio 6 px, fundo #38220F, contorno interno de 1 px #55321F e padding de 7 px vertical / 10,5 px horizontal. Texto de 9 px/700, linha 100%, tracking de 0,1 px e #E89B55.
+
+Na área inferior do rodapé, todos os títulos usam 18 px/700, linha de 16 px e #F5F1EB. Os links das três listas usam 14 px/400, linha de 30 px, #F5F1EB e tracking zero. As listas não somam gap entre linhas: cinco links ocupam 150 px, mantendo 8 px entre título e lista.
+
+Links do rodapé compartilhado: padding 32 px no desktop, gap de 124 px entre colunas e 8 px entre título e lista. Redes sociais usam 20 px entre título e ícones, botões de 30 × 30 px com gap de 10 px, 32 px até Carteiras compatíveis e 12 px até o selo. A grade reduz para duas/uma coluna em telas menores, com gaps adaptados para preservar o conteúdo.
+
+A faixa de contato usa gap horizontal de 92 px no desktop, incluindo a distância entre a caixa da frase de apresentação e o e-mail. Em tablet/mobile, a grade adapta-se e retorna ao gap de 24 px.
+
+A faixa de contato do rodapé usa #F5F1EB: KURIO em texto de 14 px/700, linha 100%, tracking 10% e caixa 48 × 18 px; frase, e-mail e telefone em 14 px/400, linha 22 px e tracking zero. A frase tem largura-base 219 px e duas linhas; e-mail e telefone têm caixas-base de 143 × 22 px e 135 × 22 px.
+
+Newsletter compartilhada: texto do campo 14 px/400, linha 16 px, tracking zero e #B39463; Enviar 18 px/700, linha 16 px e #140D0A numa caixa de texto 65 × 16 px; descrição 13 px/400, linha 22 px, largura máxima 325 px, altura mínima 89 px e #CFB28C. Os estilos se aplicam a todas as instâncias de `SiteFooter`.
+
+Newsletter do rodapé compartilhado: recuo esquerdo de 17 px após a divisória, 16 px entre título e campo, 12 px entre campo e descrição e 53 px de respiro inferior. Campo e botão permanecem juntos em uma linha, com descrição abaixo e altura do grupo acompanhando o conteúdo.
+
+Os três benefícios do rodapé compartilham tipografia: letras W/C/D de 24 px/700, linha 100% e #140D0A, centralizadas numa caixa de 15 × 32 px; títulos de 17 px/700, linha 16 px e #F5F1EB; descrições de 14 px/400, linha 22 px, largura 204 px e #CFB28C. Todos têm tracking zero e mantêm gap de 12 px no bloco de conteúdo.
+
+O topo do `SiteFooter` usa padding de 32 px no topo/esquerda, 14 px à direita e 16 px na base no desktop. Os três benefícios têm gap de 12 px entre marcador, título e descrição, divisórias verticais de 1 × 202 px em #D28A4C e marcadores circulares de 74 × 74 px, raio 37 px e fundo #D28A4C. A newsletter ocupa a quarta coluna, proporcionalmente mais larga. Essas medidas são compartilhadas por home, detalhe, carrinho e pagamento.
+
+Home, detalhe do NFT, carrinho e pagamento reutilizam `src/components/SiteFooter.tsx` e `SiteFooter.css` para benefícios/newsletter, faixa de contato, links, redes sociais, carteiras e copyright. A versão duplicada da home foi removida; ajustes no componente passam a valer nas quatro telas. A newsletter continua sendo uma confirmação demonstrativa local. A visibilidade do rodapé nos layouts mobile segue as regras de cada tela.
 
 Cards do Diário da Cunhagem: largura-base 268 px, altura conforme o conteúdo, raio 8 px, fundo #241612 e distância de 24 px entre cards. O corpo usa padding superior 12 px e lateral/inferior 16 px; data/leitura, título, resumo e link são distribuídos por flex com gap de 8 px. Data/leitura e resumo usam 12 px/500, linha de 16 px e #CFB28C; título 16 px/700, linha 100% e #F5F1EB; Ler mais 12 px/700, linha 14 px e #E89B55, com seta separada 12 px/400. As caixas mínimas de texto são de 32, 42 e 32 px, respectivamente. O cabeçalho usa Roboto Mono, título 28 px/700 e subtítulo 14 px/400, centralizados e sem tracking. A grade centraliza uma, duas ou quatro colunas conforme a largura disponível.
 
