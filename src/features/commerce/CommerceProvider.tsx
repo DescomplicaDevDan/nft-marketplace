@@ -55,7 +55,7 @@ export function CommerceProvider({ children }: { children: ReactNode }) {
     removeFromCart: cartApi.remove,
   }
 
-  return <CommerceContext.Provider value={value}>{children}<p role="status" aria-live="polite" className="sr-only">{favoriteActions.message}</p>{favoriteActions.message.includes('desfeita') && <p role="alert" className="fixed bottom-4 left-4 right-4 z-50 rounded border border-[#d28a4c] bg-[#241612] p-4 text-[#f5f1eb]">{favoriteActions.message}</p>}{cartApi.message && <p role="status" className="commerce-cart-toast pointer-events-none fixed bottom-4 left-4 right-4 z-50 rounded border border-[#d28a4c] bg-[#241612] p-4 text-[#f5f1eb]">{cartApi.message}</p>}</CommerceContext.Provider>
+  return <CommerceContext.Provider value={value}>{children}<p role="status" aria-live="polite" className="sr-only">{favoriteActions.message}</p>{favoriteActions.message.includes('desfeita') && <p role="alert" className="fixed bottom-4 left-4 right-4 z-50 rounded border border-[#d28a4c] bg-[#241612] p-4 text-[#f5f1eb]">{favoriteActions.message}</p>}{cartApi.message && <p role="status" className="commerce-cart-toast pointer-events-none fixed bottom-4 left-4 right-4 z-50 sm:left-auto sm:max-w-[360px] rounded border border-[#d28a4c] bg-[#241612] p-4 text-[#f5f1eb]">{cartApi.message}</p>}</CommerceContext.Provider>
 }
 
 export function useCommerce() {

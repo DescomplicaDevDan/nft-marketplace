@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { isAxiosError } from 'axios'
 import { api } from '@/lib/api'
@@ -22,6 +22,11 @@ export function useCartApi() {
   const locked = useRef(false)
   const [notice, setNotice] = useState<{ owner: string; text: string } | null>(null)
   const [couponNotice, setCouponNotice] = useState<{ owner: string; text: string } | null>(null)
+  useEffect(() => {
+    if (!notice || !['Carrinho atualizado.', 'NFT removido do carrinho.'].includes(notice.text)) return
+    const timer = window.setTimeout(() => setNotice((current) => current === notice ? null : current), 3000)
+    return () => window.clearTimeout(timer)
+  }, [notice])
   const query = useQuery({
     queryKey: ['cart', owner],
     enabled: !loading,

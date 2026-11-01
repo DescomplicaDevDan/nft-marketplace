@@ -6,6 +6,17 @@ test.beforeEach(async ({ page }) => {
   await page.evaluate(async () => { await fetch('/api/demo/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }) })
 })
 
+test('aviso de carrinho desaparece sem remover os itens', async ({ page }) => {
+  await page.goto('/nft/nft-001')
+  await page.getByRole('button', { name: 'COMPRAR', exact: true }).click()
+  const notice = page.locator('.commerce-cart-toast')
+  await expect(notice).toHaveText('Carrinho atualizado.')
+  await expect(notice).toHaveCount(0, { timeout: 5000 })
+  await page.goto('/cart')
+  await expect(page.locator('.cart-table tbody tr')).toHaveCount(1)
+  await expect(page.locator('.cart-summary-total')).toContainText('1.206 ETH')
+})
+
 test('rota inexistente informa o erro e oferece retorno ao início', async ({ page }) => {
   await page.goto('/rota-inexistente')
   await expect(page.getByRole('heading', { name: 'Página não encontrada' })).toBeVisible()
