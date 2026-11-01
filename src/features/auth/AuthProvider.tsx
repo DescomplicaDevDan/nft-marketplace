@@ -203,5 +203,5 @@ export function AuthButton() {
   const { openLogin, user, logout } = useAuth()
   const navigate = useNavigate()
   if (user) return <button type="button" className="auth-trigger" onClick={() => { void logout().finally(() => navigate({ to: '/', search: { search: '', category: undefined, network: undefined, minPrice: undefined, maxPrice: undefined, sort: undefined, page: 1 } })) }}><img src={loginIcon} alt="" />Sair</button>
-  return <button type="button" className="auth-trigger" onClick={openLogin}><img src={loginIcon} alt="" />Entrar</button>
+  return <button type="button" className="auth-trigger" onClick={openLogin}><img src={loginIcon} alt="" /><span className="auth-trigger-label">Entrar</span></button>
 }

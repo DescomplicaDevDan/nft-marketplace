@@ -317,7 +317,11 @@ Os sete testes atuais cobrem busca, filtros/ordenação, rota direta, NFT inexis
 
 ## Estado e próximos passos
 
+Tipografia do hero desktop: boas-vindas 14 px/500, linha 16 px e tracking 10%; título 43 px/700, linha 70 px e tracking zero; descrição com largura máxima de 557 px, 14 px/400, linha 24 px, tracking zero e cor #CFB28C. Boas-vindas e título usam #F5F1EB. A família permanece Roboto Mono enquanto o token `font/family` do Figma não revelar seu nome real.
+
 O contador dos ícones de carrinho soma as quantidades de todas as linhas/edições confirmadas pela API. Aparece a partir de uma unidade e fica oculto quando vazio; acompanha inclusão, alteração de quantidade, remoção e conclusão da compra pelo estado do TanStack Query.
+
+A navegação principal da home desktop segue o grupo de 401 × 45 px da referência: fonte monoespaçada de 16 px, line-height de 100%, caixas de texto de 21 px de altura, espaçamento entre letras zero, peso 700 em Início e 400 nos demais itens, distribuídos horizontalmente e indicador ativo de Início com 58 px de largura na base do grupo.
 
 Os filtros desktop usam grupos com gap de 40 px (Coleções, Faixa de preço e Rede), 12 px entre título e opções, opções de 40 px de altura e recuo de 12 px. Coleções tem recuo dos dois lados (246 px úteis na lateral-base); Rede tem apenas recuo esquerdo (258 px úteis). O formulário de preço usa gap de 12 px entre seus controles e cresce com o conteúdo.
 

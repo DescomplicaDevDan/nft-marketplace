@@ -186,22 +186,22 @@ function App() {
           <img src={kurioWordmark} alt="KURIO" className="h-[22px] w-[100px] sm:h-[35px] sm:w-[160px]" />
         </a>
 
-        <nav aria-label="Navegação principal" className="flex h-[45px] w-[401px] shrink-0 items-start justify-between whitespace-nowrap font-mono text-[16px] leading-[24px] tracking-normal md:col-start-2">
+        <nav aria-label="Navegação principal" className="flex h-[45px] w-[401px] shrink-0 items-start justify-between whitespace-nowrap font-mono text-[16px] font-normal leading-none tracking-[0] md:col-start-2 [&_.nav-label]:flex [&_.nav-label]:h-[21px] [&_.nav-label]:items-center">
           <a
             href="/"
             aria-current="page"
             className="block h-[45px] w-[58px] border-b-2 border-[#E89B55] p-0 font-bold text-[#E89B55]"
           >
-            Início
+            <span className="nav-label">Início</span>
           </a>
           <a href="#catalogo" className="block h-[45px] p-0 text-[#f5f1eb] transition-colors hover:text-[#E89B55]">
-            Mercado
+            <span className="nav-label">Mercado</span>
           </a>
           <span aria-disabled="true" title="Área ainda não disponível" className="block h-[45px] p-0 text-[#f5f1eb]">
-            Criadores
+            <span className="nav-label">Criadores</span>
           </span>
           <span aria-disabled="true" title="Área ainda não disponível" className="block h-[45px] p-0 text-[#f5f1eb]">
-            Aprenda
+            <span className="nav-label">Aprenda</span>
           </span>
         </nav>
         <div className="hidden h-[35px] items-center justify-self-end self-start gap-[28px] md:flex">
@@ -217,18 +217,18 @@ function App() {
       <section className="relative grid items-start gap-8 py-0 md:grid-cols-[minmax(0,640fr)_minmax(0,450fr)] md:gap-[clamp(24px,7.64vw,110px)]">
         <div className="relative min-w-0 self-stretch pb-[72px] font-mono md:pt-[43px] lg:pl-10">
           <div className="flex w-full max-w-[600px] flex-col gap-2">
-          <p className="text-sm tracking-[0.16em] text-[#f5f1eb]">
+          <p className="text-[14px] font-medium leading-[16px] tracking-[0.1em] text-[#F5F1EB]">
             Bem-vindo à Kurio
           </p>
 
           <div className="flex flex-col gap-1">
-          <h1 className="m-0 text-[48px] font-bold uppercase leading-[1.5] tracking-normal text-[#f5f1eb]">
+          <h1 className="m-0 text-[43px] font-bold uppercase leading-[70px] tracking-[0] text-[#F5F1EB]">
             Seja dono do futuro
             <br />
             da arte digital
           </h1>
 
-          <p className="w-full max-w-[600px] text-sm leading-6 text-[#b8aa9b]">
+          <p className="w-full max-w-[557px] text-[14px] font-normal leading-[24px] tracking-[0] text-[#CFB28C]">
             Descubra NFTs selecionados de criadores emergentes e consagrados.
             Colecione arte digital rara, apoie artistas e tenha uma parte da
             cultura da internet.
@@ -238,9 +238,9 @@ function App() {
 
           <a
             href="#catalogo"
-            className="mt-8 inline-flex h-10 items-center rounded-md bg-[#e69a55] px-7 font-sans text-sm font-bold text-[#1b1310] hover:brightness-110"
+            className="mt-8 inline-flex h-10 items-center rounded-md bg-[#e69a55] px-7 font-mono text-[16px] font-bold leading-[20px] tracking-[0] text-[#140D0A] hover:brightness-110"
           >
-            EXPLORAR
+            <span className="block h-[20px] w-[77px]">EXPLORAR</span>
           </a>
           <div aria-hidden="true" className="absolute bottom-[43px] right-0 hidden items-center gap-2 md:flex">
             <span className="size-2 rounded-full bg-[#e69a55]" />

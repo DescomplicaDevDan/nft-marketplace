@@ -46,8 +46,13 @@ a:has(> .cart-count-badge) { position: relative; }
   gap: 4px;
   border-radius: 6px;
   background: #d28a4c;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 100%;
+  letter-spacing: 0;
 }
 .desktop-home .auth-trigger img { width: 20px; height: 20px; flex-shrink: 0; }
+.desktop-home .auth-trigger-label { display: flex; align-items: center; justify-content: center; width: 58px; height: 21px; flex-shrink: 0; }
 
 :root {
   --text: #6b6375;
