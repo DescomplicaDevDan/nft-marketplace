@@ -2,7 +2,7 @@
 
 Frontend de um marketplace de NFTs desenvolvido para um desafio técnico. O objetivo é implementar descoberta de NFTs, compra simulada e área do colecionador com React e TypeScript.
 
-> Em desenvolvimento: fluxos desktop/mobile conectados à API simulada. A cobertura E2E, auditoria Lighthouse, revisão visual final e publicação ainda estão em andamento.
+> Fluxos desktop/mobile conectados à API simulada, testes E2E, regressão visual e auditoria Lighthouse disponíveis. Publicação pública pendente. Consulte ARCHITECTURE.md para evidências e limitações, incluindo as metas de performance mobile ainda não atingidas.
 
 ## Links
 
@@ -313,9 +313,27 @@ Checagens: a suíte Playwright confirma login, retomada de rota privada, conflit
 
 No Windows, a suíte usa o Microsoft Edge instalado. Em outros sistemas, instale o Chromium com `npx playwright install chromium`.
 
-Os nove testes atuais cobrem busca, filtros/ordenação, rota direta, NFT inexistente, seleção de edições/preços, cupom após refresh, login com retomada de rota privada, conflito de cadastro, autenticação mobile e atualização de preços por Socket.IO. O relatório e os traces de falha são gerados localmente e ignorados pelo Git. A cobertura completa listada no README do desafio ainda não foi atingida.
+Os testes iniciais cobriam busca, filtros/ordenação, rota direta, NFT inexistente, seleção de edições/preços, cupom após refresh, login com retomada de rota privada, conflito de cadastro, autenticação mobile e atualização de preços por Socket.IO. O relatório e os traces de falha são gerados localmente e ignorados pelo Git. A cobertura foi ampliada; consulte ARCHITECTURE.md e os arquivos em tests/e2e para os cenários atuais.
 
 ## Estado e próximos passos
+
+Resultado final desta rodada: **33 testes Playwright passaram juntos**, incluindo regressão visual e projetos desktop/mobile. Build e typecheck passaram; lint concluiu com avisos de Fast Refresh. Relatório HTML em `reports/playwright/index.html`. Auditoria atualizada: performance mobile 70/74 (meta 90 não atingida), desktop 97/98; acessibilidade 100 mobile/97 desktop, boas práticas 100 e SEO 92. As 12 medições e a justificativa estão em `reports/lighthouse` e `ARCHITECTURE.md`. Deploy público permanece pendente. Os registros abaixo descrevem a evolução anterior; este resultado e os relatórios são a referência atual.
+
+Validação ampliada: cenários de conta/compra/sessão, cotação obsoleta, estoque esgotado, recusa de carteira, reconexão de pedido pendente, eventos antigos/duplicados, cupom inválido/expirado, recibo imutável, rollback, foco de diálogo, skeletons e recuperação de erro estão na suíte. `npm run test:visual` compara 12 baselines versionadas em 390/768/1440 px; são referências da implementação, não prova de igualdade pixel a pixel com Figma. `npm run typecheck` verifica tipos separadamente. `.env.example` documenta a configuração do build de demonstração. Consulte a seção final de ARCHITECTURE.md para limites e evidências atuais.
+
+Verificação conjunta após as correções: 18 testes Playwright passaram (2 workers). Build aprovado; lint concluído com avisos de Fast Refresh. A suíte inclui casos em viewport mobile, mas isso ainda não equivale à matriz completa desktop/mobile exigida. Regressão visual versionada, reconexão com pedido pendente, reconfirmação de cotação e revisão de acessibilidade ainda precisam de cobertura específica.
+
+Conta e carteiras: teste E2E desktop validou alteração de nome/avatar/senha, recusa de senha atual incorreta, login com nova senha e cadastro das carteiras principal/secundária. Endereço inválido é recusado e dados confirmados permanecem após refresh. Build passou; lint executado com avisos de organização de exports para Fast Refresh.
+
+Rollback de favoritos validado por E2E: MSW devolve HTTP 503 uma vez, com atraso determinístico; a interface seleciona otimisticamente, informa a falha e restaura o estado anterior. Refresh confirma que o favorito não foi gravado. Nova tentativa tem sucesso e persiste após refresh. Teste passou em desktop.
+
+Expiração durante checkout validada: o endpoint de expiração invalida a sessão antes do envio, o login é solicitado e dados/itens são preservados. Após autenticar, reconectar e confirmar, existe apenas um pedido. Uma resposta HTTP 401 na criação agora remove a tentativa rejeitada, evitando bloquear a nova confirmação; tentativas de resultado incerto por timeout mantêm a chave de recuperação. Os testes de expiração e timeout passaram após a correção; build também passou.
+
+Isolamento de pedidos validado por E2E: após compra confirmada do colecionador, Sato acessa a URL direta e recebe Pedido não encontrado, sem itens do recibo; REST retorna 404 e a lista de pedidos fica vazia. O bloqueio permanece após refresh. Ao autenticar novamente como dono, o mesmo recibo e total permanecem disponíveis. Esse cenário passou em desktop.
+
+Dois testes E2E desktop percorrem adição de NFT como visitante, autenticação no checkout, preenchimento, conexão simulada e envio do pagamento. Confirmado: recibo persiste após refresh e carrinho esvazia. Recusado: estado persiste após refresh e item permanece no carrinho. Ambos passaram. O cenário de timeout também passou: a resposta excede os 8 segundos do Axios e o cliente recupera o pedido pela mesma chave. Os três cenários reenviam a requisição original aos handlers MSW e verificam o mesmo ID e apenas um pedido na conta. Os cenários também acionam Confirmar compra três vezes e verificam apenas um pedido. O checkout e recibo passaram em viewport 390 × 844 px (adição inicial realizada no desktop). Foi corrigido um bloqueio mobile: o CSS mantinha o diálogo fechado de autenticação visível e interceptando cliques; agora diálogos sem open permanecem ocultos. A compra integral desde o catálogo mobile passou em 390 × 844 px: card → detalhe → carrinho → checkout → login → conexão → recibo → refresh. A mensagem de carrinho passou a ignorar eventos de ponteiro, pois sobrepunha e bloqueava o botão de finalizar no mobile.
+
+Teste E2E de sessão confirma persistência após refresh e bloqueio do perfil após logout. O teste de troca de usuário verifica perfil e favoritos com colecionador → Sato → colecionador, incluindo refresh e preservação dos favoritos originais. Ambos passaram em desktop. Isso não substitui a validação de isolamento de pedidos, carteiras e eventos em trânsito, ainda pendente.
 
 Os ícones sociais preservam uma única moldura: Facebook, Instagram, Twitter e LinkedIn exibem o SVG completo em 30 × 30 px, pois o asset já inclui a borda. A borda adicional do link foi removida. YouTube usa o asset local Frame 112.svg, que também já contém sua moldura, sem borda adicional no link.
 
@@ -369,16 +387,13 @@ Os filtros desktop usam grupos com gap de 40 px (Coleções, Faixa de preço e R
 
 No catálogo desktop, o padrão medido do Figma é lateral → produtos 48 px, abas → cards 32 px, abas entre si 20 px, colunas 34 px, linhas 72 px, arte → nome 12 px e nome → preço 12 px. O frame-base dos cards é 258 × 300 px; todas as imagens são quadradas de 250 × 250 px, centralizadas, com 4 px nas laterais e 25 px acima/abaixo na largura-base. As proporções são preservadas ao redimensionar. A lateral usa padding de 20 px nos quatro lados e mantém 24 px antes do destaque. O destaque tem 24 px de padding superior e preserva 94 px abaixo da imagem, sem fundo marrom nesse espaço; o fundo decorativo termina junto à imagem.
 
-O bloco inicial desktop usa os gaps fornecidos do Figma: cabeçalho → hero 32 px; texto → imagem 110 px na largura-base de 1440 px; boas-vindas → título 8 px; título → descrição 4 px; descrição → botão 32 px; bloco inicial → catálogo 96 px. O texto tem deslocamento superior de 43 px e recuo esquerdo de 40 px no desktop. A revisão visual das demais seções continua pendente.
+O bloco inicial desktop usa os gaps fornecidos do Figma: cabeçalho → hero 32 px; texto → imagem 110 px na largura-base de 1440 px; boas-vindas → título 8 px; título → descrição 4 px; descrição → botão 32 px; bloco inicial → catálogo 96 px. O texto tem deslocamento superior de 43 px e recuo esquerdo de 40 px no desktop. A regressão visual das quatro telas principais foi adicionada em três larguras; ela registra a implementação e não substitui comparação humana com Figma.
 
-Catálogo, detalhe, favoritos, perfil, carteiras, carrinho, cotação e pedidos usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos e recibos são separados por conta e a confirmação depende da resposta do servidor simulado. Socket.IO atualiza catálogo/carrinho e pedidos, com reconciliação por REST. Há uma suíte Playwright executável e `ARCHITECTURE.md`; a cobertura E2E completa e o deploy obrigatório ainda faltam. A auditoria Lighthouse foi executada; as medianas e métricas estão em reports/lighthouse. A responsividade e a fidelidade visual precisam de revisão final.
+Os fluxos usam MSW na rede, Axios, TanStack Router/Query e Socket.IO Client. A suíte cobre compra/conta e falhas, com baselines das telas principais em 390/768/1440 px. Build, verificação de tipos e lint estão disponíveis. O lint mantém avisos de organização de exports para Fast Refresh. A publicação pública foi adiada pelo usuário; ainda é obrigatória para a entrega.
 
-1. Completar testes E2E dos fluxos de compra, conta, Socket.IO, acessibilidade, falhas e recuperação.
-2. Rever todas as telas e viewports (390, 768 e 1440 px) contra o Figma e executar regressão visual.
-3. Melhorar performance mobile: medianas Lighthouse de 88 no início e 89 no detalhe, abaixo da meta 90. As 12 medições e demais categorias estão em `reports/lighthouse`.
-4. Fazer revisão final de lint, build, README e limitações.
-5. Publicar a aplicação e registrar a URL pública.
+As medianas Lighthouse mobile atuais de 70/74 continuam abaixo da meta de 90 e estão justificadas em ARCHITECTURE.md. Não foram consideradas aprovadas. A automação de regressão detecta alterações futuras, mas não certifica igualdade absoluta com Figma nem toda combinação possível de leitor de tela e zoom.
 
+Comandos adicionais: `npm run typecheck`, `npm run test:visual` e `npx playwright test --update-snapshots` (somente para atualização intencional das baselines). Elas foram geradas no Windows/Chromium Edge; outro ambiente pode exigir referências próprias. O último relatório HTML de entrega fica em `reports/playwright/index.html`.
 ## Escopo da simulação
 
 Autenticação, carteiras e pagamentos são simulados. Integrações reais com blockchain, extensões de carteira e gateways de pagamento não fazem parte do desafio.
