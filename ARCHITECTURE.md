@@ -48,7 +48,7 @@ Correções verificadas: diálogos fechados não interceptam a tela mobile; avis
 Lighthouse atualizado: três medições por página/perfil, com build de demonstração e navegador headless, relatórios HTML/JSON e metadados em `reports/lighthouse`. Medianas: início mobile 70, detalhe mobile 74, início desktop 97, detalhe desktop 98. Acessibilidade 100 no mobile e 97 no desktop; boas práticas 100 e SEO 92. A meta de performance mobile ≥90 NÃO foi atingida. LCP mobile de 4309/4137 ms e TBT de 593/490 ms indicam atraso de conteúdo e bloqueio de thread principal; inicialização do runtime MSW/Socket.IO e aplicação React contribuem para o custo de JavaScript. A imagem principal compartilhada é pré-carregada e tem prioridade alta; isso não eliminou o gargalo. As medições anteriores 88/89 foram substituídas por esta auditoria. Os valores variam com as condições de execução; esta entrega publica os resultados medidos, sem reduzir funcionalidades ou desativar mocks para melhorar a nota.
 
 As 12 referências visuais registram a implementação; não certificam igualdade pixel a pixel com Figma. A inspeção humana, leitores de tela e combinações adicionais de zoom/dispositivos complementam a automação. O lint mantém avisos de Fast Refresh sobre organização de exports, sem erros de build.
-O deploy público e sua validação de acesso direto/refresh ainda dependem da publicação, adiada pelo usuário. Configurar `VITE_ENABLE_MOCKS=true` no build publicado e fallback SPA para index.html. A URL pública deve ser adicionada ao README após a publicação.
+Deploy publicado em https://nft-marketplace-em67.vercel.app/; acesso direto e MSW foram verificados, e quatro testes funcionais passaram na URL pública. Configurar `VITE_ENABLE_MOCKS=true` no build publicado e fallback SPA para index.html. A URL pública deve ser adicionada ao README após a publicação.
 
 ## Refinamentos posteriores de interface
 
@@ -56,4 +56,6 @@ Os tokens de fontes foram unificados em Roboto Mono local; cabeçalhos desktop r
 
 ## Preparação de hospedagem
 
-vercel.json ativa Vite, npm ci, build com VITE_ENABLE_MOCKS=true e dist, com fallback SPA e revalidação do Service Worker. playwright.preview.config.ts valida compras em viewports desktop/mobile e evento de preço sobre o build de produção local. Nenhum deploy foi feito nesta preparação; refresh e MSW precisam ser validados novamente na URL pública. Relatórios e worker gerado foram identificados por linguist-generated em .gitattributes sem excluir os arquivos da entrega.
+vercel.json ativa Vite, npm ci, build com VITE_ENABLE_MOCKS=true e dist, com fallback SPA e revalidação do Service Worker. playwright.preview.config.ts valida compras em viewports desktop/mobile e evento de preço sobre o build de produção local. A publicação posterior foi validada na URL pública; relatório em reports/deployed/index.html. Relatórios e worker gerado foram identificados por linguist-generated em .gitattributes sem excluir os arquivos da entrega.
+
+Avisos de alteração/remoção bem-sucedida do carrinho expiram após 3 segundos, com timer reiniciado a cada nova confirmação. Erros não recebem esse descarte automático. Um teste verificou o desaparecimento do aviso e a preservação do item/total no carrinho; build passou.

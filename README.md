@@ -4,7 +4,7 @@ Marketplace de NFTs em React e TypeScript, com descoberta, compra e conta do col
 
 - [Repositório](https://github.com/DescomplicaDevDan/nft-marketplace)
 - [Figma do desafio](https://www.figma.com/design/Ff0SksUi7UFtPWUO8kyNtw/Frontend-Challenge?node-id=0-1)
-- **URL pública: pendente de publicação. O deploy é obrigatório na entrega.**
+- [Aplicação publicada na Vercel](https://nft-marketplace-em67.vercel.app/)
 - [Arquitetura, decisões e limitações](ARCHITECTURE.md)
 
 ## 1. Instalação e execução
@@ -309,9 +309,9 @@ Três medições por tela/perfil, com build otimizado, mocks ativos e navegador 
 | Testes executáveis e visuais | Suíte Playwright, relatório HTML e baselines versionadas |
 | Responsividade/acessibilidade | Overflow, foco e desconexão/reconexão mobile testados; revisão humana integral não certificada |
 | Lighthouse | Auditoria entregue; performance mobile abaixo da meta, com justificativa |
-| Publicação e refresh público | **Pendente: deploy e URL pública obrigatórios** |
+| Publicação e refresh público | Publicado na Vercel; rotas diretas, MSW e quatro testes na URL pública aprovados |
 
-Não é correto declarar 100% de aderência ao desafio enquanto falta o deploy, a meta mobile não foi atingida e a inspeção manual integral não foi concluída. Testes e auditorias reduzem risco; não garantem aprovação pelo avaliador.
+O deploy foi validado, mas não se declara 100% de aderência: a meta de performance mobile não foi atingida e a inspeção manual integral não foi concluída. Testes e auditorias reduzem risco; não garantem aprovação pelo avaliador.
 
 Assets e Roboto Mono são locais. Onde o Figma informou apenas o token `font/family`, a família foi inferida das referências disponíveis. Há adaptações de foco, feedback e componentes; detalhes em `ARCHITECTURE.md`. Login social, recuperação de senha e áreas auxiliares fora do escopo não executam integrações reais e exibem comportamento informativo. Não há publicação editorial, suporte, ofertas ou downloads reais. O explorador e a referência de transação são simulados.
 
@@ -325,7 +325,7 @@ O arquivo `vercel.json` já define Vite, instalação por `npm ci`, saída `dist
 4. Mantenha a configuração versionada: instalação `npm ci`, build `VITE_ENABLE_MOCKS=true npm run build` e saída `dist`. O build command já ativa os mocks; se substituir esse comando no painel, configure `VITE_ENABLE_MOCKS=true` nas variáveis de Production/Preview e reconstrua.
 5. Clique em **Deploy** e aguarde a URL HTTPS.
 6. Na URL pública, abra `/demo`, depois `/nft/nft-001` diretamente e atualize. Faça login, cadastre uma carteira e conclua uma compra. Verifique um evento de preço pelo roteiro da seção 7.
-7. Confirme que `https://SUA_URL/mockServiceWorker.js` retorna JavaScript; a página do marketplace não deve aparecer nesse endereço. Mantenha a aplicação pública durante a avaliação e registre a URL na seção inicial deste README.
+7. Confirme que `https://nft-marketplace-em67.vercel.app/mockServiceWorker.js` retorna JavaScript; a página do marketplace não deve aparecer nesse endereço. Mantenha a aplicação pública durante a avaliação e registre a URL na seção inicial deste README.
 
 Pré-validação local do build publicado (não substitui teste na URL pública):
 
@@ -339,3 +339,7 @@ npx playwright test --config=playwright.preview.config.ts --workers=2
 ```
 
 A pré-validação passou em três testes; o HTML está em `reports/production-smoke/index.html`. Essa configuração executa compras desktop/mobile e atualização de preço via Socket.IO contra `vite preview`, sem servidor de desenvolvimento. Os relatórios gerados são marcados em `.gitattributes` para não dominar as estatísticas de linguagens do GitHub; permanecem disponíveis no repositório. `.vercel/` é ignorado para evitar versionar configurações locais da ferramenta.
+
+### Validação da publicação
+
+A URL pública passou em quatro testes: edição de perfil/avatar/senha/carteiras, compra desktop, compra mobile e atualização de preço via Socket.IO. Acesso direto às rotas e entrega do MSW responderam HTTP 200. Relatório em reports/deployed/index.html. Reproduza com npx playwright test --config=playwright.deployed.config.ts --workers=2. As confirmações de alteração/remoção do carrinho agora somem em 3 segundos e usam aviso compacto no desktop; erros permanecem visíveis. Essa alteração local exige novo envio/deploy para aparecer na URL pública.
