@@ -470,14 +470,17 @@ function App() {
         </div>
       </section>
 
-      <section aria-label="Coleções em destaque" className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <section aria-label="Coleções em destaque" className="featured-collections-section mx-auto grid w-full max-w-[1200px] grid-cols-1 justify-items-center gap-[28px] lg:grid-cols-2">
         {featuredCollections.map((collection) => (
-          <article key={collection.title} className="flex min-h-[220px] overflow-hidden bg-[#211511]">
-            <img src={collection.image} alt="" className="w-1/2 object-cover" loading="lazy" />
-            <div className="flex w-1/2 flex-col items-center justify-center px-4 py-6 text-center font-mono">
-              <h2 className="mb-3 text-base font-bold leading-snug text-[#f5f1eb]">{collection.title}</h2>
-              <p className="mb-3 text-xs leading-5 text-[#b8aa9b]">{collection.description}</p>
-              <a href="#catalogo" className="rounded bg-[#e69a55] px-5 py-2 text-xs font-bold text-[#1b1310]">Explorar →</a>
+          <article key={collection.title} className="flex min-h-[250px] w-full max-w-[586px] overflow-hidden rounded-[6px] bg-[#241612]">
+            <div className="relative w-1/2 shrink-0 self-stretch overflow-hidden rounded-[16px]">
+              <img src={collection.image} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+              <span aria-hidden="true" className="pointer-events-none absolute left-[-199px] top-[134px] size-[256px] rounded-full border border-[#D28A4C]" />
+            </div>
+            <div className="flex min-w-0 w-1/2 flex-col items-center justify-center px-4 py-6 text-center font-mono">
+              <h2 className="mb-3 w-full text-base font-bold leading-snug text-[#f5f1eb]">{collection.title}</h2>
+              <p className="w-full text-xs leading-5 text-[#b8aa9b]">{collection.description}</p>
+              <a href="#catalogo" className="mt-2 shrink-0 rounded bg-[#e69a55] px-5 py-2 text-xs font-bold text-[#1b1310]">Explorar →</a>
             </div>
           </article>
         ))}

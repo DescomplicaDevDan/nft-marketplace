@@ -20,6 +20,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@media (min-width: 1024px) {
+  .desktop-home .featured-collections-section {
+    --page-padding: 32px;
+    box-sizing: border-box;
+    width: calc(100% + 2 * var(--page-padding));
+    max-width: none;
+    margin-inline: calc(-1 * var(--page-padding));
+    padding-inline: 120px;
+  }
+}
+@media (min-width: 1440px) {
+  .desktop-home .featured-collections-section { --page-padding: 120px; }
+}
+
 a:has(> .cart-count-badge) { position: relative; }
 .cart-count-badge {
   position: absolute;
