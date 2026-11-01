@@ -7,7 +7,7 @@ export type Order = {
   version: number
   createdAt: string
   quoteId: string
-  items: Array<{ id: string; name: string; collection: string; imageUrl: string; quantity: number; unitPriceEth: string; priceEth: string }>
+  items: Array<{ id: string; lineId: string; editionId: string; editionLabel: string; name: string; collection: string; imageUrl: string; quantity: number; unitPriceEth: string; priceEth: string }>
   wallet: string
   walletAddress: string
   network: string

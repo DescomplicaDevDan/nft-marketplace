@@ -189,7 +189,7 @@ export default function CheckoutScreen() {
             {savedWallets.isError && <p role="alert" className="checkout-mobile-no-wallet">Não foi possível carregar as carteiras. <button type="button" onClick={() => { void savedWallets.refetch() }}>Tentar novamente</button></p>}
           </section>
           <div className="checkout-list-heading"><strong>NFTs</strong><span>Subtotal</span></div>
-          <ul className="checkout-items">{items.map((item) => <li key={item.id}><img src={item.imageUrl} alt="" /><div><strong>{item.name}</strong><small>ID do token: #{(item.name.match(/#(\d+)$/)?.[1] ?? '').padStart(4, '0')}</small></div><span className="checkout-item-quantity">(× {quantities[item.id] ?? 1})</span><b>{quote?.items.find((line) => line.id === item.id)?.lineTotalEth ?? '—'} ETH</b></li>)}</ul>
+          <ul className="checkout-items">{items.map((item) => <li key={item.lineId}><img src={item.imageUrl} alt="" /><div><strong>{item.name}</strong><small>ID do token: #{(item.name.match(/#(\d+)$/)?.[1] ?? '').padStart(4, '0')} · Edição: {item.editionLabel}</small></div><span className="checkout-item-quantity">(× {quantities[item.lineId] ?? 1})</span><b>{quote?.items.find((line) => line.lineId === item.lineId)?.lineTotalEth ?? '—'} ETH</b></li>)}</ul>
           <Link to="/cart" search={search} className="checkout-promo-link">Tem um código promocional? Aplique aqui</Link>
           {(quoteLoading || quoteBusy) && <p role="status">Atualizando total…</p>}
           {quoteError && <div role="alert"><p>{quoteError}</p><button type="button" onClick={retryQuote}>Recalcular total</button></div>}

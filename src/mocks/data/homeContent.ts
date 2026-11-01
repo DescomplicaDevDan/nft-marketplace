@@ -1,7 +1,7 @@
 import artwork05 from '@/assets/img/NFT Artwork 05.png'
 import artwork09 from '@/assets/img/NFT Artwork 09.png'
 import artwork18 from '@/assets/img/NFT Artwork 18.png'
-import frame136 from '@/assets/img/Frame 136.png'
+import frame136 from '@/assets/img/Frame 136.webp'
 import facebookIcon from '@/assets/icons/facebook.svg'
 import instagramIcon from '@/assets/icons/instagram.svg'
 import linkedinIcon from '@/assets/icons/linkedin.svg'

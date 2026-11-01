@@ -5,11 +5,12 @@ import { api } from '@/lib/api'
 import { guestCartId } from '@/lib/guestCart'
 import { useAuth } from '@/features/auth/AuthProvider'
 import type { NFT } from '@/features/catalog/types'
+import { editionLineId, parseEditionLineId } from '@/features/catalog/types'
 import type { CartQuote } from './quoteTypes'
 
-export type CartItem = NFT & { quantity: number }
+export type CartItem = NFT & { quantity: number; lineId: string; editionId: string }
 type CartResponse = { items: CartItem[]; version: number; notices: string[] }
-type Change = { id: string; operation: 'add' | 'set' | 'remove'; quantity?: number; owner: string; token: string; guest: string }
+type Change = { lineId: string; operation: 'add' | 'set' | 'remove'; quantity?: number; owner: string; token: string; guest: string }
 
 export function useCartApi() {
   const { user, loading } = useAuth()
@@ -36,9 +37,10 @@ export function useCartApi() {
   const mutation = useMutation({
     mutationFn: async (change: Change) => {
       const config = { headers: { Authorization: change.token ? `Bearer ${change.token}` : '', 'X-Guest-Cart': change.guest } }
-      const path = `/cart/items/${encodeURIComponent(change.id)}`
-      if (change.operation === 'remove') return (await api.delete<CartResponse>(path, config)).data
-      return (await api.put<CartResponse>(path, { quantity: change.quantity, operation: change.operation }, config)).data
+      const { nftId, editionId } = parseEditionLineId(change.lineId)
+      const path = `/cart/items/${encodeURIComponent(nftId)}`
+      if (change.operation === 'remove') return (await api.delete<CartResponse>(`${path}?editionId=${encodeURIComponent(editionId)}`, config)).data
+      return (await api.put<CartResponse>(path, { quantity: change.quantity, operation: change.operation, editionId }, config)).data
     },
     retry: false,
     onSuccess: (data, change) => {
@@ -89,12 +91,12 @@ export function useCartApi() {
     couponMutation.mutate({ code, owner, token, guest })
   }
 
-  async function change(id: string, operation: Change['operation'], quantity?: number): Promise<boolean> {
+  async function change(lineId: string, operation: Change['operation'], quantity?: number): Promise<boolean> {
     if (locked.current || loading || !query.isSuccess) return false
     locked.current = true
     setNotice(null)
     try {
-      await mutation.mutateAsync({ id, operation, quantity, owner, token, guest })
+      await mutation.mutateAsync({ lineId, operation, quantity, owner, token, guest })
       return true
     } catch { return false }
   }
@@ -113,7 +115,7 @@ export function useCartApi() {
     busy: mutation.isPending || query.isFetching || couponMutation.isPending,
     message: notice?.owner === owner ? notice.text : query.data?.notices.join(' ') ?? '',
     refetch: query.refetch,
-    add: (id: string, quantity = 1) => change(id, 'add', quantity),
+    add: (id: string, quantity = 1, editionId = 'one-of-fifty') => change(editionLineId(id, editionId), 'add', quantity),
     setQuantity: (id: string, quantity: number) => change(id, 'set', quantity),
     remove: (id: string) => change(id, 'remove'),
   }

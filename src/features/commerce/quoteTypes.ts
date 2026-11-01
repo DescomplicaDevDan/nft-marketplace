@@ -5,7 +5,7 @@ export type CartQuote = {
   cartVersion: number
   expiresAt: string
   coupon: string | null
-  items: Array<NFT & { quantity: number; lineTotalEth: string }>
+  items: Array<NFT & { lineId: string; editionId: string; quantity: number; lineTotalEth: string }>
   subtotalEth: string
   discountEth: string
   networkFeeEth: string

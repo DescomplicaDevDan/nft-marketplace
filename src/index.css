@@ -4,6 +4,20 @@
 @import "@fontsource-variable/geist";
 @import "@fontsource-variable/roboto-mono";
 
+.kurio-skeleton {
+  background: linear-gradient(100deg, #241612 25%, #3a281d 38%, #241612 62%);
+  background-size: 300% 100%;
+  animation: kurio-shimmer 1.35s ease-in-out infinite;
+}
+
+@keyframes kurio-shimmer {
+  to { background-position: -150% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kurio-skeleton { animation: none; background: #291a12; }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

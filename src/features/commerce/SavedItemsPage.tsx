@@ -1,6 +1,7 @@
 import { Link, useSearch } from '@tanstack/react-router'
 import { useFavoriteCollection } from './favorites'
 import type { CatalogSearch } from '@/features/catalog/types'
+import { defaultEditionId } from '@/features/catalog/types'
 import { useCommerce } from './CommerceProvider'
 import CartScreen from './CartPage'
 
@@ -56,7 +57,7 @@ function StoredItemsPage({ mode, search }: { mode: Mode; search: CatalogSearch }
                   <button type="button" onClick={() => removeFromCart(nft.id)} className="text-sm text-[#b8aa9b] underline">Remover</button>
                 ) : (
                   <>
-                    <button type="button" onClick={() => addToCart(nft.id)} disabled={cart.includes(nft.id)} className="text-sm text-[#e69a55] underline disabled:opacity-50">
+                    <button type="button" onClick={() => { void addToCart(nft.id, 1, defaultEditionId(nft)) }} disabled={cart.includes(nft.id)} className="text-sm text-[#e69a55] underline disabled:opacity-50">
                       {cart.includes(nft.id) ? 'No carrinho' : 'Adicionar ao carrinho'}
                     </button>
                     <button type="button" onClick={() => toggleFavorite(nft.id)} className="text-sm text-[#b8aa9b] underline">Remover dos favoritos</button>

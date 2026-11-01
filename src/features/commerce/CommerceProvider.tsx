@@ -22,7 +22,7 @@ interface CommerceContextValue {
   retryCart: () => void
   setCartQuantity: (id: string, quantity: number) => void
   toggleFavorite: (id: string) => void
-  addToCart: (id: string, quantity?: number) => Promise<boolean>
+  addToCart: (id: string, quantity?: number, editionId?: string) => Promise<boolean>
   removeFromCart: (id: string) => void
 }
 
@@ -34,7 +34,7 @@ export function CommerceProvider({ children }: { children: ReactNode }) {
 
   const value: CommerceContextValue = {
     cart: cartApi.items.map((item) => item.id),
-    quantities: Object.fromEntries(cartApi.items.map((item) => [item.id, item.quantity])),
+    quantities: Object.fromEntries(cartApi.items.map((item) => [item.lineId, item.quantity])),
     cartItems: cartApi.items,
     cartLoading: cartApi.isPending,
     cartError: cartApi.isError,

@@ -48,8 +48,8 @@
   .mobile-card-favorite { position: absolute; top: 10px; right: 8px; display: grid; place-items: center; width: 28px; height: 28px; padding: 5px; border: 1px solid #d28a4c; border-radius: 50%; background: #332013; opacity: 0; cursor: pointer; }
   .mobile-card-favorite img { width: 17px; height: 17px; }
   .mobile-first-favorite, .mobile-card-favorite[aria-pressed='true'], .mobile-card-favorite:focus-visible, .mobile-nft-art:hover .mobile-card-favorite { opacity: 1; }
-  .mobile-nft-skeleton > div { height: 190px; border-radius: 20px; background: #291a12; animation: mobile-skeleton-pulse 1.4s ease-in-out infinite; }
-  .mobile-nft-skeleton i { display: block; height: 12px; width: 75%; margin-top: 9px; border-radius: 3px; background: #291a12; }
+  .mobile-nft-skeleton > div { height: 190px; border-radius: 20px; }
+  .mobile-nft-skeleton i { display: block; height: 12px; width: 75%; margin-top: 9px; border-radius: 3px; }
   .mobile-nft-skeleton i:last-child { width: 50%; }
   .mobile-catalog-message { padding: 30px 8px; color: #cfb28c; text-align: center; }
   .mobile-catalog-message button { margin-top: 16px; border: 1px solid #d28a4c; border-radius: 6px; background: none; padding: 10px; color: #d28a4c; font: inherit; }
@@ -93,5 +93,3 @@
   .mobile-nft-art { height: 175px; }
   .mobile-nft-caption h3 { font-size: 11px; }
 }
-@keyframes mobile-skeleton-pulse { 50% { opacity: .4; } }
-@media (prefers-reduced-motion: reduce) { .mobile-nft-skeleton > div { animation: none; } }

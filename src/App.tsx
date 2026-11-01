@@ -3,7 +3,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import searchIcon from './assets/icons/Search Icon.svg'
 import cartIcon from './assets/icons/Cart Icon.svg'
-import heroArtwork from './assets/img/Frame 136.png'
+import heroArtwork from './assets/img/Frame 136.webp'
 import kurioWordmark from './assets/img/Logo.svg'
 import { useNFTs } from '@/features/catalog/api'
 import type { NFTNetwork, NFTSort } from '@/features/catalog/types'
@@ -384,9 +384,9 @@ function App() {
             {isPending && (
               <div aria-label="Carregando NFTs" className="grid grid-cols-1 gap-x-8 gap-y-8 p-0 sm:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: PAGE_SIZE }, (_, index) => (
-                  <div key={index} className="h-[350px] w-full animate-pulse">
-                    <div className="h-[300px] bg-[#241612]" />
-                    <div className="mt-3 space-y-2"><div className="h-4 w-2/3 bg-[#241612]" /><div className="h-4 w-1/3 bg-[#241612]" /></div>
+                  <div key={index} className="h-[350px] w-full">
+                    <div className="kurio-skeleton h-[300px] rounded-sm" />
+                    <div className="mt-3 space-y-2"><div className="kurio-skeleton h-4 w-2/3 rounded-sm" /><div className="kurio-skeleton h-4 w-1/3 rounded-sm" /></div>
                   </div>
                 ))}
               </div>

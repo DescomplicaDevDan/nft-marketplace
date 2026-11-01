@@ -20,8 +20,8 @@ export default function CartPage() {
   const recommendations = data?.items.slice(recommendationPage * 3, recommendationPage * 3 + 5) ?? []
   const cannotCheckout = cartBusy || isError || !quote || quoteBusy || !!quoteError
 
-  function changeQuantity(id: string, amount: number) {
-    setCartQuantity(id, Math.max(1, (quantities[id] ?? 1) + amount))
+  function changeQuantity(lineId: string, amount: number) {
+    setCartQuantity(lineId, Math.max(1, (quantities[lineId] ?? 1) + amount))
   }
 
   return (
@@ -51,24 +51,27 @@ export default function CartPage() {
         <span aria-current="page">Carrinho</span>
       </nav>
       <h1 className="sr-only">Carrinho de NFTs</h1>
-      {isPending && <p role="status">Carregando carrinho…</p>}
+      {isPending && <section role="status" aria-label="Carregando carrinho" className="cart-content cart-loading" aria-busy="true">
+        <div className="cart-table-scroll"><div className="cart-loading-heading kurio-skeleton" />{Array.from({ length: 3 }, (_, index) => <div key={index} className="cart-loading-row"><div className="kurio-skeleton cart-loading-art" /><div className="cart-loading-copy"><i className="kurio-skeleton" /><i className="kurio-skeleton" /></div><i className="kurio-skeleton cart-loading-price" /></div>)}</div>
+        <aside className="cart-summary"><div className="kurio-skeleton cart-loading-summary" /></aside>
+      </section>}
       {isError && <div role="alert"><p>Não foi possível carregar o carrinho.</p><button type="button" onClick={retryCart}>Tentar novamente</button></div>}
       {!isPending && !isError && items.length === 0 && <div className="cart-empty"><p>Seu carrinho está vazio.</p><Link to="/" search={search} hash="catalogo">Explorar NFTs</Link></div>}
       {items.length > 0 && (
         <div className="cart-content">
           <ul className="mobile-cart-items" aria-label="NFTs no carrinho">
             {items.map((item) => {
-              const quantity = quantities[item.id] ?? 1
-              const total = quote?.items.find((line) => line.id === item.id)?.lineTotalEth ?? '—'
-              return <li key={item.id} className="mobile-cart-item">
+              const quantity = quantities[item.lineId] ?? 1
+              const total = quote?.items.find((line) => line.lineId === item.lineId)?.lineTotalEth ?? '—'
+              return <li key={item.lineId} className="mobile-cart-item">
                 <Link className="mobile-cart-art" to="/nft/$nftId" params={{ nftId: item.id }} search={search}><img src={item.imageUrl} alt="" /></Link>
                 <div className="mobile-cart-info">
                   <Link to="/nft/$nftId" params={{ nftId: item.id }} search={search} className="mobile-cart-name">{item.name}</Link>
                   <div className="mobile-cart-edition-row"><span>Edição: {item.editionLabel ?? '—'}</span><div className="mobile-cart-quantity">
-                    <button type="button" aria-label={`Diminuir edições de ${item.name}`} disabled={cartBusy || quantity === 1} onClick={() => changeQuantity(item.id, -1)}>−</button>
+                    <button type="button" aria-label={`Diminuir edições de ${item.name} (${item.editionLabel})`} disabled={cartBusy || quantity === 1} onClick={() => changeQuantity(item.lineId, -1)}>−</button>
                     <span aria-label={`Quantidade: ${quantity}`}>{quantity}</span>
-                    <button type="button" aria-label={`Aumentar edições de ${item.name}`} disabled={cartBusy || quantity >= item.available} onClick={() => changeQuantity(item.id, 1)}>+</button>
-                    <button type="button" className="mobile-cart-remove" aria-label={`Remover ${item.name}`} disabled={cartBusy} onClick={() => removeFromCart(item.id)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 6V3h6v3M6 9l1 12h10l1-12" /></svg></button>
+                    <button type="button" aria-label={`Aumentar edições de ${item.name} (${item.editionLabel})`} disabled={cartBusy || quantity >= item.available} onClick={() => changeQuantity(item.lineId, 1)}>+</button>
+                    <button type="button" className="mobile-cart-remove" aria-label={`Remover ${item.name} edição ${item.editionLabel}`} disabled={cartBusy} onClick={() => removeFromCart(item.lineId)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 6V3h6v3M6 9l1 12h10l1-12" /></svg></button>
                   </div></div>
                   <strong className="mobile-cart-price">{total} ETH</strong>
                 </div>
@@ -80,16 +83,16 @@ export default function CartPage() {
               <thead><tr><th scope="col">NFTs</th><th scope="col">Preço</th><th scope="col">Edições</th><th scope="col">Total</th><th scope="col"><span className="sr-only">Remover</span></th></tr></thead>
               <tbody>
                 {items.map((item) => {
-                  const quantity = quantities[item.id] ?? 1
+                  const quantity = quantities[item.lineId] ?? 1
                   const token = item.name.match(/#(\d+)$/)?.[1] ?? ''
-                  const total = quote?.items.find((line) => line.id === item.id)?.lineTotalEth ?? '—'
+                  const total = quote?.items.find((line) => line.lineId === item.lineId)?.lineTotalEth ?? '—'
                   return (
-                    <tr key={item.id}>
-                      <td><Link className="cart-nft" to="/nft/$nftId" params={{ nftId: item.id }} search={search}><img src={item.imageUrl} alt="" /><span><strong>{item.name}</strong><small>ID do token: #{token.padStart(4, '0')}</small></span></Link></td>
+                    <tr key={item.lineId}>
+                      <td><Link className="cart-nft" to="/nft/$nftId" params={{ nftId: item.id }} search={search}><img src={item.imageUrl} alt="" /><span><strong>{item.name}</strong><small>ID do token: #{token.padStart(4, '0')}</small><small>Edição: {item.editionLabel}</small></span></Link></td>
                       <td className="cart-price">{item.priceEth} ETH</td>
-                      <td><div className="cart-quantity"><button type="button" aria-label={`Diminuir edições de ${item.name}`} disabled={cartBusy || quantity === 1} onClick={() => changeQuantity(item.id, -1)}>−</button><span>{quantity}</span><button type="button" aria-label={`Aumentar edições de ${item.name}`} disabled={cartBusy || quantity >= item.available} onClick={() => changeQuantity(item.id, 1)}>+</button></div></td>
+                      <td><div className="cart-quantity"><button type="button" aria-label={`Diminuir edições de ${item.name} (${item.editionLabel})`} disabled={cartBusy || quantity === 1} onClick={() => changeQuantity(item.lineId, -1)}>−</button><span>{quantity}</span><button type="button" aria-label={`Aumentar edições de ${item.name} (${item.editionLabel})`} disabled={cartBusy || quantity >= item.available} onClick={() => changeQuantity(item.lineId, 1)}>+</button></div></td>
                       <td className="cart-line-total">{total} ETH</td>
-                      <td><button type="button" className="cart-remove" aria-label={`Remover ${item.name}`} onClick={() => removeFromCart(item.id)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 6V3h6v3M6 9l1 12h10l1-12" /></svg></button></td>
+                      <td><button type="button" className="cart-remove" aria-label={`Remover ${item.name} edição ${item.editionLabel}`} onClick={() => removeFromCart(item.lineId)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 6V3h6v3M6 9l1 12h10l1-12" /></svg></button></td>
                     </tr>
                   )
                 })}

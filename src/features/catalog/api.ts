@@ -20,5 +20,5 @@ async function getNFT(id: string, signal?: AbortSignal): Promise<NFT> {
 }
 
 export function useNFT(id: string) {
-  return useQuery({ queryKey: ['nft', id], queryFn: ({ signal }) => getNFT(id, signal) })
+  return useQuery({ queryKey: ['nft', id], queryFn: ({ signal }) => getNFT(id, signal), retry: false })
 }

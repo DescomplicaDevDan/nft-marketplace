@@ -12,7 +12,7 @@ import { RealtimeProvider } from './features/realtime/RealtimeProvider'
 async function startApp() {
   if (import.meta.env.DEV || import.meta.env.VITE_ENABLE_MOCKS === 'true') {
     const { worker } = await import('./mocks/browser')
-    await worker.start()
+    await worker.start({ onUnhandledFrame: 'bypass' })
   }
 
   createRoot(document.getElementById('root')!).render(

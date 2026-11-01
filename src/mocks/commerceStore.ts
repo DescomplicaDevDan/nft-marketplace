@@ -1,13 +1,13 @@
 import type { CartQuote } from '@/features/commerce/quoteTypes'
 import type { Order } from '@/features/commerce/orderTypes'
 
-export type StoredCart = { lines: Array<{ id: string; quantity: number }>; version: number; coupon?: string; quote?: CartQuote }
+export type StoredCart = { lines: Array<{ id: string; editionId?: string; quantity: number }>; version: number; coupon?: string; quote?: CartQuote }
 export type StoredOrder = { userId: string; payload: string; order: Order; readyAt: number; outcome: 'confirmed' | 'rejected' }
 export type CommerceDatabase = {
   carts: Record<string, StoredCart>
   orders: Record<string, StoredOrder>
   keys: Record<string, string>
-  inventory: Record<string, { version: number; priceEth?: string; supply?: number }>
+  inventory: Record<string, { version: number; priceEth?: string; supply?: number; editions?: Record<string, { version?: number; priceEth?: string; supply?: number }> }>
 }
 const KEY = 'kurio-mock-commerce-v1'
 

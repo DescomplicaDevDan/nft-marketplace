@@ -22,7 +22,7 @@ function settle(state: CommerceDatabase, record: StoredOrder) {
     const cart = state.carts[`user:${record.userId}`]
     if (cart) {
       for (const purchased of order.items) {
-        const line = cart.lines.find((item) => item.id === purchased.id)
+        const line = cart.lines.find((item) => item.id === purchased.id && (item.editionId ?? 'one-of-fifty') === purchased.editionId)
         if (line) line.quantity = Math.max(0, line.quantity - purchased.quantity)
       }
       cart.lines = cart.lines.filter((line) => line.quantity > 0)
@@ -91,7 +91,7 @@ export function orderHandlers(userId: (request: Request) => string | undefined) 
         const id = `KURIO-${crypto.randomUUID()}`
         const order: Order = {
           id, status: 'pending', version: 1, createdAt: new Date().toISOString(), quoteId: fresh.id,
-          items: fresh.items.map((item) => ({ id: item.id, name: item.name, collection: item.collection, imageUrl: item.imageUrl, quantity: item.quantity, unitPriceEth: item.priceEth, priceEth: item.lineTotalEth })),
+          items: fresh.items.map((item) => ({ id: item.id, lineId: item.lineId, editionId: item.editionId, editionLabel: item.editionLabel ?? '—', name: item.name, collection: item.collection, imageUrl: item.imageUrl, quantity: item.quantity, unitPriceEth: item.priceEth, priceEth: item.lineTotalEth })),
           wallet: connection.provider, walletAddress: connection.address, network: connection.network,
           subtotalEth: fresh.subtotalEth, discountEth: fresh.discountEth, networkFeeEth: fresh.networkFeeEth, totalEth: fresh.totalEth, coupon: fresh.coupon,
         }

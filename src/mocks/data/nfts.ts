@@ -1,8 +1,8 @@
-import type { NFT, NFTCategory, NFTNetwork } from '@/features/catalog/types'
+import type { NFT, NFTCategory, NFTEdition, NFTNetwork } from '@/features/catalog/types'
 import artwork05 from '@/assets/img/NFT Artwork 05.png'
 import artwork09 from '@/assets/img/NFT Artwork 09.png'
 import artwork18 from '@/assets/img/NFT Artwork 18.png'
-import frame136 from '@/assets/img/Frame 136.png'
+import frame136 from '@/assets/img/Frame 136.webp'
 
 export const categoryCounts: Array<{ name: NFTCategory; count: number }> = [
   { name: 'Arte digital', count: 33 },
@@ -34,7 +34,7 @@ const firstPageNFTs: NFT[] = [
   { id: 'nft-009', name: 'Golden Signal #161', collection: 'Golden Signals', creator: 'Ana Costa', category: 'Música', network: 'Solana', priceEth: '0.39', available: 6, createdAt: '2026-10-22T12:00:00Z', sales: 9, imageUrl: artwork09, imageFrame: { width: 250, height: 250, left: 4, top: 20 } },
 ]
 
-export const nfts: NFT[] = [
+const catalogNFTs: NFT[] = [
   ...firstPageNFTs,
   ...Array.from({ length: 27 }, (_, index) => {
     const source = firstPageNFTs[index % firstPageNFTs.length]
@@ -50,5 +50,33 @@ export const nfts: NFT[] = [
     }
   }),
 ]
+
+const editionTiers = [
+  { id: 'one-of-one', label: '1/1', weight: 1, multiplier: 2.5 },
+  { id: 'one-of-ten', label: '1/10', weight: 2, multiplier: 1.5 },
+  { id: 'one-of-fifty', label: '1/50', weight: 5, multiplier: 1 },
+  { id: 'open-edition', label: 'ABERTA', weight: 2, multiplier: 0.75 },
+] as const
+
+function editionsFor(nft: NFT): NFTEdition[] {
+  const supply = Math.max(0, nft.available)
+  const weightTotal = editionTiers.reduce((sum, edition) => sum + edition.weight, 0)
+  const stocks = editionTiers.map((edition) => Math.floor(supply * edition.weight / weightTotal))
+  let remainder = supply - stocks.reduce((sum, stock) => sum + stock, 0)
+  for (let index = 0; remainder > 0; index = (index + 1) % editionTiers.length) {
+    stocks[index]++
+    remainder--
+  }
+  const defaultLabel = nft.editionLabel ?? '1/50'
+  const defaultPrice = Math.round(Number(nft.priceEth) * 100)
+  return editionTiers.map((edition, index) => ({
+    id: edition.id,
+    label: edition.label,
+    priceEth: edition.label === defaultLabel ? nft.priceEth : (Math.round(defaultPrice * edition.multiplier) / 100).toFixed(2),
+    available: stocks[index],
+  }))
+}
+
+export const nfts: NFT[] = catalogNFTs.map((nft) => ({ ...nft, editions: editionsFor(nft) }))
 
 export const featuredNFT = nfts[3]

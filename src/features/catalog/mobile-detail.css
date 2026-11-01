@@ -18,7 +18,7 @@
   .mobile-detail-edition { margin-top: 10px; }
   .mobile-detail-edition h2 { margin: 0; font-size: 14px; font-weight: 700; line-height: 19px; }
   .mobile-detail-edition > div { display: flex; gap: 7px; margin-top: 6px; color: #cfb28c; }
-  .mobile-detail-edition span { display: inline-flex; align-items: center; min-height: 24px; padding: 0 5px; border: 1px solid #49301d; border-radius: 14px; font-size: 13px; line-height: 20px; }
+  .mobile-detail-edition button { display: inline-flex; align-items: center; min-height: 24px; padding: 0 5px; border: 1px solid #49301d; border-radius: 14px; background: transparent; color: inherit; font: inherit; font-size: 13px; line-height: 20px; }
   .mobile-detail-edition .selected { border-color: #d28a4c; color: #e89b55; }
   .mobile-detail-metadata { display: grid; gap: 8px; margin: 12px 0 0; color: #b39463; font-size: 13.5px; line-height: 22px; }
   .mobile-detail-metadata > div { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -40,8 +40,8 @@
   .mobile-detail-warning { margin-top: 12px; color: #e89b55; font-size: 12px; }
   .mobile-detail-warning button { border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; }
   .mobile-detail-loading { padding: 0 26px; }
-  .mobile-detail-loading > div { aspect-ratio: 1; border-radius: 22px; background: #49301d; animation: mobile-detail-pulse 1.4s ease-in-out infinite; }
-  .mobile-detail-loading i { display: block; width: 75%; height: 18px; margin-top: 22px; background: #49301d; }
+  .mobile-detail-loading > div { aspect-ratio: 1; border-radius: 22px; }
+  .mobile-detail-loading i { display: block; width: 75%; height: 18px; margin-top: 22px; }
   .mobile-detail-loading i:last-of-type { width: 55%; }
   .mobile-detail-error { margin: 30px 22px; }
   .mobile-detail-error h1 { font-size: 20px; }
@@ -57,5 +57,3 @@
   .mobile-detail-summary, .mobile-detail-metadata { font-size: 12px; }
   .mobile-detail-purchase { padding-inline: 18px; }
 }
-@keyframes mobile-detail-pulse { 50% { opacity: .5; } }
-@media (prefers-reduced-motion: reduce) { .mobile-detail-loading > div { animation: none; } }

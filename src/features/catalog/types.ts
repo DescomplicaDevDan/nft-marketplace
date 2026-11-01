@@ -25,6 +25,33 @@ export interface CatalogSearch {
   page: number
 }
 
+export interface NFTEdition {
+  id: string
+  label: string
+  priceEth: string
+  available: number
+}
+
+export const EDITION_OPTIONS = [
+  { id: 'one-of-one', label: '1/1' },
+  { id: 'one-of-ten', label: '1/10' },
+  { id: 'one-of-fifty', label: '1/50' },
+  { id: 'open-edition', label: 'ABERTA' },
+] as const
+
+export function defaultEditionId(nft: Pick<NFT, 'editionLabel'>) {
+  return EDITION_OPTIONS.find((edition) => edition.label === nft.editionLabel)?.id ?? 'one-of-fifty'
+}
+
+export function editionLineId(nftId: string, editionId: string) {
+  return `${nftId}::${editionId}`
+}
+
+export function parseEditionLineId(lineId: string) {
+  const [nftId, editionId] = lineId.split('::', 2)
+  return editionId ? { nftId, editionId } : { nftId, editionId: 'one-of-fifty' }
+}
+
 export interface NFT {
   version?: number
   id: string
@@ -38,6 +65,7 @@ export interface NFT {
   summary?: string
   displayCollection?: string
   editionLabel?: string
+  editions?: NFTEdition[]
   attributes?: string[]
   rating?: number
   reviewsCount?: number

@@ -11,6 +11,7 @@ import SiteFooter from '@/components/SiteFooter'
 import { useNFT, useNFTs } from './api'
 import { MobileNFTDetail } from './MobileNFTDetail'
 import { isAxiosError } from 'axios'
+import { defaultEditionId, editionLineId } from './types'
 
 const description = [
   'Emerald Ape #042 é uma obra digital 1/50 finalizada à mão da coleção Kurio Editions. Cada atributo fica armazenado nos metadados do token e verificado na Ethereum. A obra explora identidade, movimento e luz em um mundo digital sem fronteiras.',
@@ -22,13 +23,20 @@ export default function NFTDetailPage() {
   const search = useSearch({ from: '/nft/$nftId' })
   const { data: nft, isPending, isError, error, refetch } = useNFT(nftId)
   const { data: catalog } = useNFTs({ page: 1, pageSize: 24 })
-  const { favorites, cart, toggleFavorite, addToCart, cartBusy } = useCommerce()
+  const { favorites, cart, quantities, toggleFavorite, addToCart, cartBusy } = useCommerce()
   const [selectedImage, setSelectedImage] = useState(1)
-  const [quantity, setQuantity] = useState(1)
+  const [quantityByNft, setQuantityByNft] = useState<Record<string, number>>({})
+  const [editionByNft, setEditionByNft] = useState<Record<string, string>>({})
+  const quantity = quantityByNft[nftId] ?? 1
+  const setQuantity = (update: number | ((current: number) => number)) => setQuantityByNft((current) => ({ ...current, [nftId]: typeof update === 'function' ? update(current[nftId] ?? 1) : update }))
+  const selectedEditionId = editionByNft[nftId]
   const [activeTab, setActiveTab] = useState<'details' | 'reviews'>('details')
   const [relatedPage, setRelatedPage] = useState(1)
   const [zoomOpen, setZoomOpen] = useState(false)
   const isFavorite = nft ? favorites.includes(nft.id) : false
+  const selectedEdition = nft?.editions?.find((edition) => edition.id === selectedEditionId) ?? nft?.editions?.find((edition) => edition.id === defaultEditionId(nft)) ?? nft?.editions?.find((edition) => edition.available > 0)
+  const lineId = nft && selectedEdition ? editionLineId(nft.id, selectedEdition.id) : ''
+  const editionRemaining = selectedEdition ? Math.max(0, selectedEdition.available - (quantities[lineId] ?? 0)) : 0
   const tokenNumber = nft?.name.match(/#(\d+)$/)?.[1] ?? '0042'
   const relatedItems = catalog?.items.filter((item) => item.id !== nftId) ?? []
   const visibleRelatedItems = relatedItems.slice(relatedPage * 2, relatedPage * 2 + 5)
@@ -37,7 +45,11 @@ export default function NFTDetailPage() {
     <>
     <MobileNFTDetail key={nftId} nft={nft} loading={isPending} error={isError} notFound={isAxiosError(error) && error.response?.status === 404} retry={() => { void refetch() }} />
     <main className="desktop-nft-detail nft-detail-page mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-12 bg-[#140d0a] px-5 pt-6 pb-6 font-mono text-[#f5f1eb] sm:px-8 md:gap-24 min-[1440px]:px-[120px]">
-      {isPending && <p role="status" className="py-16 text-center text-[#b8aa9b]">Carregando NFT…</p>}
+      {isPending && <section role="status" aria-label="Carregando detalhe do NFT" className="grid gap-8 lg:grid-cols-[96px_450px_minmax(0,1fr)]">
+        <div className="hidden gap-4 lg:grid">{Array.from({ length: 4 }, (_, index) => <div key={index} className="kurio-skeleton size-24 rounded-lg" />)}</div>
+        <div className="kurio-skeleton aspect-square w-full rounded-2xl" />
+        <div className="space-y-4"><div className="kurio-skeleton h-8 w-3/4 rounded" /><div className="kurio-skeleton h-6 w-1/3 rounded" /><div className="kurio-skeleton h-24 rounded" /><div className="kurio-skeleton h-12 w-full rounded" /></div>
+      </section>}
       {isError && <div role="alert" className="py-16 text-center"><h1 className="mb-3 text-2xl font-bold">NFT não encontrado</h1><Link to="/" search={search} className="text-[#e89b55] underline">Voltar ao catálogo</Link></div>}
 
       {nft && (
@@ -70,14 +82,14 @@ export default function NFTDetailPage() {
                 <div className="nft-detail-info order-3 min-w-0 space-y-3">
                   <h1 className="text-2xl font-bold leading-7">{nft.name}</h1>
                   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#49372b] pb-2">
-                    <p className="text-xl font-bold text-[#e89b55]">{nft.priceEth} ETH</p>
+                    <p className="nft-detail-price text-xl font-bold text-[#e89b55]">{selectedEdition?.priceEth ?? nft.priceEth} ETH</p>
                     <p className="text-xs text-[#cfb28c]" aria-label="5 estrelas, 19 avaliações"><span className="mr-1 text-[#d28a4c]">★★★★★</span>19 avaliações de colecionadores</p>
                   </div>
                   <div><h2 className="mb-2 text-sm font-bold">Sobre este NFT:</h2><p className="text-sm leading-6 text-[#cfb28c]">Um colecionável digital finalizado à mão da coleção Kurio Editions, verificado na Ethereum, com arte desbloqueável e acesso para colecionadores.</p></div>
-                  <div><h2 className="mb-2 text-sm font-bold">Edição:</h2><div className="flex gap-2 text-xs"><span className="rounded-full border border-[#49372b] px-2 py-1">1/1</span><span className="rounded-full border border-[#49372b] px-2 py-1">1/10</span><span className="rounded-full border border-[#d28a4c] px-2 py-1 text-[#e89b55]">1/50</span><span className="rounded-full border border-[#49372b] px-2 py-1">ABERTA</span></div></div>
+                  <div><h2 className="mb-2 text-sm font-bold">Edição:</h2><div className="flex flex-wrap gap-2 text-xs">{(nft.editions ?? []).map((edition) => <button key={edition.id} type="button" aria-pressed={edition.id === selectedEdition?.id} title={`${edition.available} disponíveis`} disabled={edition.available < 1} onClick={() => { setEditionByNft((current) => ({ ...current, [nft.id]: edition.id })); setQuantity(1) }} className={`rounded-full border px-2 py-1 disabled:cursor-not-allowed disabled:opacity-40 ${edition.id === selectedEdition?.id ? 'border-[#d28a4c] text-[#e89b55]' : 'border-[#49372b]'}`}>{edition.label}</button>)}</div></div>
                   <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-                    <div className="flex items-center gap-3"><button type="button" aria-label="Diminuir quantidade" onClick={() => setQuantity((value) => Math.max(1, value - 1))} className="grid size-10 place-items-center rounded-full bg-[#d28a4c] text-xl font-bold text-[#140d0a]">−</button><span>{quantity}</span><button type="button" aria-label="Aumentar quantidade" onClick={() => setQuantity((value) => Math.min(nft.available, value + 1))} className="grid size-10 place-items-center rounded-full bg-[#d28a4c] text-xl font-bold text-[#140d0a]">+</button></div>
-                    <div className="flex gap-2"><button type="button" disabled={cartBusy || nft.available < 1} onClick={() => addToCart(nft.id, quantity)} className="min-w-[128px] rounded bg-[#d28a4c] px-6 py-2 text-xs font-bold text-[#140d0a]">COMPRAR</button><button type="button" aria-pressed={isFavorite} onClick={() => toggleFavorite(nft.id)} className="rounded border border-[#d28a4c] px-4 py-2 text-xs text-[#d28a4c]">♡ {isFavorite ? 'Favoritado' : 'Favoritar'}</button></div>
+                    <div className="flex items-center gap-3"><button type="button" aria-label="Diminuir quantidade" disabled={quantity <= 1} onClick={() => setQuantity((value) => Math.max(1, value - 1))} className="grid size-10 place-items-center rounded-full bg-[#d28a4c] text-xl font-bold text-[#140d0a] disabled:opacity-50">−</button><span>{quantity}</span><button type="button" aria-label="Aumentar quantidade" disabled={quantity >= editionRemaining} onClick={() => setQuantity((value) => Math.min(editionRemaining, value + 1))} className="grid size-10 place-items-center rounded-full bg-[#d28a4c] text-xl font-bold text-[#140d0a] disabled:opacity-50">+</button></div>
+                    <div className="flex gap-2"><button type="button" disabled={cartBusy || !selectedEdition || editionRemaining < 1} onClick={() => { if (selectedEdition) void addToCart(nft.id, Math.min(quantity, editionRemaining), selectedEdition.id) }} className="min-w-[128px] rounded bg-[#d28a4c] px-6 py-2 text-xs font-bold text-[#140d0a] disabled:opacity-50">COMPRAR</button><button type="button" aria-pressed={isFavorite} onClick={() => toggleFavorite(nft.id)} className="rounded border border-[#d28a4c] px-4 py-2 text-xs text-[#d28a4c]">♡ {isFavorite ? 'Favoritado' : 'Favoritar'}</button></div>
                   </div>
                   <div className="space-y-2 pt-1 text-sm text-[#b39463]"><p>ID do token: #{tokenNumber.padStart(4, '0')}</p><p>Coleção: Kurio Apes</p><p>Atributos: Óculos, Esmeralda, Raro</p><p className="flex items-center gap-2 pt-1 font-bold text-[#f5f1eb]">Compartilhar este NFT:<img src={linkedinIcon} alt="LinkedIn" className="size-4" /><span className="text-sm">✉</span><img src={twitterIcon} alt="Twitter" className="size-4" /></p></div>
                 </div>

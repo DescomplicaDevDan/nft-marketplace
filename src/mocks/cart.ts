@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw'
 import { inventoryNFTs } from './inventory'
 import { readCommerce, writeCommerce, type StoredCart } from './commerceStore'
 import { ethToWei, weiToEth } from '@/lib/eth'
+import { defaultEditionId, editionLineId } from '@/features/catalog/types'
 import type { CartQuote } from '@/features/commerce/quoteTypes'
 
 const empty = (): StoredCart => ({ lines: [], version: 0 })
@@ -14,7 +15,9 @@ function response(cart: StoredCart, notices: string[] = []) {
   const nfts = inventoryNFTs()
   return { items: cart.lines.flatMap((line) => {
     const nft = nfts.find((item) => item.id === line.id)
-    return nft ? [{ ...nft, quantity: line.quantity }] : []
+    const editionId = line.editionId ?? (nft ? defaultEditionId(nft) : '')
+    const edition = nft?.editions?.find((item) => item.id === editionId)
+    return nft && edition ? [{ ...nft, id: nft.id, lineId: editionLineId(nft.id, editionId), editionId, editionLabel: edition.label, priceEth: edition.priceEth, available: edition.available, quantity: line.quantity }] : []
   }), version: cart.version, notices }
 }
 
@@ -45,8 +48,10 @@ export function quoteCart(cart: StoredCart): CartQuote {
   if (!cart.lines.length) throw new QuoteError('Seu carrinho está vazio.', 400, 'cart_empty')
   const items = cart.lines.map((line) => {
     const nft = nfts.find((item) => item.id === line.id)
-    if (!nft || line.quantity > nft.available || line.quantity < 1 || !Number.isSafeInteger(line.quantity)) throw new QuoteError('O estoque mudou. Revise as quantidades no carrinho.', 409, 'stock_changed')
-    return { ...nft, quantity: line.quantity, lineTotalEth: weiToEth(ethToWei(nft.priceEth) * BigInt(line.quantity)) }
+    const editionId = line.editionId ?? (nft ? defaultEditionId(nft) : '')
+    const edition = nft?.editions?.find((item) => item.id === editionId)
+    if (!nft || !edition || line.quantity > edition.available || line.quantity < 1 || !Number.isSafeInteger(line.quantity)) throw new QuoteError('O estoque mudou. Revise as quantidades no carrinho.', 409, 'stock_changed')
+    return { ...nft, lineId: editionLineId(nft.id, editionId), editionId, editionLabel: edition.label, priceEth: edition.priceEth, available: edition.available, quantity: line.quantity, lineTotalEth: weiToEth(ethToWei(edition.priceEth) * BigInt(line.quantity)) }
   })
   const subtotal = items.reduce((sum, item) => sum + ethToWei(item.lineTotalEth), 0n)
   const discount = cart.coupon ? subtotal * couponRate(cart.coupon) / 10000n : 0n
@@ -135,12 +140,14 @@ export function cartHandlers(userId: (request: Request) => string | undefined) {
         if (!target.coupon && source.coupon) target.coupon = source.coupon
         for (const line of source.lines) {
           const nft = nfts.find((item) => item.id === line.id)
-          const existing = target.lines.find((item) => item.id === line.id)
+          const editionId = line.editionId ?? (nft ? defaultEditionId(nft) : '')
+          const edition = nft?.editions?.find((item) => item.id === editionId)
+          const existing = target.lines.find((item) => item.id === line.id && (item.editionId ?? (nft ? defaultEditionId(nft) : '')) === editionId)
           const requested = (existing?.quantity ?? 0) + line.quantity
-          const quantity = Math.min(requested, nft?.available ?? 0)
-          if (quantity < requested) notices.push(`A quantidade de ${nft?.name ?? line.id} foi ajustada ao estoque disponível.`)
+          const quantity = Math.min(requested, edition?.available ?? 0)
+          if (quantity < requested) notices.push(`A quantidade de ${nft?.name ?? line.id} (${edition?.label ?? 'edição'}) foi ajustada ao estoque disponível.`)
           if (existing) existing.quantity = quantity
-          else if (quantity > 0) target.lines.push({ id: line.id, quantity })
+          else if (quantity > 0) target.lines.push({ id: line.id, editionId, quantity })
         }
         target.lines = target.lines.filter((line) => line.quantity > 0)
         target.version++
@@ -153,17 +160,20 @@ export function cartHandlers(userId: (request: Request) => string | undefined) {
     http.put('/api/cart/items/:id', async ({ request, params }) => {
       const owner = identity(request)
       if (!owner) return unauthorized()
-      const body = await request.json().catch(() => null) as { quantity?: unknown; operation?: unknown } | null
+      const body = await request.json().catch(() => null) as { quantity?: unknown; operation?: unknown; editionId?: unknown } | null
       if (!body || !Number.isSafeInteger(body.quantity) || Number(body.quantity) < 1 || !['add', 'set'].includes(String(body.operation))) return HttpResponse.json({ message: 'Informe uma quantidade inteira maior que zero.' }, { status: 400 })
       const nft = inventoryNFTs().find((item) => item.id === params.id)
       if (!nft) return HttpResponse.json({ message: 'NFT não encontrado.' }, { status: 404 })
+      const editionId = typeof body.editionId === 'string' ? body.editionId : defaultEditionId(nft)
+      const edition = nft.editions?.find((item) => item.id === editionId)
+      if (!edition) return HttpResponse.json({ message: 'Edição não encontrada.' }, { status: 404 })
       const state = database()
       const cart = state[owner] ?? empty()
-      const existing = cart.lines.find((item) => item.id === nft.id)
+      const existing = cart.lines.find((item) => item.id === nft.id && (item.editionId ?? defaultEditionId(nft)) === editionId)
       const quantity = Number(body.quantity) + (body.operation === 'add' ? existing?.quantity ?? 0 : 0)
-      if (!Number.isSafeInteger(quantity) || quantity > nft.available) return HttpResponse.json({ message: `Estoque insuficiente: ${nft.name} tem ${nft.available} edição(ões) disponível(is).` }, { status: 409 })
+      if (!Number.isSafeInteger(quantity) || quantity > edition.available) return HttpResponse.json({ message: `Estoque insuficiente: ${nft.name} (${edition.label}) tem ${edition.available} edição(ões) disponível(is).` }, { status: 409 })
       if (existing) existing.quantity = quantity
-      else cart.lines.push({ id: nft.id, quantity })
+      else cart.lines.push({ id: nft.id, editionId, quantity })
       cart.version++
       state[owner] = cart
       try { persist(state) } catch { return HttpResponse.json({ message: 'Não foi possível salvar o carrinho.' }, { status: 507 }) }
@@ -172,9 +182,12 @@ export function cartHandlers(userId: (request: Request) => string | undefined) {
     http.delete('/api/cart/items/:id', ({ request, params }) => {
       const owner = identity(request)
       if (!owner) return unauthorized()
+      const nft = inventoryNFTs().find((item) => item.id === params.id)
+      const rawEditionId = new URL(request.url).searchParams.get('editionId')
+      const editionId = rawEditionId ?? (nft ? defaultEditionId(nft) : '')
       const state = database()
       const cart = state[owner] ?? empty()
-      cart.lines = cart.lines.filter((line) => line.id !== params.id)
+      cart.lines = cart.lines.filter((line) => !(line.id === params.id && (line.editionId ?? (nft ? defaultEditionId(nft) : '')) === editionId))
       cart.version++
       state[owner] = cart
       try { persist(state) } catch { return HttpResponse.json({ message: 'Não foi possível remover o item.' }, { status: 507 }) }

@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { Input } from '@/components/ui/input'
 import { useCommerce } from '@/features/commerce/CommerceProvider'
 import { NFT_CATEGORIES, NFT_NETWORKS, type NFTListResponse, type NFTSort } from '@/features/catalog/types'
-import hero from '@/assets/img/Frame 136.png'
+import hero from '@/assets/img/Frame 136.webp'
 import sage from '@/assets/img/NFT Artwork 18.png'
 import searchIcon from '@/assets/icons/Search Icon.svg'
 import filterIcon from '@/assets/icons/Frame 402.svg'
@@ -86,7 +86,7 @@ export function MobileHome({ data, loading, error, retry }: Props) {
           {[{ label: 'Todos os NFTs', value: undefined }, { label: 'Novos lançamentos', value: 'recent' as const }, { label: 'Em alta', value: 'popular' as const }].map((tab) => <button type="button" key={tab.label} aria-pressed={search.sort === tab.value} onClick={() => sort(tab.value)}>{tab.label}</button>)}
         </nav>
         <p className="sr-only" role="status">{data ? `${data.total} NFTs disponíveis` : 'Carregando catálogo'}</p>
-        {loading && <div className="mobile-nft-grid" aria-label="Carregando NFTs">{Array.from({ length: 6 }, (_, index) => <div key={index} className="mobile-nft-skeleton"><div /><i /><i /></div>)}</div>}
+        {loading && <div className="mobile-nft-grid" aria-label="Carregando NFTs">{Array.from({ length: 6 }, (_, index) => <div key={index} className="mobile-nft-skeleton"><div className="kurio-skeleton" /><i className="kurio-skeleton" /><i className="kurio-skeleton" /></div>)}</div>}
         {error && <div className="mobile-catalog-message" role="alert"><p>Não foi possível carregar o catálogo.</p><button type="button" onClick={retry}>Tentar novamente</button></div>}
         {!loading && !error && !items.length && <div className="mobile-catalog-message"><p>Nenhum NFT encontrado.</p><button type="button" onClick={openFilters}>Revisar filtros</button></div>}
         {!error && items.length > 0 && <ul className="mobile-nft-grid">{items.map((nft, index) => <li key={nft.id} className="mobile-nft-card">
