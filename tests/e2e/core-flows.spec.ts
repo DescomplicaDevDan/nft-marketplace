@@ -1,5 +1,42 @@
 import { expect, test } from '@playwright/test'
 import type { NFTListResponse } from '../../src/features/catalog/types'
+import { ethToWei, weiToEth } from '../../src/lib/eth'
+
+test('evento de preço atualiza edições, carrinho e cotação sem recarregar', async ({ page }) => {
+  await page.goto('/nft/nft-001')
+  await expect(page.locator('.nft-detail-price')).toHaveText('1.19 ETH')
+  await page.getByRole('button', { name: 'COMPRAR' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'Carrinho atualizado' })).toBeVisible()
+  await page.goto('/cart')
+  await expect(page.locator('.cart-price')).toHaveText('1.19 ETH')
+  await expect(page.locator('.cart-summary-total')).toContainText('1.206 ETH')
+  const result = await page.evaluate(async () => {
+    const headers = { 'Content-Type': 'application/json', 'X-Guest-Cart': localStorage.getItem('kurio-guest-cart-id') ?? '' }
+    async function json(url: string, init?: RequestInit) {
+      const response = await fetch(url, init)
+      if (!response.ok) throw new Error(`${url}: ${response.status}`)
+      return response.json()
+    }
+    const before = await json('/api/nfts/nft-001')
+    const oldQuote = await json('/api/cart/quote', { method: 'POST', headers })
+    const updated = await json('/api/demo/nfts/nft-001', { method: 'POST', headers, body: JSON.stringify({ priceEth: '1.250000000000000001', delivery: 'out-of-order' }) })
+    return { before, updated, oldQuoteId: oldQuote.id }
+  })
+  for (const edition of result.before.editions) {
+    const expected = weiToEth(ethToWei(edition.priceEth) * ethToWei('1.250000000000000001') / ethToWei(result.before.priceEth))
+    expect(result.updated.editions.find((item: { id: string }) => item.id === edition.id).priceEth).toBe(expected)
+  }
+  await expect(page.getByRole('status').filter({ hasText: 'Preço ou estoque de um NFT do carrinho mudou' })).toBeVisible()
+  await expect(page.locator('.cart-price')).toHaveText('1.250000000000000001 ETH')
+  await expect(page.locator('.cart-summary-total')).toContainText('1.266000000000000001 ETH')
+  const quote = await page.evaluate(async () => (await fetch('/api/cart/quote', { method: 'POST', headers: { 'X-Guest-Cart': localStorage.getItem('kurio-guest-cart-id') ?? '' } })).json())
+  expect(quote.id).not.toBe(result.oldQuoteId)
+  expect(quote.items[0].priceEth).toBe('1.250000000000000001')
+  await page.goto('/nft/nft-001')
+  await expect(page.locator('.nft-detail-price')).toHaveText('1.250000000000000001 ETH')
+  await page.goto('/')
+  await expect(page.locator('.desktop-home li').filter({ has: page.getByRole('heading', { name: 'Emerald Ape #042' }) })).toContainText('1.250000000000000001 ETH')
+})
 
 test('contagens de todas as coleções e redes correspondem ao catálogo completo', async ({ page }) => {
   await expect(page.locator('#catalog-sort')).toBeVisible()

@@ -1,5 +1,7 @@
 import { nfts } from './data/nfts'
 import { readCommerce, type CommerceDatabase } from './commerceStore'
+import { ethToWei, weiToEth } from '@/lib/eth'
+import { defaultEditionId } from '@/features/catalog/types'
 
 export function inventoryNFTs(state: CommerceDatabase = readCommerce()) {
   const reserved = new Map<string, number>()
@@ -14,6 +16,8 @@ export function inventoryNFTs(state: CommerceDatabase = readCommerce()) {
   }
   return nfts.map((nft) => {
     const inventory = state.inventory[nft.id]
+    const basePrice = inventory?.priceEth ?? nft.priceEth
+    const originalBaseWei = ethToWei(nft.priceEth)
     const totalSupply = inventory?.supply ?? nft.available
     const editionSupply = nft.editions?.map((edition) => Math.floor(totalSupply * edition.available / Math.max(1, nft.available))) ?? []
     let remainder = totalSupply - editionSupply.reduce((sum, supply) => sum + supply, 0)
@@ -21,8 +25,9 @@ export function inventoryNFTs(state: CommerceDatabase = readCommerce()) {
     const editions = nft.editions?.map((edition, index) => {
       const override = inventory?.editions?.[edition.id]
       const supply = override?.supply ?? editionSupply[index] ?? edition.available
-      return { ...edition, priceEth: override?.priceEth ?? edition.priceEth, available: Math.max(0, supply - (reserved.get(`${nft.id}:${edition.id}`) ?? 0)) }
+      const adjustedPrice = inventory?.priceEth === undefined ? edition.priceEth : originalBaseWei === 0n ? basePrice : weiToEth(ethToWei(edition.priceEth) * ethToWei(basePrice) / originalBaseWei)
+      return { ...edition, priceEth: override?.priceEth ?? adjustedPrice, available: Math.max(0, supply - (reserved.get(`${nft.id}:${edition.id}`) ?? 0)) }
     })
-    return { ...nft, priceEth: inventory?.priceEth ?? nft.priceEth, version: inventory?.version ?? 1, editions, available: editions?.reduce((sum, edition) => sum + edition.available, 0) ?? Math.max(0, totalSupply - (reserved.get(`${nft.id}:`) ?? 0)) }
+    return { ...nft, priceEth: editions?.find((edition) => edition.id === defaultEditionId(nft))?.priceEth ?? basePrice, version: inventory?.version ?? 1, editions, available: editions?.reduce((sum, edition) => sum + edition.available, 0) ?? Math.max(0, totalSupply - (reserved.get(`${nft.id}:`) ?? 0)) }
   })
 }

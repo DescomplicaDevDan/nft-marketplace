@@ -313,9 +313,11 @@ Checagens: a suíte Playwright confirma login, retomada de rota privada, conflit
 
 No Windows, a suíte usa o Microsoft Edge instalado. Em outros sistemas, instale o Chromium com `npx playwright install chromium`.
 
-Os oito testes atuais cobrem busca, filtros/ordenação, rota direta, NFT inexistente, seleção de edições/preços, cupom após refresh, login com retomada de rota privada, conflito de cadastro e autenticação mobile. O relatório e os traces de falha são gerados localmente e ignorados pelo Git. A cobertura completa listada no README do desafio ainda não foi atingida.
+Os nove testes atuais cobrem busca, filtros/ordenação, rota direta, NFT inexistente, seleção de edições/preços, cupom após refresh, login com retomada de rota privada, conflito de cadastro, autenticação mobile e atualização de preços por Socket.IO. O relatório e os traces de falha são gerados localmente e ignorados pelo Git. A cobertura completa listada no README do desafio ainda não foi atingida.
 
 ## Estado e próximos passos
+
+Alterações do preço-base pelo endpoint `/api/demo/nfts/:id` recalculam proporcionalmente os preços das edições, com inteiros em wei e truncamento somente na última casa (1 wei). Overrides explícitos de uma edição no inventário mantêm prioridade. Catálogo mostra o preço da edição padrão; detalhe, carrinho e cotação usam o preço da edição selecionada. O evento Socket.IO publica o mesmo inventário servido por REST e invalida carrinho/cotação; uma cotação anterior deixa de ser válida se seus valores mudarem. O recibo mantém o snapshot original. O teste de regressão cobre atualização sem refresh, edições, nova cotação, evento antigo e precisão de 18 casas; compra com reconfirmação e recibo ainda requer teste integral.
 
 Os nomes de todos os cards do catálogo desktop usam 16 px/400, linha de 16 px, tracking zero e #F5F1EB; preços atuais usam 18 px/700, linha de 16 px, tracking zero e #E89B55. Os textos de ordenação usam 15 px/400, linha de 100%, caixa de 20 px, tracking zero e #F5F1EB. O seletor reserva largura adicional para a seta para evitar sobreposição e truncamento.
 
