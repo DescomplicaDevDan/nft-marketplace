@@ -6,6 +6,13 @@ test.beforeEach(async ({ page }) => {
   await page.evaluate(async () => { await fetch('/api/demo/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }) })
 })
 
+test('rota inexistente informa o erro e oferece retorno ao início', async ({ page }) => {
+  await page.goto('/rota-inexistente')
+  await expect(page.getByRole('heading', { name: 'Página não encontrada' })).toBeVisible()
+  await page.getByRole('link', { name: 'Voltar ao início' }).click()
+  await expect.poll(() => new URL(page.url()).pathname).toBe('/')
+})
+
 test('cadastro válido cria sessão e mantém a nova conta após refresh', async ({ page }) => {
   await page.goto('/profile')
   await page.locator('.auth-tabs button').nth(1).click()
@@ -16,7 +23,7 @@ test('cadastro válido cria sessão e mantém a nova conta após refresh', async
   await page.locator('.auth-submit').click()
   await expect(page.getByLabel('Nome de usuário', { exact: false })).toHaveValue('novo_colecionador')
   await page.reload()
-  await expect(page.getByLabel('E-mail', { exact: false })).toHaveValue('novo@kurio.demo')
+  await expect(page.locator('.profile-form').getByRole('textbox', { name: 'E-mail' })).toHaveValue('novo@kurio.demo')
 })
 
 test('carregamento lento apresenta skeleton e erro permite recuperação', async ({ page }) => {

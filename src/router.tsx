@@ -75,6 +75,7 @@ const rootRoute = createRootRoute({
     try { await queryClient.fetchQuery({ queryKey: ['session'], queryFn: getSession, staleTime: 0, retry: false }) } catch { /* Private requests remain guarded by the server during an outage. */ }
   },
   component: Outlet,
+  notFoundComponent: () => <main className="grid min-h-screen place-content-center gap-4 bg-[#140d0a] p-8 text-center text-[#f5f1eb]"><h1 className="text-2xl font-bold">Página não encontrada</h1><p>O endereço solicitado não existe.</p><a className="text-[#e89b55] underline" href="/">Voltar ao início</a></main>,
 })
 
 const homeRoute = createRoute({
