@@ -1,0 +1,3 @@
+# Reports and the MSW worker are generated artifacts, not application source.
+reports/** linguist-generated=true
+public/mockServiceWorker.js linguist-generated=true
