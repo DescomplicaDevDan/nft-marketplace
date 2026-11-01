@@ -352,9 +352,10 @@ code {
 }
 
 .price-range-thumb::-webkit-slider-thumb {
-  width: 15px;
-  height: 15px;
-  margin-top: -5.5px;
+  box-sizing: border-box;
+  width: 21px;
+  height: 21px;
+  margin-top: -8.5px;
   appearance: none;
   border: 3px solid #140d0a;
   border-radius: 9999px;
@@ -364,8 +365,9 @@ code {
 }
 
 .price-range-thumb::-moz-range-thumb {
-  width: 15px;
-  height: 15px;
+  box-sizing: border-box;
+  width: 21px;
+  height: 21px;
   border: 3px solid #140d0a;
   border-radius: 9999px;
   background: #d28a4c;

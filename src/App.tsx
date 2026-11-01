@@ -71,18 +71,18 @@ function PriceRangeFilter({
 
   return (
     <form
-      className="flex w-full max-w-[270px] flex-col gap-3"
+      className="flex w-full max-w-[270px] flex-col gap-3 tracking-[0]"
       onSubmit={(event) => {
         event.preventDefault()
         onApply(min.toFixed(2), max.toFixed(2))
       }}
     >
-      <h3 className="h-4 text-lg font-bold leading-4 text-[#f5f1eb]">Faixa de preço</h3>
+      <h3 className="h-[16px] text-[18px] font-bold leading-[16px] text-[#F5F1EB]">Faixa de preço</h3>
       <div className="flex flex-col gap-3 pl-3">
         <div className="relative h-[21px] w-[258px]">
           <div
             aria-hidden="true"
-            className="absolute inset-x-[7px] top-1/2 h-1 -translate-y-1/2 rounded-full"
+            className="absolute inset-x-[10.5px] top-1/2 h-[4px] -translate-y-1/2 rounded-full"
             style={{ background: `linear-gradient(to right, #D28A4C ${minPosition}%, #D28A4C ${minPosition}% ${maxPosition}%, #D28A4C ${maxPosition}%)` }}
           />
           <label className="sr-only" htmlFor="min-price">Preço mínimo em ETH</label>
@@ -108,11 +108,11 @@ function PriceRangeFilter({
             className="price-range-thumb"
           />
         </div>
-        <p className="h-5 text-[15px] leading-5 text-[#f5f1eb]">
+        <p className="flex h-[20px] items-center whitespace-nowrap text-[15px] font-normal leading-none tracking-[0] text-[#F5F1EB]">
           Preço: {min.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} – {max.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} ETH
         </p>
         <button type="submit" className="inline-flex h-[36px] w-[92px] shrink-0 items-center justify-center rounded-[6px] bg-[#D28A4C] px-[12px] py-[8px] font-mono text-[16px] font-bold leading-[20px] text-[#140D0A] hover:brightness-110">
-          Aplicar
+          <span className="block h-[20px] w-[68px] tracking-[0]">Aplicar</span>
         </button>
       </div>
     </form>
@@ -261,12 +261,11 @@ function App() {
         <div className="grid gap-8 lg:grid-cols-[310px_minmax(0,1fr)] lg:gap-12">
           <div className="flex flex-col gap-6">
           <aside aria-label="Filtros do catálogo" className="flex w-full flex-col gap-10 self-start bg-[#241612] p-5 font-mono">
-            <section aria-labelledby="collections-filter-title" className="flex flex-col gap-3">
-            <h2 id="collections-filter-title" className="h-4 text-lg font-bold leading-4 text-[#f5f1eb]">Coleções</h2>
+            <section aria-labelledby="collections-filter-title" className="flex flex-col gap-3 tracking-[0]">
+            <h2 id="collections-filter-title" className="h-[16px] text-[18px] font-bold leading-[16px] text-[#F5F1EB]">Coleções</h2>
             <ul className="m-0 w-full list-none px-3 py-0">
               {data?.categoryCounts.map((item) => {
                 const selected = search.category === item.name
-                const highlighted = selected
 
                 return (
                   <li key={item.name}>
@@ -281,10 +280,10 @@ function App() {
                         }),
                       resetScroll: false,
                       })}
-                      className={`flex h-10 w-full items-center justify-between gap-3 text-left font-mono text-[15px] leading-10 transition-colors hover:text-[#E89B55] ${highlighted ? 'font-normal text-[#E89B55]' : 'font-normal text-[#CFB28C]'}`}
+                      className={`flex h-[40px] w-full items-center justify-between gap-3 text-left font-mono text-[15px] font-normal leading-[40px] tracking-[0] transition-colors ${selected ? 'text-[#E89B55]' : 'text-[#CFB28C]'}`}
                     >
-                      <span>{item.name}</span>
-                      <span className="font-bold">({item.count})</span>
+                      <span className="h-[40px] font-normal">{item.name}</span>
+                      <span className="h-[40px] min-w-[37px] text-right font-bold">({item.count})</span>
                     </button>
                   </li>
                 )
@@ -303,8 +302,8 @@ function App() {
               />
             )}
 
-            <section aria-labelledby="networks-filter-title" className="flex flex-col gap-3">
-              <h3 id="networks-filter-title" className="h-4 text-lg font-bold leading-4 text-[#f5f1eb]">Rede</h3>
+            <section aria-labelledby="networks-filter-title" className="flex flex-col gap-3 tracking-[0]">
+              <h3 id="networks-filter-title" className="h-[16px] text-[18px] font-bold leading-[16px] text-[#F5F1EB]">Rede</h3>
               <ul className="m-0 list-none space-y-0 py-0 pl-3 pr-0">
                 {data?.networkCounts.map((item) => {
                   const selected = search.network === item.name
@@ -315,10 +314,10 @@ function App() {
                         type="button"
                         aria-pressed={selected}
                         onClick={() => changeNetwork(item.name)}
-                        className={`flex h-10 w-full items-center justify-between gap-3 text-left font-mono text-[15px] leading-10 transition-colors hover:text-[#E89B55] ${selected ? 'font-semibold text-[#E89B55]' : 'text-[#CFB28C]'}`}
+                        className={`flex h-[40px] w-full items-center justify-between gap-3 text-left font-mono text-[15px] font-normal leading-[40px] tracking-[0] transition-colors ${selected ? 'text-[#E89B55]' : 'text-[#CFB28C]'}`}
                       >
-                        <span>{item.name}</span>
-                <span>({item.count})</span>
+                        <span className="h-[40px] font-normal">{item.name}</span>
+                        <span className="h-[40px] min-w-[37px] text-right font-bold">({item.count})</span>
                       </button>
                     </li>
                   )
@@ -330,8 +329,8 @@ function App() {
             <article className="w-[310px] flex-none overflow-visible pb-[94px] font-mono">
               <div className="bg-[linear-gradient(180deg,rgba(210,138,76,0.1)_0%,rgba(210,138,76,0.03)_100%)] pt-6">
               <div className="flex flex-col items-center gap-4">
-                <h2 className="flex h-8 w-full items-center px-5 text-2xl font-bold uppercase leading-8 text-[#E89B55]">NFT em destaque</h2>
-                <p className="h-4 w-full text-center text-[22px] font-bold uppercase leading-4 text-[#F5F1EB]">Oferta limitada</p>
+                <h2 className="flex h-[32px] w-[270px] items-center text-[24px] font-bold uppercase leading-[32px] tracking-[0] text-[#E89B55]">NFT em destaque</h2>
+                <p className="h-[16px] w-[270px] text-center text-[22px] font-bold uppercase leading-[16px] tracking-[0] text-[#F5F1EB]">Oferta limitada</p>
               </div>
               <Link to="/nft/$nftId" params={{ nftId: data.featuredNFT.id }} search={search} className="group block focus-visible:outline-2 focus-visible:outline-[#e69a55]">
                 <img src={data.featuredNFT.imageUrl} alt={data.featuredNFT.name} className="mt-4 block h-[368px] w-[310px] rounded-[22px] object-cover" />
@@ -345,7 +344,7 @@ function App() {
             <div className="mb-8">
               <div className="flex min-h-[20px] w-full flex-wrap items-center justify-between gap-x-6 gap-y-4">
                 <div>
-                  <nav aria-label="Filtrar catálogo" role="tablist" className="flex h-[18px] items-start gap-5 font-mono text-[15px] leading-4">
+                  <nav aria-label="Filtrar catálogo" role="tablist" className="flex h-[18px] items-start gap-5 font-mono text-[15px] font-medium leading-[16px] tracking-[0]">
                   {[
                     { label: 'Todos os NFTs', value: undefined },
                     { label: 'Novos lançamentos', value: 'recent' as const },
@@ -360,7 +359,7 @@ function App() {
                         role="tab"
                         aria-selected={selected}
                         onClick={() => changeSort(tab.value)}
-                        className={`h-[18px] border-b-2 pb-0 transition-colors ${selected ? 'border-[#E89B55] font-medium text-[#E89B55]' : 'border-transparent font-medium text-[#F5F1EB] hover:text-[#E89B55]'}`}
+                        className={`h-[18px] border-b-2 pb-0 font-medium leading-[16px] tracking-[0] transition-colors ${selected ? 'border-[#E89B55] text-[#E89B55]' : 'border-transparent text-[#F7F3EC]'}`}
                       >
                         {tab.label}
                       </button>
@@ -371,14 +370,14 @@ function App() {
                     {data ? (data.total === 1 ? '1 item disponível' : data.total + ' itens disponíveis') : 'Carregando catálogo'}
                   </p>
                 </div>
-                <div className="ml-auto flex shrink-0 items-center gap-2 font-mono text-[15px] leading-5 text-[#F5F1EB]">
-                  <label htmlFor="catalog-sort" className="whitespace-nowrap font-normal">Ordenar por:</label>
+                <div className="ml-auto flex shrink-0 items-center gap-px font-mono text-[15px] font-normal leading-none tracking-[0] text-[#F5F1EB]">
+                  <label htmlFor="catalog-sort" className="flex h-[20px] w-[109px] items-center whitespace-nowrap font-normal">Ordenar por:</label>
                   <div className="relative h-5 w-[224px]">
                     <select
                       id="catalog-sort"
                       value={search.sort ?? 'recent'}
                       onChange={(event) => changeSort(event.target.value as NFTSort)}
-                      className="h-5 w-full appearance-none border-0 bg-[#140D0A] py-0 pl-0 pr-6 font-mono text-[15px] font-normal leading-5 text-[#F5F1EB] outline-none [color-scheme:dark] focus-visible:ring-2 focus-visible:ring-[#E89B55] [&_option]:bg-[#241612] [&_option]:text-[#F5F1EB]"
+                      className="h-[20px] w-full appearance-none border-0 bg-[#140D0A] py-0 pl-0 pr-6 font-mono text-[15px] font-normal leading-none tracking-[0] text-[#F5F1EB] outline-none [color-scheme:dark] focus-visible:ring-2 focus-visible:ring-[#E89B55] [&_option]:bg-[#241612] [&_option]:text-[#F5F1EB]"
                     >
                       <option value="recent">Listados recentemente</option>
                       <option value="popular">Mais populares</option>
@@ -435,10 +434,10 @@ function App() {
                           />
                         </div>
                         <div className="flex min-h-[44px] flex-col gap-3 font-mono">
-                          <h3 className="min-h-4 break-words text-base font-normal leading-4">{nft.name}</h3>
+                          <h3 className="min-h-[16px] w-full break-words text-[16px] font-normal leading-[16px] tracking-[0] text-[#F5F1EB]">{nft.name}</h3>
                           <div className="flex h-4 items-center gap-3">
-                            <p className="text-lg font-bold leading-4 text-[#E89B55]">{nft.priceEth} ETH</p>
-                            {nft.previousPriceEth && <p className="text-lg font-normal leading-4 text-[#B39463]">{nft.previousPriceEth} ETH</p>}
+                            <p className="text-[18px] font-bold leading-[16px] tracking-[0] text-[#E89B55]">{nft.priceEth} ETH</p>
+                            {nft.previousPriceEth && <p className="text-[18px] font-normal leading-[16px] tracking-[0] text-[#B39463]">{nft.previousPriceEth} ETH</p>}
                           </div>
                         </div>
                       </Link>

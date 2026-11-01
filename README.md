@@ -317,6 +317,16 @@ Os oito testes atuais cobrem busca, filtros/ordenação, rota direta, NFT inexis
 
 ## Estado e próximos passos
 
+Os nomes de todos os cards do catálogo desktop usam 16 px/400, linha de 16 px, tracking zero e #F5F1EB; preços atuais usam 18 px/700, linha de 16 px, tracking zero e #E89B55. Os textos de ordenação usam 15 px/400, linha de 100%, caixa de 20 px, tracking zero e #F5F1EB. O seletor reserva largura adicional para a seta para evitar sobreposição e truncamento.
+
+As três abas do catálogo desktop usam fonte 15 px/500, linha de 16 px e tracking zero. Abas inativas usam #F7F3EC; a selecionada usa #E89B55 e sublinhado da mesma cor. O estado selecionado acompanha os parâmetros de ordenação da URL.
+
+No destaque lateral, o título usa caixa 270 × 32 px, fonte 24 px/700, linha de 32 px e #E89B55. Oferta limitada usa caixa 270 × 16 px, fonte 22 px/700, linha de 16 px, alinhamento central e #F5F1EB. Ambos têm tracking zero. A arte mantém 310 × 368 px e raio de 22 px.
+
+Faixa de preço e Rede usam títulos 18 px/700, linha de 16 px e #F5F1EB. O preço usa 15 px/400, linha de 100% numa caixa de 20 px; Aplicar usa 16 px/700, linha de 20 px e #140D0A. Redes usam nomes 15 px/400 e contagens 15 px/700 à direita, linha de 40 px; #CFB28C sem seleção e #E89B55 selecionadas. A trilha de preço tem 4 px em #D28A4C, com marcadores circulares e borda escura; os limites continuam derivados da API.
+
+Coleções no filtro desktop: título 18 px/700, linha 16 px e cor #F5F1EB; nomes 15 px/400 e contagens 15 px/700, ambos com linha de 40 px e tracking zero. Contagens têm largura mínima de 37 px e alinhamento à direita. Nome e número usam #CFB28C sem seleção e #E89B55 quando selecionados, mantendo os valores reais da API.
+
 Tipografia do hero desktop: boas-vindas 14 px/500, linha 16 px e tracking 10%; título 43 px/700, linha 70 px e tracking zero; descrição com largura máxima de 557 px, 14 px/400, linha 24 px, tracking zero e cor #CFB28C. Boas-vindas e título usam #F5F1EB. A família permanece Roboto Mono enquanto o token `font/family` do Figma não revelar seu nome real.
 
 O contador dos ícones de carrinho soma as quantidades de todas as linhas/edições confirmadas pela API. Aparece a partir de uma unidade e fica oculto quando vazio; acompanha inclusão, alteração de quantidade, remoção e conclusão da compra pelo estado do TanStack Query.
