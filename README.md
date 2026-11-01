@@ -332,7 +332,10 @@ Pré-validação local do build publicado (não substitui teste na URL pública)
 ```powershell
 $env:VITE_ENABLE_MOCKS="true"
 npm run build
+# Terminal 1: mantenha o preview aberto
+npm run preview -- --host 127.0.0.1 --port 4175 --strictPort
+# Terminal 2: execute os testes
 npx playwright test --config=playwright.preview.config.ts --workers=2
 ```
 
-Essa configuração executa compras desktop/mobile e atualização de preço via Socket.IO contra `vite preview`, sem servidor de desenvolvimento. Os relatórios gerados são marcados em `.gitattributes` para não dominar as estatísticas de linguagens do GitHub; permanecem disponíveis no repositório. `.vercel/` é ignorado para evitar versionar configurações locais da ferramenta.
+A pré-validação passou em três testes; o HTML está em `reports/production-smoke/index.html`. Essa configuração executa compras desktop/mobile e atualização de preço via Socket.IO contra `vite preview`, sem servidor de desenvolvimento. Os relatórios gerados são marcados em `.gitattributes` para não dominar as estatísticas de linguagens do GitHub; permanecem disponíveis no repositório. `.vercel/` é ignorado para evitar versionar configurações locais da ferramenta.
