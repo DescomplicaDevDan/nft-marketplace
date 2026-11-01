@@ -81,9 +81,9 @@ a:has(> .cart-count-badge) { position: relative; }
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --sans: 'Roboto Mono Variable', Consolas, monospace;
+  --heading: 'Roboto Mono Variable', Consolas, monospace;
+  --mono: 'Roboto Mono Variable', Consolas, monospace;
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
@@ -260,7 +260,7 @@ code {
 
 @theme inline {
   --font-heading: var(--font-sans);
-  --font-sans: 'Geist Variable', sans-serif;
+  --font-sans: 'Roboto Mono Variable', Consolas, ui-monospace, monospace;
   --font-mono: 'Roboto Mono Variable', Consolas, ui-monospace, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -387,4 +387,11 @@ code {
   background: #d28a4c;
   pointer-events: auto;
   cursor: ew-resize;
+}
+
+/* Shared desktop navigation follows the supplied Figma typography. */
+@media (min-width: 768px) {
+  .cart-header nav, .nft-detail-nav { font-family: var(--mono); font-size: 16px; font-weight: 400; line-height: 1; letter-spacing: 0; }
+  .cart-header nav .active, .nft-detail-nav .active { font-weight: 700; }
+  .cart-header-actions .auth-trigger, .nft-detail-header .auth-trigger { font-family: var(--mono); font-size: 16px; font-weight: 500; line-height: 1; letter-spacing: 0; color: #140d0a; }
 }

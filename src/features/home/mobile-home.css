@@ -12,10 +12,11 @@
   .mobile-search input::placeholder { color: #b39463; opacity: 1; }
   .mobile-filter-trigger { position: relative; flex: 0 0 44px; padding: 0; border: 0; background: none; cursor: pointer; }
   .mobile-filter-trigger > img { display: block; width: 44px; height: 44px; }
-  .mobile-filter-trigger > span { position: absolute; top: 3px; right: 3px; width: 8px; height: 8px; border: 2px solid #140d0a; border-radius: 50%; background: #f5f1eb; }
 
-  .mobile-hero { position: relative; isolation: isolate; height: 180px; overflow: hidden; border-radius: 30px; margin-bottom: 17px; background: radial-gradient(ellipse at 20% 52%, #d28a4c18 0 28%, transparent 28.5%), radial-gradient(ellipse at 59% 21%, #a9773f38 0 34%, transparent 34.5%), linear-gradient(123deg, #76512f, #27190f 90%); }
-  .mobile-hero::before { content: ''; position: absolute; z-index: -1; width: 125px; height: 240px; left: 56px; top: -53px; border-radius: 50%; background: #d28a4c0c; transform: rotate(28deg); }
+  .mobile-hero { position: relative; isolation: isolate; height: 180px; overflow: hidden; border-radius: 30px; margin-bottom: 17px; background: linear-gradient(123deg, #76512f, #27190f 90%); }
+  .mobile-hero::before, .mobile-hero::after { content: ''; position: absolute; z-index: -1; width: 248px; height: 248px; border-radius: 50%; pointer-events: none; }
+  .mobile-hero::before { left: -80px; top: -31px; background: linear-gradient(180deg, rgb(221 154 95 / 43%), rgb(210 138 76 / 4%)); }
+  .mobile-hero::after { left: 73px; top: -10px; background: linear-gradient(180deg, rgb(221 154 95 / 37%), rgb(210 138 76 / 0%)); }
   .mobile-hero-copy { position: relative; z-index: 1; width: 190px; padding: 6px 0 0 14px; }
   .mobile-welcome { font-size: 10px; line-height: 16px; }
   .mobile-hero h1 { margin: 7px 0 7px; font-size: 16px; font-weight: 700; line-height: 26px; text-transform: uppercase; }

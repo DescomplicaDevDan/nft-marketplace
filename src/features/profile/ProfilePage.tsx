@@ -10,6 +10,7 @@ import { updateProfile, useProfile, type CollectorProfile } from './api'
 import searchIcon from '@/assets/icons/Search Icon.svg'
 import cartIcon from '@/assets/icons/Cart Icon.svg'
 import hideIcon from '@/assets/icons/Hide.svg'
+import avatarIcon from '@/assets/icons/Image 2.svg'
 import '@/features/commerce/cart.css'
 import './profile.css'
 
@@ -104,7 +105,7 @@ function ProfileEditor({ initialProfile }: { initialProfile: CollectorProfile })
             <label>E-mail<span>*</span><Input type="email" value={profile.email} onChange={(event) => update('email', event.target.value)} autoComplete="email" required /></label>
             <label>Nome ENS<span>*</span><div className="profile-ens"><select aria-label="Sufixo ENS"><option>.eth</option></select><Input aria-label="Nome ENS" value={profile.ens} onChange={(event) => update('ens', event.target.value)} required /></div></label>
             <label>Apelido da carteira<span>*</span><Input value={profile.walletAlias} onChange={(event) => update('walletAlias', event.target.value)} required /></label>
-            <div className="profile-avatar"><span>Avatar</span><div>{profile.avatar ? <img src={profile.avatar} alt="Avatar do perfil" /> : <span className="profile-avatar-placeholder" aria-hidden="true">◎</span>}<input ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp" onChange={avatarChanged} hidden /><button type="button" onClick={() => fileInput.current?.click()}>Alterar</button><button type="button" className="profile-remove-avatar" onClick={() => { update('avatar', ''); if (fileInput.current) fileInput.current.value = '' }}>Remover</button></div></div>
+            <div className="profile-avatar"><span>Avatar</span><div>{profile.avatar ? <img src={profile.avatar} alt="Avatar do perfil" /> : <span className="profile-avatar-placeholder" aria-hidden="true"><img src={avatarIcon} alt="" /></span>}<input ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp" onChange={avatarChanged} hidden /><button type="button" onClick={() => fileInput.current?.click()}>Alterar</button><button type="button" className="profile-remove-avatar" onClick={() => { update('avatar', ''); if (fileInput.current) fileInput.current.value = '' }}>Remover</button></div></div>
           </div>
           <fieldset className="profile-passwords"><legend>Alterar senha</legend>{[['currentPassword', 'Senha atual'], ['newPassword', 'Nova senha'], ['confirmPassword', 'Confirmar nova senha']].map(([name, label]) => <label key={name}>{label}<div><Input name={name} type={visiblePasswords[name] ? 'text' : 'password'} autoComplete={name === 'currentPassword' ? 'current-password' : 'new-password'} minLength={name === 'currentPassword' ? undefined : 8} /><button type="button" aria-label={`${visiblePasswords[name] ? 'Ocultar' : 'Mostrar'} ${label.toLowerCase()}`} aria-pressed={!!visiblePasswords[name]} onClick={() => setVisiblePasswords((current) => ({ ...current, [name]: !current[name] }))}><img src={hideIcon} alt="" /></button></div></label>)}</fieldset>
           <Button variant="kurio" size="design" type="submit" className="profile-save">{saveMutation.isPending ? 'Salvando…' : 'Salvar'}</Button>

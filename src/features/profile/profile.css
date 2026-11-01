@@ -34,3 +34,5 @@
 @media (max-width: 1100px) { .profile-layout { grid-template-columns: 230px minmax(0, 1fr); gap: 24px; } }
 @media (max-width: 760px) { .profile-layout { grid-template-columns: 1fr; } .profile-sidebar nav { display: grid; grid-template-columns: 1fr 1fr; } }
 @media (max-width: 539px) { .profile-fields { grid-template-columns: 1fr; } .profile-passwords { width: 100%; } }
+
+.profile-avatar-placeholder > img { width: 24px; height: 24px; border-radius: 0; object-fit: contain; }

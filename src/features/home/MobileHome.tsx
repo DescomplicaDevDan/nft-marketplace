@@ -72,7 +72,7 @@ export function MobileHome({ data, loading, error, retry }: Props) {
           <button type="submit" aria-label="Buscar coleções"><span aria-hidden="true" style={{ maskImage: `url("${searchIcon}")`, WebkitMaskImage: `url("${searchIcon}")` }} /></button>
           <Input key={search.search} id="mobile-nft-search" type="search" value={term} onChange={(event) => setTerm(event.target.value)} placeholder="Explorar coleções" />
         </form>
-        <button type="button" className="mobile-filter-trigger" aria-label={activeFilters ? 'Abrir filtros, há filtros aplicados' : 'Abrir filtros'} aria-haspopup="dialog" onClick={openFilters}><img src={filterIcon} alt="" />{activeFilters && <span />}</button>
+        <button type="button" className="mobile-filter-trigger" aria-label={activeFilters ? 'Abrir filtros, há filtros aplicados' : 'Abrir filtros'} aria-haspopup="dialog" onClick={openFilters}><img src={filterIcon} alt="" /></button>
       </div>
 
       <section className="mobile-hero" aria-labelledby="mobile-hero-title">
