@@ -1,0 +1,278 @@
+{
+  "generatedAt": "2026-10-31T21:41:17.560Z",
+  "tool": "Lighthouse 13.6.0",
+  "browser": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  "environment": {
+    "platform": "win32 10.0.26300",
+    "architecture": "x64",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+    "logicalCpus": 8,
+    "memoryBytes": 16889782272
+  },
+  "baseURL": "http://127.0.0.1:4174",
+  "conditions": "Build otimizado com mocks padrão, armazenamento isolado entre execuções e perfis Lighthouse padrão mobile/desktop.",
+  "runs": [
+    {
+      "name": "inicio-mobile-1",
+      "page": "inicio",
+      "profile": "mobile",
+      "scores": {
+        "performance": 87,
+        "accessibility": 96,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 3922.6115500000005,
+        "cls": 0.0002207260910292068,
+        "tbtMs": 116.49999999999977
+      }
+    },
+    {
+      "name": "inicio-mobile-2",
+      "page": "inicio",
+      "profile": "mobile",
+      "scores": {
+        "performance": 88,
+        "accessibility": 96,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 3827.568,
+        "cls": 0.0002207260910292068,
+        "tbtMs": 107
+      }
+    },
+    {
+      "name": "inicio-mobile-3",
+      "page": "inicio",
+      "profile": "mobile",
+      "scores": {
+        "performance": 88,
+        "accessibility": 96,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 3877.4467999999997,
+        "cls": 0.0002207260910292068,
+        "tbtMs": 73
+      }
+    },
+    {
+      "name": "inicio-desktop-1",
+      "page": "inicio",
+      "profile": "desktop",
+      "scores": {
+        "performance": 99,
+        "accessibility": 97,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 979.24055,
+        "cls": 0.004032243835339728,
+        "tbtMs": 0
+      }
+    },
+    {
+      "name": "inicio-desktop-2",
+      "page": "inicio",
+      "profile": "desktop",
+      "scores": {
+        "performance": 99,
+        "accessibility": 97,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 958.2483,
+        "cls": 0.004032243835339728,
+        "tbtMs": 0
+      }
+    },
+    {
+      "name": "inicio-desktop-3",
+      "page": "inicio",
+      "profile": "desktop",
+      "scores": {
+        "performance": 99,
+        "accessibility": 97,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 985.4600500000001,
+        "cls": 0.004032243835339728,
+        "tbtMs": 0
+      }
+    },
+    {
+      "name": "detalhe-mobile-1",
+      "page": "detalhe",
+      "profile": "mobile",
+      "scores": {
+        "performance": 89,
+        "accessibility": 96,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 3705.4369000000006,
+        "cls": 0.0002207260910292068,
+        "tbtMs": 81
+      }
+    },
+    {
+      "name": "detalhe-mobile-2",
+      "page": "detalhe",
+      "profile": "mobile",
+      "scores": {
+        "performance": 89,
+        "accessibility": 96,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 3699.2513000000004,
+        "cls": 0.0002207260910292068,
+        "tbtMs": 68
+      }
+    },
+    {
+      "name": "detalhe-mobile-3",
+      "page": "detalhe",
+      "profile": "mobile",
+      "scores": {
+        "performance": 89,
+        "accessibility": 96,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 3695.2797499999997,
+        "cls": 0.0002207260910292068,
+        "tbtMs": 80.5
+      }
+    },
+    {
+      "name": "detalhe-desktop-1",
+      "page": "detalhe",
+      "profile": "desktop",
+      "scores": {
+        "performance": 99,
+        "accessibility": 97,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 928.0693,
+        "cls": 0.009976717551383343,
+        "tbtMs": 0
+      }
+    },
+    {
+      "name": "detalhe-desktop-2",
+      "page": "detalhe",
+      "profile": "desktop",
+      "scores": {
+        "performance": 99,
+        "accessibility": 97,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 967.3883500000001,
+        "cls": 0.009976717551383343,
+        "tbtMs": 0
+      }
+    },
+    {
+      "name": "detalhe-desktop-3",
+      "page": "detalhe",
+      "profile": "desktop",
+      "scores": {
+        "performance": 99,
+        "accessibility": 97,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 959.1782999999999,
+        "cls": 0.009976717551383343,
+        "tbtMs": 0
+      }
+    }
+  ],
+  "medians": {
+    "inicio-mobile": {
+      "categories": {
+        "performance": 88,
+        "accessibility": 96,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 3877.4467999999997,
+        "cls": 0.0002207260910292068,
+        "tbtMs": 107
+      }
+    },
+    "inicio-desktop": {
+      "categories": {
+        "performance": 99,
+        "accessibility": 97,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 979.24055,
+        "cls": 0.004032243835339728,
+        "tbtMs": 0
+      }
+    },
+    "detalhe-mobile": {
+      "categories": {
+        "performance": 89,
+        "accessibility": 96,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 3699.2513000000004,
+        "cls": 0.0002207260910292068,
+        "tbtMs": 80.5
+      }
+    },
+    "detalhe-desktop": {
+      "categories": {
+        "performance": 99,
+        "accessibility": 97,
+        "best-practices": 100,
+        "seo": 92,
+        "agentic-browsing": 50
+      },
+      "metrics": {
+        "lcpMs": 959.1782999999999,
+        "cls": 0.009976717551383343,
+        "tbtMs": 0
+      }
+    }
+  }
+}
