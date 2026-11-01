@@ -20,6 +20,18 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.desktop-home .auth-trigger {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: 100px;
+  height: 35px;
+  padding: 7px 9px;
+  gap: 4px;
+  border-radius: 6px;
+  background: #d28a4c;
+}
+.desktop-home .auth-trigger img { width: 20px; height: 20px; flex-shrink: 0; }
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;

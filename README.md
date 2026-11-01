@@ -317,6 +317,12 @@ Os sete testes atuais cobrem busca, filtros/ordenação, rota direta, NFT inexis
 
 ## Estado e próximos passos
 
+Os filtros desktop usam grupos com gap de 40 px (Coleções, Faixa de preço e Rede), 12 px entre título e opções, opções de 40 px de altura e recuo de 12 px. Coleções tem recuo dos dois lados (246 px úteis na lateral-base); Rede tem apenas recuo esquerdo (258 px úteis). O formulário de preço usa gap de 12 px entre seus controles e cresce com o conteúdo.
+
+No catálogo desktop, o padrão medido do Figma é lateral → produtos 48 px, abas → cards 32 px, abas entre si 20 px, colunas 34 px, linhas 72 px, arte → nome 12 px e nome → preço 12 px. O frame-base dos cards é 258 × 300 px; todas as imagens são quadradas de 250 × 250 px, centralizadas, com 4 px nas laterais e 25 px acima/abaixo na largura-base. As proporções são preservadas ao redimensionar. A lateral usa padding de 20 px nos quatro lados e mantém 24 px antes do destaque. O destaque tem 24 px de padding superior e preserva 94 px abaixo da imagem, sem fundo marrom nesse espaço; o fundo decorativo termina junto à imagem.
+
+O bloco inicial desktop usa os gaps fornecidos do Figma: cabeçalho → hero 32 px; texto → imagem 110 px na largura-base de 1440 px; boas-vindas → título 8 px; título → descrição 4 px; descrição → botão 32 px; bloco inicial → catálogo 96 px. O texto tem deslocamento superior de 43 px e recuo esquerdo de 40 px no desktop. A revisão visual das demais seções continua pendente.
+
 Catálogo, detalhe, favoritos, perfil, carteiras, carrinho, cotação e pedidos usam handlers REST do MSW. Busca, ordenação, filtros e paginação usam a URL. Pedidos e recibos são separados por conta e a confirmação depende da resposta do servidor simulado. Socket.IO atualiza catálogo/carrinho e pedidos, com reconciliação por REST. Há uma suíte Playwright executável e `ARCHITECTURE.md`; a cobertura E2E completa e o deploy obrigatório ainda faltam. A auditoria Lighthouse foi executada; as medianas e métricas estão em reports/lighthouse. A responsividade e a fidelidade visual precisam de revisão final.
 
 1. Completar testes E2E dos fluxos de compra, conta, Socket.IO, acessibilidade, falhas e recuperação.
