@@ -477,10 +477,10 @@ function App() {
               <img src={collection.image} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
               <span aria-hidden="true" className="pointer-events-none absolute left-[-199px] top-[134px] size-[256px] rounded-full border border-[#D28A4C]" />
             </div>
-            <div className="flex min-w-0 w-1/2 flex-col items-center justify-center px-4 py-6 text-center font-mono">
+            <div className="flex min-w-0 w-1/2 flex-col items-end justify-center px-4 py-6 text-right font-mono">
               <h2 className="mb-3 w-full text-base font-bold leading-snug text-[#f5f1eb]">{collection.title}</h2>
-              <p className="w-full text-xs leading-5 text-[#b8aa9b]">{collection.description}</p>
-              <a href="#catalogo" className="mt-2 shrink-0 rounded bg-[#e69a55] px-5 py-2 text-xs font-bold text-[#1b1310]">Explorar →</a>
+              <p className="w-full text-[14px] font-normal leading-[24px] tracking-[0] text-[#CFB28C]">{collection.description}</p>
+              <a href="#catalogo" className="mt-2 shrink-0 self-end rounded bg-[#e69a55] px-5 py-2 text-xs font-bold text-[#1b1310]">Explorar →</a>
             </div>
           </article>
         ))}
