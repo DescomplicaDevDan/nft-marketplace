@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "typecheck": "tsc -b",
+    "test:visual": "playwright test visual.spec.ts",
     "preview": "vite preview",
     "test:e2e": "playwright test",
     "audit:lighthouse": "node scripts/audit-lighthouse.mjs"
