@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T21:41:17.560Z",
+  "generatedAt": "2026-11-01T12:30:48.089Z",
   "tool": "Lighthouse 13.6.0",
   "browser": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
   "environment": {
@@ -17,16 +17,16 @@
       "page": "inicio",
       "profile": "mobile",
       "scores": {
-        "performance": 87,
-        "accessibility": 96,
+        "performance": 69,
+        "accessibility": 100,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 3922.6115500000005,
-        "cls": 0.0002207260910292068,
-        "tbtMs": 116.49999999999977
+        "lcpMs": 4585.763149999999,
+        "cls": 0.0005973931055030592,
+        "tbtMs": 561.5
       }
     },
     {
@@ -34,16 +34,16 @@
       "page": "inicio",
       "profile": "mobile",
       "scores": {
-        "performance": 88,
-        "accessibility": 96,
+        "performance": 70,
+        "accessibility": 100,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 3827.568,
-        "cls": 0.0002207260910292068,
-        "tbtMs": 107
+        "lcpMs": 4309.1826,
+        "cls": 0.0005316083110691486,
+        "tbtMs": 608.352175
       }
     },
     {
@@ -51,16 +51,16 @@
       "page": "inicio",
       "profile": "mobile",
       "scores": {
-        "performance": 88,
-        "accessibility": 96,
+        "performance": 71,
+        "accessibility": 100,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 3877.4467999999997,
-        "cls": 0.0002207260910292068,
-        "tbtMs": 73
+        "lcpMs": 4177.091075,
+        "cls": 0.0005316083110691486,
+        "tbtMs": 592.5000000000005
       }
     },
     {
@@ -68,15 +68,15 @@
       "page": "inicio",
       "profile": "desktop",
       "scores": {
-        "performance": 99,
+        "performance": 97,
         "accessibility": 97,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 979.24055,
-        "cls": 0.004032243835339728,
+        "lcpMs": 1242.81115,
+        "cls": 0.004072859475127165,
         "tbtMs": 0
       }
     },
@@ -85,16 +85,16 @@
       "page": "inicio",
       "profile": "desktop",
       "scores": {
-        "performance": 99,
+        "performance": 96,
         "accessibility": 97,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 958.2483,
-        "cls": 0.004032243835339728,
-        "tbtMs": 0
+        "lcpMs": 1391.4218,
+        "cls": 0.03079876905004293,
+        "tbtMs": 1
       }
     },
     {
@@ -102,15 +102,15 @@
       "page": "inicio",
       "profile": "desktop",
       "scores": {
-        "performance": 99,
+        "performance": 97,
         "accessibility": 97,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 985.4600500000001,
-        "cls": 0.004032243835339728,
+        "lcpMs": 1236.0314000000003,
+        "cls": 0.03079876905004293,
         "tbtMs": 0
       }
     },
@@ -119,16 +119,16 @@
       "page": "detalhe",
       "profile": "mobile",
       "scores": {
-        "performance": 89,
-        "accessibility": 96,
+        "performance": 74,
+        "accessibility": 100,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 3705.4369000000006,
-        "cls": 0.0002207260910292068,
-        "tbtMs": 81
+        "lcpMs": 4137.322050000001,
+        "cls": 0,
+        "tbtMs": 489.50000000000045
       }
     },
     {
@@ -136,16 +136,16 @@
       "page": "detalhe",
       "profile": "mobile",
       "scores": {
-        "performance": 89,
-        "accessibility": 96,
+        "performance": 70,
+        "accessibility": 100,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 3699.2513000000004,
-        "cls": 0.0002207260910292068,
-        "tbtMs": 68
+        "lcpMs": 4230.77485,
+        "cls": 0.005403434538638326,
+        "tbtMs": 613.5
       }
     },
     {
@@ -153,16 +153,16 @@
       "page": "detalhe",
       "profile": "mobile",
       "scores": {
-        "performance": 89,
-        "accessibility": 96,
+        "performance": 76,
+        "accessibility": 100,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 3695.2797499999997,
-        "cls": 0.0002207260910292068,
-        "tbtMs": 80.5
+        "lcpMs": 4091.02905,
+        "cls": 0,
+        "tbtMs": 427.5000000000007
       }
     },
     {
@@ -170,15 +170,15 @@
       "page": "detalhe",
       "profile": "desktop",
       "scores": {
-        "performance": 99,
+        "performance": 98,
         "accessibility": 97,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 928.0693,
-        "cls": 0.009976717551383343,
+        "lcpMs": 1101.52625,
+        "cls": 0.009991855745701567,
         "tbtMs": 0
       }
     },
@@ -187,15 +187,15 @@
       "page": "detalhe",
       "profile": "desktop",
       "scores": {
-        "performance": 99,
+        "performance": 97,
         "accessibility": 97,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 967.3883500000001,
-        "cls": 0.009976717551383343,
+        "lcpMs": 1214.847925,
+        "cls": 0.009991855745701567,
         "tbtMs": 0
       }
     },
@@ -204,15 +204,15 @@
       "page": "detalhe",
       "profile": "desktop",
       "scores": {
-        "performance": 99,
+        "performance": 98,
         "accessibility": 97,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 959.1782999999999,
-        "cls": 0.009976717551383343,
+        "lcpMs": 1172.2072,
+        "cls": 0.009991855745701567,
         "tbtMs": 0
       }
     }
@@ -220,57 +220,57 @@
   "medians": {
     "inicio-mobile": {
       "categories": {
-        "performance": 88,
-        "accessibility": 96,
+        "performance": 70,
+        "accessibility": 100,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 3877.4467999999997,
-        "cls": 0.0002207260910292068,
-        "tbtMs": 107
+        "lcpMs": 4309.1826,
+        "cls": 0.0005316083110691486,
+        "tbtMs": 592.5000000000005
       }
     },
     "inicio-desktop": {
       "categories": {
-        "performance": 99,
+        "performance": 97,
         "accessibility": 97,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 979.24055,
-        "cls": 0.004032243835339728,
+        "lcpMs": 1242.81115,
+        "cls": 0.03079876905004293,
         "tbtMs": 0
       }
     },
     "detalhe-mobile": {
       "categories": {
-        "performance": 89,
-        "accessibility": 96,
+        "performance": 74,
+        "accessibility": 100,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 3699.2513000000004,
-        "cls": 0.0002207260910292068,
-        "tbtMs": 80.5
+        "lcpMs": 4137.322050000001,
+        "cls": 0,
+        "tbtMs": 489.50000000000045
       }
     },
     "detalhe-desktop": {
       "categories": {
-        "performance": 99,
+        "performance": 98,
         "accessibility": 97,
         "best-practices": 100,
         "seo": 92,
         "agentic-browsing": 50
       },
       "metrics": {
-        "lcpMs": 959.1782999999999,
-        "cls": 0.009976717551383343,
+        "lcpMs": 1172.2072,
+        "cls": 0.009991855745701567,
         "tbtMs": 0
       }
     }

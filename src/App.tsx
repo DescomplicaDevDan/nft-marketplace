@@ -251,6 +251,7 @@ function App() {
 
         <img
           src={heroArtwork}
+          fetchPriority="high"
           alt="NFT Emerald Ape com óculos e jaqueta verde"
           className="hidden aspect-square w-full max-w-[450px] justify-self-end rounded-2xl object-cover md:block"
         />

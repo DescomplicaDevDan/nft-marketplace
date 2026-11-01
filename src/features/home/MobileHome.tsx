@@ -77,7 +77,7 @@ export function MobileHome({ data, loading, error, retry }: Props) {
 
       <section className="mobile-hero" aria-labelledby="mobile-hero-title">
         <div className="mobile-hero-copy"><p className="mobile-welcome">Bem-vindo à Kurio</p><h1 id="mobile-hero-title">Seja dono da<br />cultura digital</h1><p className="mobile-hero-description">Descubra NFTs selecionados de criadores do mundo todo.</p><a href="#mobile-catalog">EXPLORAR <span aria-hidden="true">→</span></a></div>
-        <div className="mobile-hero-art"><img src={hero} alt="Emerald Ape com óculos e jaqueta verde" /><img src={sage} className="mobile-hero-mini" alt="" /></div>
+        <div className="mobile-hero-art"><img src={hero} fetchPriority="high" alt="Emerald Ape com óculos e jaqueta verde" /><img src={sage} className="mobile-hero-mini" alt="" /></div>
         <div className="mobile-hero-dots" aria-hidden="true"><i /><i /><i /></div>
       </section>
 

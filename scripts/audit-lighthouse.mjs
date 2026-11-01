@@ -50,7 +50,7 @@ try {
   for (const page of pages) for (const profile of profiles) for (let iteration = 1; iteration <= 3; iteration++) {
     const name = `${page.name}-${profile}-${iteration}`
     const outputPath = path.join(reportsDir, name)
-    const flags = [cli, `${baseURL}${page.route}`, `--chrome-path=${chromePath}`, '--output=html', '--output=json', `--output-path=${outputPath}`, '--disable-storage-reset', '--max-wait-for-load=30000', '--quiet']
+    const flags = [cli, `${baseURL}${page.route}`, `--chrome-path=${chromePath}`, '--chrome-flags=--headless=new', '--output=html', '--output=json', `--output-path=${outputPath}`, '--disable-storage-reset', '--max-wait-for-load=30000', '--quiet']
     if (profile === 'desktop') flags.push('--preset=desktop')
     console.log(`Lighthouse ${name}`)
     let lastError
