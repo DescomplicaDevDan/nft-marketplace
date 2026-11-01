@@ -99,3 +99,5 @@
   .auth-register .auth-mobile-title { margin-bottom: 18px; }
   .auth-register .auth-mobile-switch { margin-top: 24px; }
 }
+
+.auth-dialog:not([open]) { display: none; }

@@ -84,6 +84,12 @@ export function useCheckoutOrder() {
         order = await mutation.mutateAsync({ attempt: saved, token })
       } catch (error) {
         const failure = isAxiosError<OrderFailure>(error) ? error.response?.data : undefined
+        if (isAxiosError(error) && error.response?.status === 401) {
+          localStorage.removeItem(attemptKey(id))
+          setAttempt(null)
+          setMessage('Sua sessão expirou. Entre novamente e confirme a compra.')
+          return
+        }
         if (failure?.quote) {
           queryClient.setQueryData(['quote', `user:${id}`, failure.quote.cartVersion], failure.quote)
           void queryClient.invalidateQueries({ queryKey: ['cart', `user:${id}`] })
